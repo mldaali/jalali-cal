@@ -7,6 +7,7 @@
 [![Firefox Add-on](https://img.shields.io/badge/Firefox_AMO-Install_Now-FF7139?style=for-the-badge&logo=firefox-browser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)
 [![GitHub Release](https://img.shields.io/github/v/release/mldaali/jalali-cal?style=for-the-badge&logo=github&color=blue)](https://github.com/mldaali/jalali-cal/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Built with AI](https://img.shields.io/badge/Built_with-AI-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-توسعه-با-هوش-مصنوعی-built-with-ai)
 [![Tests](https://img.shields.io/badge/Tests-56%2F56_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
 
 [**دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/) • [**دانلود مستقیم بسته XPI (نسخه ۱.۰.۰)**](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi)
@@ -65,6 +66,14 @@
 node test-extension.js
 ```
 *(تمامی ۵۶ آزمون با موفقیت پاس می‌شوند).*
+
+---
+
+## 🤖 توسعه با هوش مصنوعی (Built with AI)
+
+این افزونه و پروژه به صورت کامل و سرتاسری (End-to-End) — شامل معماری ساختار Manifest V3، پیاده‌سازی الگوریتم‌های دقیق Intl API، طراحی رابط کاربری بدون اسکرول با تم Catppuccin، موتور رندرینگ Canvas آیکون نوار ابزار، بانک رویدادها، نوشتن آزمون‌های اعتبارسنجی ۵۶ گانه و بسته‌بندی برای فروشگاه رسمی افزونه‌های موزیلا (Mozilla AMO) — با همراهی و کدنویسی **هوش مصنوعی** توسعه یافته است.
+
+> 💡 **AI Transparency:** This entire codebase was architected, written, tested, and packaged with AI assistance.
 
 ---
 
