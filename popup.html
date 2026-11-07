@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html lang="fa" dir="rtl">
+<html lang="fa" dir="rtl" data-theme="dark">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -7,163 +7,82 @@
   <link rel="stylesheet" href="popup.css">
 </head>
 <body>
-  <div class="container">
-    <!-- Top App Header -->
-    <header class="app-header">
-      <div class="brand-wrapper">
-        <img src="icons/icon-32.png" alt="آیکون تقویم" class="app-icon">
-        <span class="app-title">تقویم فارسی</span>
+  <div class="app-dashboard">
+    <!-- Top Bar: Title & Theme & Clock -->
+    <header class="top-bar">
+      <div class="brand-group">
+        <img src="icons/icon-32.png" alt="تقویم" class="brand-icon">
+        <span class="brand-name">تقویم فارسی</span>
       </div>
-      <div class="header-actions">
-        <button class="theme-toggle-btn" id="themeToggleBtn" title="تغییر پوسته (روشن / تیره)" aria-label="تغییر پوسته">
-          <span class="theme-icon" id="themeIcon">☀️</span>
+      <div class="top-actions">
+        <div class="live-clock" id="liveClock" title="ساعت زنده">--:--:--</div>
+        <button class="icon-btn" id="themeToggleBtn" title="تغییر پوسته" aria-label="تغییر پوسته">
+          <span id="themeIcon">☀️</span>
         </button>
-        <div class="live-clock-badge" id="liveClockBadge" title="ساعت دقیق و بی‌درنگ">
-          <div class="clock-dot"></div>
-          <span id="liveClockText">--:--:--</span>
-        </div>
       </div>
     </header>
 
-    <!-- Today Hero Card -->
-    <section class="today-hero-card" id="todayHeroCard">
-      <div class="today-header-row">
-        <div class="today-jalali-title" id="todayJalaliTitle">امروز: در حال بارگذاری...</div>
-        <div class="today-status-badge status-workday" id="todayStatusBadge">روز کاری</div>
+    <!-- Prominent Today Hero Section -->
+    <section class="hero-date-section" id="heroSection">
+      <div class="hero-main-row">
+        <span class="hero-weekday" id="heroWeekday">...</span>
+        <div class="hero-date-wrapper">
+          <span class="hero-day-num" id="heroDayNum">--</span>
+          <span class="hero-month-year" id="heroMonthYear">...</span>
+        </div>
       </div>
-      <div class="secondary-dates-row">
-        <span id="todayGregorianText">میلادی: --</span>
-        <span id="todayIslamicText">قمری: --</span>
+      <div class="hero-sub-dates" id="heroSubDates">
+        <span id="heroGregorian">--</span>
+        <span class="dot-separator">•</span>
+        <span id="heroIslamic">--</span>
       </div>
     </section>
 
-    <!-- View Switcher Tabs -->
-    <nav class="tabs-nav" aria-label="ناوبری بخش‌ها">
-      <button class="tab-btn active" id="tabCalendarBtn" data-target="calendarTab">تقویم ماهانه</button>
-      <button class="tab-btn" id="tabEventsBtn" data-target="eventsTab">مناسبت‌های ماه</button>
-      <button class="tab-btn" id="tabConverterBtn" data-target="converterTab">تبدیل تاریخ</button>
-    </nav>
-
-    <!-- TAB 1: Calendar View -->
-    <main class="tab-content active" id="calendarTab">
-      <!-- Month Navigation -->
-      <div class="calendar-nav-bar">
-        <button class="nav-btn" id="prevMonthBtn" title="ماه قبل" aria-label="ماه قبل">›</button>
-        <span class="month-year-label" id="currentMonthYearLabel">...</span>
-        <button class="today-shortcut-btn" id="jumpTodayBtn" title="بازگشت به امروز">امروز</button>
-        <button class="nav-btn" id="nextMonthBtn" title="ماه بعد" aria-label="ماه بعد">‹</button>
+    <!-- Scroll-Free Occasion / Holiday Pill -->
+    <div class="occasion-pill-wrapper">
+      <div class="occasion-pill" id="occasionPill">
+        <span class="occasion-indicator-dot" id="occasionDot"></span>
+        <span class="occasion-text" id="occasionText">در حال بارگذاری...</span>
       </div>
+    </div>
 
-      <!-- Calendar Grid -->
-      <div class="calendar-table-wrapper">
-        <!-- Weekday Headers -->
-        <div class="weekdays-grid">
-          <div class="weekday-header">ش</div>
-          <div class="weekday-header">ی</div>
-          <div class="weekday-header">د</div>
-          <div class="weekday-header">س</div>
-          <div class="weekday-header">چ</div>
-          <div class="weekday-header">پ</div>
-          <div class="weekday-header friday">ج</div>
-        </div>
-        <!-- Days Grid -->
-        <div class="days-grid" id="daysGrid"></div>
+    <!-- Calendar Month Navigation -->
+    <div class="calendar-header-bar">
+      <button class="nav-arrow-btn" id="prevMonthBtn" title="ماه قبل" aria-label="ماه قبل">›</button>
+      <div class="month-title-group">
+        <span class="month-title" id="monthTitle">...</span>
+        <button class="jump-today-dot" id="jumpTodayBtn" title="بازگشت به امروز">امروز</button>
       </div>
+      <button class="nav-arrow-btn" id="nextMonthBtn" title="ماه بعد" aria-label="ماه بعد">‹</button>
+    </div>
 
-      <!-- Selected Day Details & Events -->
-      <section class="day-details-card" id="dayDetailsCard">
-        <div class="details-header">
-          <span class="details-date-title" id="detailsDateTitle">رویدادهای روز</span>
-          <span class="today-status-badge status-workday" id="detailsHolidayBadge">روز کاری</span>
-        </div>
-        <div class="events-list" id="eventsListContainer">
-          <div class="no-event-text">مناسبتی برای این روز ثبت نشده است.</div>
-        </div>
-      </section>
-    </main>
-
-    <!-- TAB 2: Month Events View -->
-    <section class="tab-content" id="eventsTab">
-      <div class="month-events-container" id="monthEventsListContainer">
-        <!-- Injected dynamically by popup.js -->
+    <!-- Calendar Grid (Compact single-screen) -->
+    <div class="calendar-container">
+      <div class="weekdays-row">
+        <div class="col-header">ش</div>
+        <div class="col-header">ی</div>
+        <div class="col-header">د</div>
+        <div class="col-header">س</div>
+        <div class="col-header">چ</div>
+        <div class="col-header">پ</div>
+        <div class="col-header friday">ج</div>
       </div>
-    </section>
+      <div class="days-matrix" id="daysMatrix"></div>
+    </div>
 
-    <!-- TAB 3: Date Converter -->
-    <section class="tab-content" id="converterTab">
-      <div class="converter-card">
-        <!-- Jalali to Gregorian -->
-        <div class="converter-section-title">تبدیل خورشیدی به میلادی</div>
-        <div class="converter-inputs-row">
-          <div class="input-group">
-            <label class="input-label" for="jConvYear">سال</label>
-            <input type="number" id="jConvYear" class="converter-input" value="1405" min="1300" max="1500">
-          </div>
-          <div class="input-group">
-            <label class="input-label" for="jConvMonth">ماه</label>
-            <select id="jConvMonth" class="converter-select">
-              <option value="1">فروردین</option>
-              <option value="2">اردیبهشت</option>
-              <option value="3">خرداد</option>
-              <option value="4">تیر</option>
-              <option value="5">مرداد</option>
-              <option value="6">شهریور</option>
-              <option value="7">مهر</option>
-              <option value="8" selected>آبان</option>
-              <option value="9">آذر</option>
-              <option value="10">دی</option>
-              <option value="11">بهمن</option>
-              <option value="12">اسفند</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label class="input-label" for="jConvDay">روز</label>
-            <input type="number" id="jConvDay" class="converter-input" value="16" min="1" max="31">
-          </div>
-        </div>
-        <button class="converter-btn" id="btnConvertJtoG">تبدیل به میلادی</button>
-        <div class="converter-result-box" id="resultJtoG">نتیجه تبدیل: --</div>
-
-        <hr style="border: 0; border-top: 1px solid var(--border-subtle); margin: 4px 0;">
-
-        <!-- Gregorian to Jalali -->
-        <div class="converter-section-title">تبدیل میلادی به خورشیدی</div>
-        <div class="converter-inputs-row">
-          <div class="input-group">
-            <label class="input-label" for="gConvYear">سال</label>
-            <input type="number" id="gConvYear" class="converter-input" value="2026" min="1900" max="2100">
-          </div>
-          <div class="input-group">
-            <label class="input-label" for="gConvMonth">ماه</label>
-            <select id="gConvMonth" class="converter-select">
-              <option value="1">January</option>
-              <option value="2">February</option>
-              <option value="3">March</option>
-              <option value="4">April</option>
-              <option value="5">May</option>
-              <option value="6">June</option>
-              <option value="7">July</option>
-              <option value="8">August</option>
-              <option value="9">September</option>
-              <option value="10">October</option>
-              <option value="11" selected>November</option>
-              <option value="12">December</option>
-            </select>
-          </div>
-          <div class="input-group">
-            <label class="input-label" for="gConvDay">روز</label>
-            <input type="number" id="gConvDay" class="converter-input" value="7" min="1" max="31">
-          </div>
-        </div>
-        <button class="converter-btn" id="btnConvertGtoJ">تبدیل به خورشیدی</button>
-        <div class="converter-result-box" id="resultGtoJ">نتیجه تبدیل: --</div>
-      </div>
-    </section>
-
-    <!-- Footer -->
+    <!-- Compact Minimalist Footer: Status & Refresh -->
     <footer class="app-footer">
-      <span>تقویم خورشیدی ۱۴۰۵ | نسخه ۱.۰</span>
-      <span class="footer-link" id="toggleBadgeOption" title="تغییر وضعیت نمایش عدد روز روی آیکون نوار ابزار">نشانگر نوار ابزار: فعال</span>
+      <div class="status-indicator" title="وضعیت افزونه">
+        <span class="pulse-dot"></span>
+        <span class="status-label" id="statusLabel">۱۴۰۵ خورشیدی</span>
+      </div>
+      <div class="footer-actions">
+        <button class="refresh-btn" id="refreshBtn" title="به‌روزرسانی سریع" aria-label="به‌روزرسانی">
+          <svg class="refresh-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
+          </svg>
+        </button>
+      </div>
     </footer>
   </div>
 
