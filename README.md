@@ -1,6 +1,10 @@
+<div dir="rtl">
+
 # 📅 تقویم فارسی | Persian Jalali Calendar
 
-> افزونه مدرن و فوق‌فشرده تقویم هجری شمسی برای موزیلا فایرفاکس (Firefox Manifest V3) با طراحی Catppuccin، تایپوگرافی آفلاین وزیرمتن و نشانگر زنده نوار ابزار.
+> **افزونه تقویم هجری شمسی برای موزیلا فایرفاکس (Firefox Manifest V3) با طراحی مدرن Catppuccin، تایپوگرافی آفلاین وزیرمتن و نشانگر زنده نوار ابزار.**
+
+</div>
 
 <div align="center">
 
@@ -10,11 +14,19 @@
 [![Built with AI](https://img.shields.io/badge/Built_with-AI-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-توسعه-با-هوش-مصنوعی-built-with-ai)
 [![Tests](https://img.shields.io/badge/Tests-56%2F56_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
 
-[**دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/) • [**دانلود مستقیم بسته XPI (نسخه ۱.۰.۰)**](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi)
+<br/>
+
+[**🚀 دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/) • [**📦 دانلود مستقیم بسته XPI (نسخه ۱.۰.۰)**](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi)
+
+<br/>
+
+<img src="assets/preview.png" alt="پیش‌نمایش افزونه تقویم فارسی | Persian Jalali Calendar Preview" width="760" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
 
 </div>
 
 ---
+
+<div dir="rtl">
 
 ## ✨ ویژگی‌های کلیدی (Key Features)
 
@@ -31,19 +43,22 @@
 ## 🚀 نصب (Installation)
 
 ### ۱. نصب مستقیم از فروشگاه موزیلا (پیشنهادی)
-به صفحه رسمی افزونه در فروشگاه موزیلا بروید و روی **Add to Firefox** کلیک کنید:
+به صفحه رسمی افزونه در فروشگاه موزیلا بروید و روی **Add to Firefox** کلیک کنید:  
 👉 **[نصب تقویم فارسی از Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)**
 
-### ۲. نصب دستی نسخه توسعه (Developer Mode)
+### ۲. نصب دستی بسته رسمی (XPI File)
+فایل آماده [`persian-calendar-v1.0.0.xpi`](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi) را از بخش Release دانلود کرده و مستقیماً داخل پنجره فایرفاکس بکشید و رها کنید (Drag & Drop).
+
+### ۳. نصب نسخه توسعه (Developer Mode)
 1. در فایرفاکس به آدرس `about:debugging#/runtime/this-firefox` بروید.
 2. روی دکمه **Load Temporary Add-on...** کلیک کنید.
 3. فایل `manifest.json` را از پوشه پروژه انتخاب کنید.
 
-> همچنین می‌توانید فایل بسته‌بندی‌شده [`persian-calendar-v1.0.0.xpi`](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi) را از بخش Release دانلود کرده و مستقیماً در فایرفاکس درگ اند دراپ نمایید.
-
 ---
 
 ## 📁 ساختار پروژه (Structure)
+
+</div>
 
 ```text
 ├── manifest.json       # پیکربندی رسمی Firefox Manifest V3
@@ -53,8 +68,11 @@
 ├── background.js       # سرویس پس‌زمینه و موتور رندر Canvas آیکون داینامیک
 ├── fonts/              # فونت‌های توکار وزیرمتن (WOFF2)
 ├── icons/              # آیکون‌های وکتور و شطرنجی (۱۶ تا ۵۱۲px)
+├── assets/             # تصاویر پیش‌نمایش و کاور مخزن
 └── test-extension.js   # مجموعه تست‌های جامع اعتبارسنجی
 ```
+
+<div dir="rtl">
 
 ---
 
@@ -80,3 +98,5 @@ node test-extension.js
 ## 📄 مجوز (License)
 
 این پروژه تحت مجوز [MIT](LICENSE) منتشر شده است. فونت «وزیرمتن» نیز تحت مجوز [SIL Open Font License 1.1](http://scripts.sil.org/OFL) ارائه می‌شود.
+
+</div>
