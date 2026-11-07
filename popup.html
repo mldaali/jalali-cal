@@ -10,12 +10,16 @@
   <div class="app-dashboard">
     <!-- Main Hero Date Card with Embedded Minimalist Corner Actions -->
     <section class="hero-date-card" id="heroCard">
-      <!-- Subtle Borderless Corner Actions -->
-      <div class="corner-actions">
+      <!-- Right Corner Action: Theme Toggle Button -->
+      <div class="corner-actions corner-right">
         <button class="corner-icon-btn" id="themeToggleBtn" title="تغییر پوسته" aria-label="تغییر پوسته">
           <span id="themeIcon">☀️</span>
         </button>
-        <button class="corner-icon-btn" id="quickNoteBtn" title="ثبت یادداشت برای روز انتخابی" aria-label="یادداشت">
+      </div>
+
+      <!-- Left Corner Actions: Quick Note & Refresh -->
+      <div class="corner-actions corner-left">
+        <button class="corner-icon-btn" id="quickNoteBtn" title="ثبت یادداشت برای روز انتخابی (کلید N)" aria-label="یادداشت">
           <span id="quickNoteIcon">📝</span>
         </button>
         <button class="corner-icon-btn" id="refreshBtn" title="به‌روزرسانی" aria-label="به‌روزرسانی">
@@ -74,12 +78,12 @@
 
     <!-- Calendar Month Navigation Bar -->
     <div class="calendar-nav-bar">
-      <button class="nav-arrow" id="prevMonthBtn" title="ماه قبل (N)" aria-label="ماه قبل">›</button>
+      <button class="nav-arrow" id="prevMonthBtn" title="ماه قبل (P / PageUp)" aria-label="ماه قبل">›</button>
       <div class="month-title-wrapper">
         <span class="month-title" id="monthTitle">...</span>
         <button class="jump-today-btn" id="jumpTodayBtn" title="بازگشت به امروز (T)">امروز</button>
       </div>
-      <button class="nav-arrow" id="nextMonthBtn" title="ماه بعد (M)" aria-label="ماه بعد">‹</button>
+      <button class="nav-arrow" id="nextMonthBtn" title="ماه بعد (M / PageDown)" aria-label="ماه بعد">‹</button>
     </div>
 
     <!-- Calendar Matrix Grid -->
@@ -98,7 +102,7 @@
 
     <!-- Minimalist Shortcut Footer Guide -->
     <div class="shortcuts-footer" title="کلیدهای میانبر فعال تقویم">
-      <span>⌨ میانبرها: ←/→ روزها • T امروز • N یادداشت • C کپی</span>
+      <span>⌨ میانبرها: ←/→ روزها • T امروز • N یادداشت • P/M ماه • C کپی</span>
     </div>
   </div>
 

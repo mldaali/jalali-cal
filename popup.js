@@ -653,11 +653,15 @@ function setupKeyboardNavigation() {
       e.preventDefault();
       goToToday();
     } else if (e.key === "m" || e.key === "M" || e.key === "PageDown") {
-      // Next Month
+      // Next Month (M / PageDown)
       e.preventDefault();
       goToNextMonth();
-    } else if (e.key === "n" || e.key === "N" || e.key === "PageUp") {
-      // Quick Note Toggle
+    } else if (e.key === "p" || e.key === "P" || e.key === "PageUp") {
+      // Previous Month (P / PageUp)
+      e.preventDefault();
+      goToPrevMonth();
+    } else if (e.key === "n" || e.key === "N") {
+      // Note (N) strictly toggles the personal note editor!
       e.preventDefault();
       AppState.isEditingNote = !AppState.isEditingNote;
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
@@ -703,7 +707,8 @@ function setupEventHandlers() {
   // 4. Quick Note Actions
   const quickNoteBtn = document.getElementById("quickNoteBtn");
   if (quickNoteBtn) {
-    quickNoteBtn.addEventListener("click", () => {
+    quickNoteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       AppState.isEditingNote = !AppState.isEditingNote;
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
     });
@@ -711,7 +716,8 @@ function setupEventHandlers() {
 
   const noteText = document.getElementById("noteText");
   if (noteText) {
-    noteText.addEventListener("click", () => {
+    noteText.addEventListener("click", (e) => {
+      e.stopPropagation();
       AppState.isEditingNote = true;
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
     });
@@ -719,12 +725,16 @@ function setupEventHandlers() {
 
   const saveNoteBtn = document.getElementById("saveNoteBtn");
   if (saveNoteBtn) {
-    saveNoteBtn.addEventListener("click", saveCurrentNote);
+    saveNoteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      saveCurrentNote();
+    });
   }
 
   const cancelNoteBtn = document.getElementById("cancelNoteBtn");
   if (cancelNoteBtn) {
-    cancelNoteBtn.addEventListener("click", () => {
+    cancelNoteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       AppState.isEditingNote = false;
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
     });
@@ -742,13 +752,17 @@ function setupEventHandlers() {
 
   const delNoteBtn = document.getElementById("delNoteBtn");
   if (delNoteBtn) {
-    delNoteBtn.addEventListener("click", deleteCurrentNote);
+    delNoteBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      deleteCurrentNote();
+    });
   }
 
   // 5. Refresh Button
   const refreshBtn = document.getElementById("refreshBtn");
   if (refreshBtn) {
-    refreshBtn.addEventListener("click", () => {
+    refreshBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
       refreshBtn.classList.add("rotating");
       setTimeout(() => refreshBtn.classList.remove("rotating"), 360);
 
@@ -779,7 +793,8 @@ function setupEventHandlers() {
   // 6. Theme Toggle Button
   const themeToggleBtn = document.getElementById("themeToggleBtn");
   if (themeToggleBtn) {
-    themeToggleBtn.addEventListener("click", async () => {
+    themeToggleBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
       const nextTheme = AppState.theme === "light" ? "dark" : "light";
       applyTheme(nextTheme);
       try {
