@@ -1,10 +1,10 @@
 /**
- * popup.css - Catppuccin Minimalist Single-Screen Persian Calendar
- * Zero-scroll, ultra-compact (280px) dashboard layout with Vazirmatn typography
+ * popup.css - Minimalist Single-Screen Persian Calendar (Zero-Scroll 280px)
+ * Cohesive Catppuccin Theme with Vazirmatn Offline Typography
  */
 
 /* ==========================================================================
-   Embedded Vazirmatn Typography
+   Embedded Vazirmatn Font Faces
    ========================================================================== */
 @font-face {
   font-family: 'Vazirmatn';
@@ -42,78 +42,64 @@
    Catppuccin Mocha Dark Theme (Default)
    ========================================================================== */
 :root, [data-theme="dark"] {
-  --ctp-base: #1e1e2e;
-  --ctp-mantle: #181825;
-  --ctp-crust: #11111b;
-  --ctp-surface0: #313244;
-  --ctp-surface1: #45475a;
-  --ctp-surface2: #585b70;
-  --ctp-overlay0: #6c7086;
-  --ctp-text: #cdd6f4;
-  --ctp-subtext1: #bac2de;
-  --ctp-subtext0: #a6adc8;
-  --ctp-lavender: #b4befe;
-  --ctp-blue: #89b4fa;
-  --ctp-sapphire: #74c7ec;
-  --ctp-green: #a6e3a1;
-  --ctp-yellow: #f9e2af;
-  --ctp-peach: #fab387;
-  --ctp-red: #f38ba8;
-  --ctp-mauve: #cba6f7;
+  --bg-base: #1e1e2e;
+  --bg-mantle: #181825;
+  --bg-crust: #11111b;
+  --bg-surface0: #313244;
+  --bg-surface1: #45475a;
+  --bg-surface2: #585b70;
 
-  --app-bg: var(--ctp-base);
-  --card-bg: var(--ctp-mantle);
-  --card-border: var(--ctp-surface0);
-  --card-hover: var(--ctp-surface1);
-  --text-primary: var(--ctp-text);
-  --text-muted: var(--ctp-subtext0);
-  --accent-primary: var(--ctp-mauve);
-  --holiday-color: var(--ctp-red);
-  --workday-color: var(--ctp-green);
+  --text-primary: #cdd6f4;
+  --text-muted: #a6adc8;
+  --text-dim: #6c7086;
+
+  --accent-mauve: #cba6f7;
+  --accent-blue: #89b4fa;
+  --accent-sapphire: #74c7ec;
+  --accent-red: #f38ba8;
+  --accent-green: #a6e3a1;
+
+  --card-bg: var(--bg-mantle);
+  --card-border: var(--bg-surface0);
+  --card-hover: var(--bg-surface1);
+
   --today-bg: rgba(203, 166, 247, 0.18);
-  --today-border: var(--ctp-mauve);
-  --today-glow: 0 0 8px rgba(203, 166, 247, 0.3);
+  --today-border: var(--accent-mauve);
+  --today-glow: 0 0 6px rgba(203, 166, 247, 0.3);
 }
 
 /* ==========================================================================
    Catppuccin Latte Light Theme
    ========================================================================== */
 [data-theme="light"] {
-  --ctp-base: #eff1f5;
-  --ctp-mantle: #e6e9ef;
-  --ctp-crust: #dce0e8;
-  --ctp-surface0: #ccd0da;
-  --ctp-surface1: #bcc0cc;
-  --ctp-surface2: #acb0be;
-  --ctp-overlay0: #9ca0b0;
-  --ctp-text: #4c4f69;
-  --ctp-subtext1: #5c5f77;
-  --ctp-subtext0: #6c6f85;
-  --ctp-lavender: #7287fd;
-  --ctp-blue: #1e66f5;
-  --ctp-sapphire: #209fb5;
-  --ctp-green: #40a02b;
-  --ctp-yellow: #df8e1d;
-  --ctp-peach: #fe640b;
-  --ctp-red: #d20f39;
-  --ctp-mauve: #8839ef;
+  --bg-base: #eff1f5;
+  --bg-mantle: #ffffff;
+  --bg-crust: #dce0e8;
+  --bg-surface0: #ccd0da;
+  --bg-surface1: #bcc0cc;
+  --bg-surface2: #acb0be;
 
-  --app-bg: var(--ctp-base);
+  --text-primary: #4c4f69;
+  --text-muted: #6c6f85;
+  --text-dim: #9ca0b0;
+
+  --accent-mauve: #8839ef;
+  --accent-blue: #1e66f5;
+  --accent-sapphire: #209fb5;
+  --accent-red: #d20f39;
+  --accent-green: #40a02b;
+
   --card-bg: #ffffff;
-  --card-border: var(--ctp-surface0);
-  --card-hover: var(--ctp-mantle);
-  --text-primary: var(--ctp-text);
-  --text-muted: var(--ctp-subtext0);
-  --accent-primary: var(--ctp-mauve);
-  --holiday-color: var(--ctp-red);
-  --workday-color: var(--ctp-green);
+  --card-border: var(--bg-surface0);
+  --card-hover: var(--bg-base);
+
   --today-bg: rgba(136, 57, 239, 0.14);
-  --today-border: var(--ctp-mauve);
+  --today-border: var(--accent-mauve);
   --today-glow: 0 0 6px rgba(136, 57, 239, 0.25);
 }
 
 /* ==========================================================================
-   Zero-Scroll Single-Screen Container (280px)
+   Global Reset & Container (Strict Zero-Scroll 280px)
    ========================================================================== */
 * {
   box-sizing: border-box;
@@ -126,9 +112,8 @@
 
 html, body {
   width: 280px;
-  height: 425px;
   overflow: hidden;
-  background-color: var(--app-bg);
+  background-color: var(--bg-base);
   color: var(--text-primary);
   font-family: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
   direction: rtl;
@@ -139,132 +124,111 @@ html, body {
 
 .app-dashboard {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: space-between;
-  padding: 8px 10px 6px 10px;
-}
-
-/* ==========================================================================
-   1. Top Bar
-   ========================================================================== */
-.top-bar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: 4px;
-}
-
-.brand-group {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-}
-
-.brand-icon {
-  width: 18px;
-  height: 18px;
-  border-radius: 4px;
-}
-
-.brand-name {
-  font-size: 12.5px;
-  font-weight: 700;
-  color: var(--text-primary);
-  letter-spacing: -0.2px;
-}
-
-.top-actions {
-  display: flex;
-  align-items: center;
+  padding: 8px 9px 8px 9px;
   gap: 5px;
 }
 
-.live-clock {
-  font-size: 11px;
-  font-weight: 600;
-  color: var(--ctp-green);
+/* ==========================================================================
+   1. Hero Date Card with Minimalist Corner Actions
+   ========================================================================== */
+.hero-date-card {
+  position: relative;
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  padding: 2px 6px;
-  border-radius: 999px;
-  font-variant-numeric: tabular-nums;
-  line-height: 1.2;
+  border-radius: 8px;
+  padding: 8px 8px 6px 8px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
 }
 
-.icon-btn {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  color: var(--text-primary);
+/* Minimalist borderless corner actions */
+.corner-actions {
+  position: absolute;
+  top: 5px;
+  left: 6px;
+  right: 6px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  pointer-events: none;
+}
+
+.corner-icon-btn {
+  pointer-events: auto;
+  background: transparent;
+  border: none;
+  color: var(--text-muted);
   width: 22px;
   height: 22px;
-  border-radius: 6px;
+  border-radius: 4px;
   display: flex;
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  font-size: 11px;
-  transition: all 0.15s ease;
+  font-size: 12px;
+  opacity: 0.6;
   outline: none;
+  transition: all 0.15s ease;
 }
 
-.icon-btn:hover {
-  background: var(--card-hover);
-  border-color: var(--accent-primary);
-  transform: scale(1.05);
+.corner-icon-btn:hover {
+  opacity: 1;
+  color: var(--accent-mauve);
+  transform: scale(1.1);
 }
 
-/* ==========================================================================
-   2. Prominent Today Hero Section
-   ========================================================================== */
-.hero-date-section {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: 8px;
-  padding: 6px 10px;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-  text-align: center;
-  position: relative;
-  overflow: hidden;
+.refresh-svg {
+  width: 13px;
+  height: 13px;
+  transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-.hero-main-row {
+.corner-icon-btn.rotating .refresh-svg {
+  transform: rotate(360deg);
+}
+
+/* Main Solar Date */
+.solar-date-row {
   display: flex;
   align-items: baseline;
   justify-content: center;
   gap: 6px;
+  margin-top: 2px;
 }
 
-.hero-weekday {
-  font-size: 13.5px;
+.solar-weekday {
+  font-size: 13px;
   font-weight: 700;
-  color: var(--accent-primary);
+  color: var(--accent-mauve);
 }
 
-.hero-date-wrapper {
+.solar-day-group {
   display: flex;
   align-items: baseline;
   gap: 4px;
 }
 
-.hero-day-num {
-  font-size: 20px;
+.solar-day-num {
+  font-size: 21px;
   font-weight: 800;
   color: var(--text-primary);
   line-height: 1;
   font-variant-numeric: tabular-nums;
 }
 
-.hero-month-year {
-  font-size: 13.5px;
+.solar-month-year {
+  font-size: 13px;
   font-weight: 600;
   color: var(--text-primary);
 }
 
-.hero-sub-dates {
+/* Sub-dates (Gregorian & Hijri) */
+.sub-dates-row {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -274,26 +238,68 @@ html, body {
   line-height: 1.2;
 }
 
-.dot-separator {
-  color: var(--ctp-overlay0);
-  font-size: 9px;
+.sub-sep {
+  color: var(--text-dim);
+  font-size: 8px;
+}
+
+/* Click-to-copy interactions */
+.clickable-copy {
+  cursor: pointer;
+  transition: opacity 0.15s ease;
+  border-radius: 4px;
+}
+
+.clickable-copy:hover {
+  opacity: 0.8;
+}
+
+.clickable-copy:active {
+  transform: scale(0.97);
+}
+
+/* Floating copy toast */
+.copy-toast {
+  position: absolute;
+  bottom: 4px;
+  left: 50%;
+  transform: translateX(-50%) translateY(4px);
+  background: var(--accent-mauve);
+  color: var(--bg-crust);
+  font-size: 9.5px;
+  font-weight: 700;
+  padding: 1px 7px;
+  border-radius: 999px;
+  opacity: 0;
+  pointer-events: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+}
+
+.copy-toast.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
 }
 
 /* ==========================================================================
-   3. Scroll-Free Occasion / Holiday Pill
+   2. Conditional Occasion / Holiday Badge
    ========================================================================== */
-.occasion-pill-wrapper {
+.occasion-container {
   display: flex;
   justify-content: center;
-  margin: 3px 0 2px 0;
+  margin: 1px 0 2px 0;
 }
 
-.occasion-pill {
+.occasion-container.hidden {
+  display: none !important;
+}
+
+.occasion-badge {
   display: inline-flex;
   align-items: center;
   gap: 5px;
   max-width: 100%;
-  padding: 3px 9px;
+  padding: 2.5px 8px;
   border-radius: 999px;
   font-size: 10.5px;
   font-weight: 600;
@@ -302,62 +308,53 @@ html, body {
   overflow: hidden;
   text-overflow: ellipsis;
   border: 1px solid transparent;
-  transition: all 0.2s ease;
 }
 
-.occasion-indicator-dot {
-  width: 6px;
-  height: 6px;
+.badge-dot {
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   flex-shrink: 0;
 }
 
-.occasion-text {
+.badge-text {
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
 }
 
-/* Occasion Variants */
-.occasion-pill.is-holiday {
+/* Holiday styling (Red) */
+.occasion-badge.is-holiday {
   background: rgba(243, 139, 168, 0.14);
   border-color: rgba(243, 139, 168, 0.35);
-  color: var(--holiday-color);
+  color: var(--accent-red);
 }
-.occasion-pill.is-holiday .occasion-indicator-dot {
-  background-color: var(--holiday-color);
-  box-shadow: 0 0 5px var(--holiday-color);
+.occasion-badge.is-holiday .badge-dot {
+  background-color: var(--accent-red);
+  box-shadow: 0 0 4px var(--accent-red);
 }
 
-.occasion-pill.is-event {
+/* Regular event styling (Blue / Violet) */
+.occasion-badge.is-event {
   background: rgba(137, 180, 250, 0.14);
   border-color: rgba(137, 180, 250, 0.35);
-  color: var(--ctp-blue);
+  color: var(--accent-blue);
 }
-.occasion-pill.is-event .occasion-indicator-dot {
-  background-color: var(--ctp-blue);
-}
-
-.occasion-pill.is-workday {
-  background: rgba(166, 227, 161, 0.12);
-  border-color: rgba(166, 227, 161, 0.25);
-  color: var(--workday-color);
-}
-.occasion-pill.is-workday .occasion-indicator-dot {
-  background-color: var(--workday-color);
+.occasion-badge.is-event .badge-dot {
+  background-color: var(--accent-blue);
 }
 
 /* ==========================================================================
-   4. Calendar Header & Month Navigation
+   3. Calendar Navigation Bar
    ========================================================================== */
-.calendar-header-bar {
+.calendar-nav-bar {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 0 2px;
 }
 
-.nav-arrow-btn {
+.nav-arrow {
   background: transparent;
   border: none;
   color: var(--text-muted);
@@ -370,15 +367,16 @@ html, body {
   cursor: pointer;
   font-size: 14px;
   font-weight: 700;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
+  outline: none;
 }
 
-.nav-arrow-btn:hover {
+.nav-arrow:hover {
   background: var(--card-hover);
   color: var(--text-primary);
 }
 
-.month-title-group {
+.month-title-wrapper {
   display: flex;
   align-items: center;
   gap: 6px;
@@ -390,32 +388,34 @@ html, body {
   color: var(--text-primary);
 }
 
-.jump-today-dot {
+.jump-today-btn {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
-  color: var(--accent-primary);
+  color: var(--accent-mauve);
   font-size: 10px;
   font-weight: 600;
   padding: 1px 6px;
   border-radius: 999px;
   cursor: pointer;
   font-family: inherit;
-  transition: all 0.15s ease;
+  transition: all 0.12s ease;
+  outline: none;
 }
 
-.jump-today-dot:hover {
+.jump-today-btn:hover {
   background: var(--today-bg);
   border-color: var(--today-border);
 }
 
 /* ==========================================================================
-   5. Calendar Grid (Matrix 7x6 without scroll)
+   4. Calendar Matrix Grid
    ========================================================================== */
-.calendar-container {
+.calendar-matrix-card {
   background: var(--card-bg);
   border: 1px solid var(--card-border);
   border-radius: 8px;
-  padding: 5px;
+  padding: 4px 5px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.06);
 }
 
 .weekdays-row {
@@ -427,14 +427,14 @@ html, body {
   border-bottom: 1px solid var(--card-border);
 }
 
-.col-header {
+.weekday-cell {
   font-size: 10.5px;
   font-weight: 600;
   color: var(--text-muted);
 }
 
-.col-header.friday {
-  color: var(--holiday-color);
+.weekday-cell.friday-col {
+  color: var(--accent-red);
 }
 
 .days-matrix {
@@ -445,7 +445,7 @@ html, body {
 
 .cell {
   position: relative;
-  height: 25px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -453,11 +453,11 @@ html, body {
   cursor: pointer;
   background: transparent;
   border: 1px solid transparent;
-  font-size: 12px;
+  font-size: 11.5px;
   font-weight: 500;
   color: var(--text-primary);
   font-variant-numeric: tabular-nums;
-  transition: all 0.12s ease;
+  transition: all 0.1s ease;
 }
 
 .cell:hover:not(.other-month) {
@@ -472,110 +472,34 @@ html, body {
 .cell.today {
   background: var(--today-bg);
   border-color: var(--today-border);
-  color: var(--accent-primary);
+  color: var(--accent-mauve);
   font-weight: 700;
   box-shadow: var(--today-glow);
 }
 
 .cell.selected {
-  border-color: var(--ctp-sapphire);
+  border-color: var(--accent-sapphire);
   background: rgba(116, 199, 236, 0.16);
 }
 
 .cell.holiday {
-  color: var(--holiday-color);
+  color: var(--accent-red);
   font-weight: 600;
 }
 
 .cell.friday {
-  color: var(--holiday-color);
+  color: var(--accent-red);
 }
 
 .cell-dot {
   position: absolute;
   bottom: 2px;
-  width: 3.5px;
-  height: 3.5px;
+  width: 3px;
+  height: 3px;
   border-radius: 50%;
-  background: var(--ctp-blue);
+  background: var(--accent-blue);
 }
 
 .cell-dot.holiday-dot {
-  background: var(--holiday-color);
-}
-
-/* ==========================================================================
-   6. Compact Footer
-   ========================================================================== */
-.app-footer {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 4px 2px 0 2px;
-  border-top: 1px solid var(--card-border);
-  font-size: 10.5px;
-}
-
-.status-indicator {
-  display: flex;
-  align-items: center;
-  gap: 5px;
-  color: var(--text-muted);
-}
-
-.pulse-dot {
-  width: 6px;
-  height: 6px;
-  background-color: var(--ctp-green);
-  border-radius: 50%;
-  animation: pulseDot 2s infinite ease-in-out;
-}
-
-.status-label {
-  font-weight: 500;
-}
-
-.footer-actions {
-  display: flex;
-  align-items: center;
-  gap: 4px;
-}
-
-.refresh-btn {
-  background: transparent;
-  border: none;
-  color: var(--text-muted);
-  width: 20px;
-  height: 20px;
-  border-radius: 4px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.15s ease;
-  outline: none;
-}
-
-.refresh-btn:hover {
-  background: var(--card-hover);
-  color: var(--accent-primary);
-}
-
-.refresh-btn:active .refresh-icon {
-  transform: rotate(180deg);
-}
-
-.refresh-icon {
-  width: 13px;
-  height: 13px;
-  transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.refresh-btn.rotating .refresh-icon {
-  transform: rotate(360deg);
-}
-
-@keyframes pulseDot {
-  0%, 100% { opacity: 1; transform: scale(1); }
-  50% { opacity: 0.4; transform: scale(0.85); }
+  background: var(--accent-red);
 }

@@ -22,6 +22,7 @@
   },
   "background": {
     "scripts": [
+      "events.js",
       "background.js"
     ]
   },
@@ -31,7 +32,7 @@
   ],
   "browser_specific_settings": {
     "gecko": {
-      "id": "persian-calendar@extension.mozilla.org",
+      "id": "persian-calendar@mldaali",
       "strict_min_version": "142.0",
       "data_collection_permissions": {
         "required": [

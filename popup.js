@@ -1,6 +1,6 @@
 /**
- * popup.js - Ultra-Compact Persian Calendar Dashboard
- * Native Intl API calculations with zero-scroll Catppuccin single-screen layout
+ * popup.js - Persian Calendar Extension (Minimalist Dashboard)
+ * Native Intl API calculations, interactive grid, click-to-copy, and zero-scroll UI
  */
 
 const browserAPI = typeof browser !== "undefined" ? browser : chrome;
@@ -13,7 +13,7 @@ const PERSIAN_MONTH_NAMES = [
   "دی", "بهمن", "اسفند"
 ];
 
-// Weekday names in Persian (0 = Saturday to 6 = Friday)
+// Weekday names in Persian (0 = Saturday ... 6 = Friday)
 const PERSIAN_WEEKDAYS = [
   "شنبه", "یکشنبه", "دوشنبه", "سه‌شنبه", "چهارشنبه", "پنج‌شنبه", "جمعه"
 ];
@@ -26,7 +26,7 @@ function toPersianDigits(str) {
 }
 
 /**
- * Standard Jalali <-> Gregorian conversion algorithms
+ * High-precision Jalali <-> Gregorian conversion algorithms
  */
 function jalaliToGregorian(jy, jm, jd) {
   jy = parseInt(jy, 10);
@@ -98,7 +98,7 @@ function getDaysInJalaliMonth(year, month) {
 }
 
 /**
- * Global App State
+ * App State
  */
 const AppState = {
   todayJalali: null, // { year, month, day, weekdayIndex, rawDate }
@@ -136,80 +136,9 @@ function getLiveJalaliParts(date = new Date()) {
 }
 
 /**
- * Live Clock (seconds updates)
+ * Display a selected date on the top hero card
  */
-function startLiveClock() {
-  const clockEl = document.getElementById("liveClock");
-
-  function tick() {
-    const now = new Date();
-    const h = String(now.getHours()).padStart(2, "0");
-    const m = String(now.getMinutes()).padStart(2, "0");
-    const s = String(now.getSeconds()).padStart(2, "0");
-    if (clockEl) {
-      clockEl.textContent = toPersianDigits(`${h}:${m}:${s}`);
-    }
-
-    // Midnight rollover check
-    if (AppState.todayJalali) {
-      const live = getLiveJalaliParts(now);
-      if (live.day !== AppState.todayJalali.day || live.month !== AppState.todayJalali.month) {
-        initTodayHero();
-        renderCalendar();
-      }
-    }
-  }
-
-  tick();
-  setInterval(tick, 1000);
-}
-
-/**
- * Initializes the prominent Today Hero section
- */
-function initTodayHero() {
-  const now = new Date();
-  const today = getLiveJalaliParts(now);
-  AppState.todayJalali = today;
-
-  // 1. Day of week
-  document.getElementById("heroWeekday").textContent = PERSIAN_WEEKDAYS[today.weekdayIndex];
-
-  // 2. Day number & Month Year
-  document.getElementById("heroDayNum").textContent = toPersianDigits(today.day);
-  document.getElementById("heroMonthYear").textContent = `${PERSIAN_MONTH_NAMES[today.month - 1]} ${toPersianDigits(today.year)}`;
-
-  // 3. Gregorian Subtitle
-  try {
-    const intlGregorian = new Intl.DateTimeFormat("fa-IR-u-ca-gregory", {
-      day: "numeric",
-      month: "short",
-      year: "numeric"
-    });
-    document.getElementById("heroGregorian").textContent = intlGregorian.format(now);
-  } catch (e) {
-    document.getElementById("heroGregorian").textContent = now.toLocaleDateString();
-  }
-
-  // 4. Islamic Hijri Subtitle
-  try {
-    const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
-      day: "numeric",
-      month: "long"
-    });
-    document.getElementById("heroIslamic").textContent = intlIslamic.format(now);
-  } catch (e) {
-    document.getElementById("heroIslamic").textContent = "";
-  }
-
-  // 5. Update the occasion pill for today
-  updateOccasionPill(today.year, today.month, today.day, today.weekdayIndex, now);
-}
-
-/**
- * Updates the compact scroll-free occasion/holiday pill
- */
-function updateOccasionPill(year, month, day, weekdayIndex = null, gDate = null) {
+function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) {
   if (!gDate) {
     const g = jalaliToGregorian(year, month, day);
     gDate = new Date(g.gy, g.gm - 1, g.gd);
@@ -218,46 +147,113 @@ function updateOccasionPill(year, month, day, weekdayIndex = null, gDate = null)
     weekdayIndex = (gDate.getDay() + 1) % 7;
   }
 
+  const weekdayName = PERSIAN_WEEKDAYS[weekdayIndex];
+  const monthName = PERSIAN_MONTH_NAMES[month - 1];
+
+  // 1. Solar Date
+  document.getElementById("heroWeekday").textContent = weekdayName;
+  document.getElementById("heroDayNum").textContent = toPersianDigits(day);
+  document.getElementById("heroMonthYear").textContent = `${monthName} ${toPersianDigits(year)}`;
+
+  // Store for Click-to-Copy
+  const fullSolarStr = `${weekdayName}، ${toPersianDigits(day)} ${monthName} ${toPersianDigits(year)}`;
+  document.getElementById("heroSolarDate").dataset.copyText = fullSolarStr;
+
+  // 2. Gregorian Subtitle
+  let gregorianStr = "";
+  try {
+    const intlGregorian = new Intl.DateTimeFormat("fa-IR-u-ca-gregory", {
+      day: "numeric",
+      month: "short",
+      year: "numeric"
+    });
+    gregorianStr = intlGregorian.format(gDate);
+  } catch (e) {
+    gregorianStr = `${gDate.getFullYear()}/${gDate.getMonth() + 1}/${gDate.getDate()}`;
+  }
+  const heroGregorianEl = document.getElementById("heroGregorian");
+  heroGregorianEl.textContent = gregorianStr;
+  heroGregorianEl.dataset.copyText = `${gDate.getFullYear()}-${String(gDate.getMonth() + 1).padStart(2, "0")}-${String(gDate.getDate()).padStart(2, "0")}`;
+
+  // 3. Hijri Subtitle
+  try {
+    const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
+      day: "numeric",
+      month: "long"
+    });
+    document.getElementById("heroIslamic").textContent = intlIslamic.format(gDate);
+  } catch (e) {
+    document.getElementById("heroIslamic").textContent = "";
+  }
+
+  // 4. Update the conditional occasion badge
+  updateOccasionBadge(year, month, day, weekdayIndex, gDate);
+}
+
+/**
+ * Updates the conditional occasion badge:
+ * - Hidden entirely if there are NO events or holidays.
+ * - Rendered in Red for holidays, Blue/Violet for events.
+ */
+function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
   const events = getEventsForDate(year, month, day, gDate);
   const isFriday = weekdayIndex === 6;
   const officialHolidays = events.filter(e => e.isHoliday);
 
-  const pillEl = document.getElementById("occasionPill");
-  const textEl = document.getElementById("occasionText");
+  const container = document.getElementById("occasionContainer");
+  const badge = document.getElementById("occasionBadge");
+  const textEl = document.getElementById("badgeText");
 
-  pillEl.className = "occasion-pill";
+  // If normal day with no occasions, hide the badge completely (Requirement 2)
+  if (events.length === 0 && !isFriday) {
+    container.classList.add("hidden");
+    return;
+  }
+
+  container.classList.remove("hidden");
+  badge.className = "occasion-badge";
 
   if (officialHolidays.length > 0 || isFriday) {
-    pillEl.classList.add("is-holiday");
+    badge.classList.add("is-holiday");
     if (officialHolidays.length > 0) {
       const title = officialHolidays.map(h => h.title).join(" • ");
       textEl.textContent = `${title} (تعطیل)`;
-      pillEl.title = `${title} (تعطیل رسمی)`;
+      badge.title = `${title} (تعطیل رسمی)`;
     } else {
       textEl.textContent = "جمعه (تعطیل هفتگی)";
-      pillEl.title = "تعطیل هفتگی";
+      badge.title = "تعطیل هفتگی";
     }
   } else if (events.length > 0) {
-    pillEl.classList.add("is-event");
+    badge.classList.add("is-event");
     const title = events.map(e => e.title).join(" • ");
     textEl.textContent = title;
-    pillEl.title = title;
-  } else {
-    pillEl.classList.add("is-workday");
-    textEl.textContent = "روز عادی";
-    pillEl.title = "روز عادی (کاری)";
+    badge.title = title;
   }
 }
 
 /**
- * Renders the compact 7x6 calendar grid without scrolling
+ * Shows temporary toast notification for Click-to-Copy
+ */
+function showCopyToast(message = "کپی شد!") {
+  const toast = document.getElementById("copyToast");
+  if (!toast) return;
+  toast.textContent = message;
+  toast.classList.add("show");
+  clearTimeout(showCopyToast._timer);
+  showCopyToast._timer = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1300);
+}
+
+/**
+ * Renders the compact month grid with clickable days
  */
 function renderCalendar() {
   const year = AppState.currentViewYear;
   const month = AppState.currentViewMonth;
   const today = AppState.todayJalali;
 
-  // Update month title
+  // Title in header
   const monthName = PERSIAN_MONTH_NAMES[month - 1];
   document.getElementById("monthTitle").textContent = `${monthName} ${toPersianDigits(year)}`;
 
@@ -268,7 +264,7 @@ function renderCalendar() {
 
   const daysInCurrentMonth = getDaysInJalaliMonth(year, month);
 
-  // Preceding month info
+  // Preceding month padding
   const prevMonth = month === 1 ? 12 : month - 1;
   const prevYear = month === 1 ? year - 1 : year;
   const daysInPrevMonth = getDaysInJalaliMonth(prevYear, prevMonth);
@@ -276,7 +272,7 @@ function renderCalendar() {
   const matrixEl = document.getElementById("daysMatrix");
   matrixEl.innerHTML = "";
 
-  // 1. Preceding month padding
+  // 1. Preceding month days
   for (let i = startDayOfWeek - 1; i >= 0; i--) {
     const pDay = daysInPrevMonth - i;
     const cell = document.createElement("div");
@@ -287,7 +283,9 @@ function renderCalendar() {
       AppState.currentViewMonth = prevMonth;
       AppState.selectedDay = pDay;
       renderCalendar();
-      updateOccasionPill(prevYear, prevMonth, pDay);
+      const g = jalaliToGregorian(prevYear, prevMonth, pDay);
+      const dt = new Date(g.gy, g.gm - 1, g.gd);
+      displayDateOnHero(prevYear, prevMonth, pDay, (dt.getDay() + 1) % 7, dt);
     });
     matrixEl.appendChild(cell);
   }
@@ -325,18 +323,18 @@ function renderCalendar() {
       cell.appendChild(dot);
     }
 
-    // Click handler to select and update the occasion pill
+    // Interactive Click: Updates hero card & occasion badge (Requirement 3)
     cell.addEventListener("click", () => {
       document.querySelectorAll(".cell.selected").forEach(el => el.classList.remove("selected"));
       cell.classList.add("selected");
       AppState.selectedDay = d;
-      updateOccasionPill(year, month, d, dayOfWeek, cellGDate);
+      displayDateOnHero(year, month, d, dayOfWeek, cellGDate);
     });
 
     matrixEl.appendChild(cell);
   }
 
-  // 3. Trailing month padding (fill exactly 35 or 42 cells)
+  // 3. Trailing month padding
   const totalRendered = startDayOfWeek + daysInCurrentMonth;
   const totalCells = totalRendered > 35 ? 42 : 35;
   const nextMonth = month === 12 ? 1 : month + 1;
@@ -353,25 +351,16 @@ function renderCalendar() {
       AppState.currentViewMonth = nextMonth;
       AppState.selectedDay = nDay;
       renderCalendar();
-      updateOccasionPill(nextYear, nextMonth, nDay);
+      const g = jalaliToGregorian(nextYear, nextMonth, nDay);
+      const dt = new Date(g.gy, g.gm - 1, g.gd);
+      displayDateOnHero(nextYear, nextMonth, nDay, (dt.getDay() + 1) % 7, dt);
     });
     matrixEl.appendChild(cell);
-  }
-
-  // Default selection
-  if (!AppState.selectedDay) {
-    if (today && today.year === year && today.month === month) {
-      AppState.selectedDay = today.day;
-      updateOccasionPill(year, month, today.day, today.weekdayIndex, today.rawDate);
-    } else {
-      AppState.selectedDay = 1;
-      updateOccasionPill(year, month, 1, startDayOfWeek);
-    }
   }
 }
 
 /**
- * Apply Theme (Dark or Light)
+ * Apply Dark or Light Theme
  */
 function applyTheme(theme) {
   AppState.theme = theme;
@@ -387,10 +376,10 @@ function applyTheme(theme) {
 }
 
 /**
- * Setup Event Listeners
+ * Setup Event Handlers
  */
 function setupEventHandlers() {
-  // Month Nav
+  // 1. Month Navigation
   document.getElementById("prevMonthBtn").addEventListener("click", () => {
     if (AppState.currentViewMonth === 1) {
       AppState.currentViewMonth = 12;
@@ -400,6 +389,9 @@ function setupEventHandlers() {
     }
     AppState.selectedDay = 1;
     renderCalendar();
+    const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
+    const dt = new Date(g.gy, g.gm - 1, g.gd);
+    displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
   });
 
   document.getElementById("nextMonthBtn").addEventListener("click", () => {
@@ -411,16 +403,19 @@ function setupEventHandlers() {
     }
     AppState.selectedDay = 1;
     renderCalendar();
+    const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
+    const dt = new Date(g.gy, g.gm - 1, g.gd);
+    displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
   });
 
-  // Jump to Today
+  // 2. Jump to Today Button
   document.getElementById("jumpTodayBtn").addEventListener("click", () => {
     if (AppState.todayJalali) {
       AppState.currentViewYear = AppState.todayJalali.year;
       AppState.currentViewMonth = AppState.todayJalali.month;
       AppState.selectedDay = AppState.todayJalali.day;
       renderCalendar();
-      updateOccasionPill(
+      displayDateOnHero(
         AppState.todayJalali.year,
         AppState.todayJalali.month,
         AppState.todayJalali.day,
@@ -430,24 +425,54 @@ function setupEventHandlers() {
     }
   });
 
-  // Refresh Button
+  // 3. Click-to-Copy Handlers
+  document.getElementById("heroSolarDate").addEventListener("click", () => {
+    const text = document.getElementById("heroSolarDate").dataset.copyText;
+    if (text) {
+      navigator.clipboard.writeText(text).then(() => showCopyToast("تاریخ خورشیدی کپی شد!"));
+    }
+  });
+
+  document.getElementById("heroGregorian").addEventListener("click", () => {
+    const text = document.getElementById("heroGregorian").dataset.copyText;
+    if (text) {
+      navigator.clipboard.writeText(text).then(() => showCopyToast("تاریخ میلادی کپی شد!"));
+    }
+  });
+
+  // 4. Refresh Button
   const refreshBtn = document.getElementById("refreshBtn");
   if (refreshBtn) {
     refreshBtn.addEventListener("click", () => {
       refreshBtn.classList.add("rotating");
-      setTimeout(() => refreshBtn.classList.remove("rotating"), 350);
+      setTimeout(() => refreshBtn.classList.remove("rotating"), 360);
 
-      initTodayHero();
-      if (AppState.todayJalali) {
-        AppState.currentViewYear = AppState.todayJalali.year;
-        AppState.currentViewMonth = AppState.todayJalali.month;
-        AppState.selectedDay = AppState.todayJalali.day;
-      }
+      // Re-fetch current real time
+      const now = new Date();
+      AppState.todayJalali = getLiveJalaliParts(now);
+      AppState.currentViewYear = AppState.todayJalali.year;
+      AppState.currentViewMonth = AppState.todayJalali.month;
+      AppState.selectedDay = AppState.todayJalali.day;
+
       renderCalendar();
+      displayDateOnHero(
+        AppState.todayJalali.year,
+        AppState.todayJalali.month,
+        AppState.todayJalali.day,
+        AppState.todayJalali.weekdayIndex,
+        AppState.todayJalali.rawDate
+      );
+
+      // Trigger background icon update
+      try {
+        if (browserAPI.runtime && browserAPI.runtime.sendMessage) {
+          browserAPI.runtime.sendMessage({ action: "updateIcon" });
+        }
+      } catch (e) {}
     });
   }
 
-  // Theme Toggle
+  // 5. Theme Toggle Button
   const themeToggleBtn = document.getElementById("themeToggleBtn");
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", async () => {
@@ -481,15 +506,28 @@ function setupEventHandlers() {
 
 // Bootstrap on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
-  startLiveClock();
-  initTodayHero();
-
-  if (AppState.todayJalali) {
-    AppState.currentViewYear = AppState.todayJalali.year;
-    AppState.currentViewMonth = AppState.todayJalali.month;
-    AppState.selectedDay = AppState.todayJalali.day;
-  }
+  const now = new Date();
+  AppState.todayJalali = getLiveJalaliParts(now);
+  AppState.currentViewYear = AppState.todayJalali.year;
+  AppState.currentViewMonth = AppState.todayJalali.month;
+  AppState.selectedDay = AppState.todayJalali.day;
 
   setupEventHandlers();
   renderCalendar();
+
+  // Initially display today
+  displayDateOnHero(
+    AppState.todayJalali.year,
+    AppState.todayJalali.month,
+    AppState.todayJalali.day,
+    AppState.todayJalali.weekdayIndex,
+    AppState.todayJalali.rawDate
+  );
+
+  // Notify background to ensure icon is up-to-date
+  try {
+    if (browserAPI.runtime && browserAPI.runtime.sendMessage) {
+      browserAPI.runtime.sendMessage({ action: "updateIcon" });
+    }
+  } catch (e) {}
 });
