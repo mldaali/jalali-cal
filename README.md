@@ -18,10 +18,6 @@
 
 [**🚀 دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/) • [**📦 دانلود مستقیم بسته XPI (نسخه ۱.۰.۰)**](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi)
 
-<br/>
-
-<img src="assets/preview.png" alt="پیش‌نمایش افزونه تقویم فارسی | Persian Jalali Calendar Preview" width="760" style="border-radius: 12px; box-shadow: 0 8px 24px rgba(0,0,0,0.25);" />
-
 </div>
 
 ---
