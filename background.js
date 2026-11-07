@@ -1,14 +1,38 @@
 /**
- * background.js - Dynamic Canvas-based Toolbar Icon Generator
- * Renders high-DPI 64x64 rounded rectangle icon with Persian day number
+ * background.js - High-DPI Dynamic Toolbar Icon Generator
+ * Renders crisp, clean, high-contrast calendar tile with Persian day number
  */
 
 const browserAPI = typeof browser !== "undefined" ? browser : chrome;
 
-// Helper: Convert digits to Persian
+// Convert Latin digits to Persian digits
 function toPersianDigits(str) {
   const persianDigits = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
   return String(str).replace(/[0-9]/g, w => persianDigits[+w]);
+}
+
+/**
+ * Load offline Vazirmatn font into background execution environment
+ */
+let fontLoaded = false;
+async function ensureFontLoaded() {
+  if (fontLoaded) return;
+  try {
+    if (typeof FontFace !== "undefined") {
+      const font = new FontFace("Vazirmatn", "url(fonts/Vazirmatn-Bold.woff2)", {
+        weight: "700"
+      });
+      await font.load();
+      if (typeof self !== "undefined" && self.fonts) {
+        self.fonts.add(font);
+      } else if (typeof document !== "undefined" && document.fonts) {
+        document.fonts.add(font);
+      }
+      fontLoaded = true;
+    }
+  } catch (e) {
+    console.warn("Could not load custom font in background, using system fallback:", e);
+  }
 }
 
 /**
@@ -33,7 +57,6 @@ function getTodayInfo() {
   const weekdayIndex = (now.getDay() + 1) % 7; // 0=Saturday ... 6=Friday
   const isFriday = weekdayIndex === 6;
 
-  // Check holiday status from events.js
   let holiday = isFriday;
   if (typeof isOfficialHoliday === "function") {
     holiday = isOfficialHoliday(year, month, day, weekdayIndex, now);
@@ -47,7 +70,7 @@ function getTodayInfo() {
 }
 
 /**
- * Draws rounded rectangle path on Canvas
+ * Draw rounded rectangle helper
  */
 function drawRoundRect(ctx, x, y, w, h, r) {
   if (typeof ctx.roundRect === "function") {
@@ -69,53 +92,92 @@ function drawRoundRect(ctx, x, y, w, h, r) {
 }
 
 /**
- * Dynamically generate a 64x64 icon ImageData
+ * Renders a pixel-perfect, clean, high-contrast calendar tile icon at specific size
  */
-function generateDynamicIconData(dayText, isHoliday) {
-  const size = 64;
+function renderTileIcon(size, dayText, isHoliday) {
   const canvas = new OffscreenCanvas(size, size);
   const ctx = canvas.getContext("2d");
 
-  // 1. Clear Canvas
+  // 1. Clear
   ctx.clearRect(0, 0, size, size);
 
-  // 2. Rounded Rectangle Background (Catppuccin aesthetic)
-  const radius = 14;
-  const pad = 3;
-  drawRoundRect(ctx, pad, pad, size - pad * 2, size - pad * 2, radius);
+  // Geometry
+  const pad = size === 16 ? 0.5 : (size === 32 ? 1 : 2);
+  const w = size - pad * 2;
+  const h = size - pad * 2;
+  const radius = size === 16 ? 2.5 : (size === 32 ? 5 : 10);
+  const headerHeight = Math.round(size * 0.28);
 
-  // Background color
-  ctx.fillStyle = isHoliday ? "#281822" : "#1e1e2e";
+  // 2. Base Calendar Card (Clean high-contrast White #ffffff)
+  // Ensures 100% visibility on both dark and light browser toolbars
+  ctx.save();
+  drawRoundRect(ctx, pad, pad, w, h, radius);
+  ctx.fillStyle = "#ffffff";
   ctx.fill();
 
-  // Subtle accent border
-  ctx.lineWidth = 3;
-  ctx.strokeStyle = isHoliday ? "#f38ba8" : "#cba6f7";
+  // Subtle boundary border for light toolbars
+  ctx.lineWidth = size === 16 ? 0.75 : (size === 32 ? 1.2 : 2);
+  ctx.strokeStyle = "rgba(0, 0, 0, 0.18)";
   ctx.stroke();
+  ctx.clip(); // Clip to the rounded calendar boundary
 
-  // 3. Persian Day Number (Centered, bold)
-  ctx.fillStyle = isHoliday ? "#f38ba8" : "#ffffff";
-  ctx.font = 'bold 36px "Vazirmatn", -apple-system, sans-serif';
+  // 3. Top Header Bar (Crimson Red for holiday/Friday, Indigo for regular days)
+  ctx.fillStyle = isHoliday ? "#e11d48" : "#4f46e5";
+  ctx.fillRect(pad, pad, w, headerHeight);
+
+  // Header separator line
+  ctx.fillStyle = isHoliday ? "#be123c" : "#4338ca";
+  ctx.fillRect(pad, pad + headerHeight - (size <= 32 ? 0.75 : 1.5), w, size <= 32 ? 0.75 : 1.5);
+
+  ctx.restore();
+
+  // 4. Day Number Text (Bold, razor-sharp, high-contrast)
+  const bodyCenterY = pad + headerHeight + (h - headerHeight) / 2;
+  const centerX = size / 2;
+
+  // Font setup with sizes tuned for optical clarity
+  let fontSize, fontOffset;
+  if (size === 16) {
+    fontSize = dayText.length > 1 ? 9.5 : 10.5;
+    fontOffset = 0.5;
+  } else if (size === 32) {
+    fontSize = dayText.length > 1 ? 19 : 21;
+    fontOffset = 1.0;
+  } else {
+    fontSize = dayText.length > 1 ? 38 : 42;
+    fontOffset = 2.0;
+  }
+
+  // Red text on holiday, deep dark slate #0f172a on regular days for max contrast
+  ctx.fillStyle = isHoliday ? "#dc2626" : "#0f172a";
+  ctx.font = `bold ${fontSize}px "Vazirmatn", "Tahoma", "Arial", sans-serif`;
   ctx.textAlign = "center";
   ctx.textBaseline = "middle";
 
-  // Center alignment with optical vertical nudge
-  ctx.fillText(dayText, size / 2, size / 2 + 2);
+  ctx.fillText(dayText, centerX, bodyCenterY + fontOffset);
 
   return ctx.getImageData(0, 0, size, size);
 }
 
 /**
- * Updates the extension toolbar action icon
+ * Updates the extension toolbar action icon with native 16, 32, and 64 resolutions
  */
 async function updateDynamicIcon() {
   try {
+    await ensureFontLoaded();
     const { dayFa, isHoliday } = getTodayInfo();
 
     if (typeof OffscreenCanvas !== "undefined") {
-      const imageData = generateDynamicIconData(dayFa, isHoliday);
+      const img16 = renderTileIcon(16, dayFa, isHoliday);
+      const img32 = renderTileIcon(32, dayFa, isHoliday);
+      const img64 = renderTileIcon(64, dayFa, isHoliday);
+
       await browserAPI.action.setIcon({
-        imageData: { 64: imageData }
+        imageData: {
+          16: img16,
+          32: img32,
+          64: img64
+        }
       });
     }
   } catch (err) {
@@ -126,17 +188,13 @@ async function updateDynamicIcon() {
 // 1. Lifecycle: On Installed
 browserAPI.runtime.onInstalled.addListener(() => {
   updateDynamicIcon();
-  browserAPI.alarms.create("hourlyIconAlarm", {
-    periodInMinutes: 60
-  });
+  browserAPI.alarms.create("hourlyIconAlarm", { periodInMinutes: 60 });
 });
 
 // 2. Lifecycle: On Startup
 browserAPI.runtime.onStartup.addListener(() => {
   updateDynamicIcon();
-  browserAPI.alarms.create("hourlyIconAlarm", {
-    periodInMinutes: 60
-  });
+  browserAPI.alarms.create("hourlyIconAlarm", { periodInMinutes: 60 });
 });
 
 // 3. Hourly Alarm Trigger
@@ -146,7 +204,7 @@ browserAPI.alarms.onAlarm.addListener(alarm => {
   }
 });
 
-// 4. Message Listener (e.g. from popup refresh or open)
+// 4. Message Listener (from popup)
 browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message && message.action === "updateIcon") {
     updateDynamicIcon();
