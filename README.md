@@ -5,10 +5,11 @@
 <div align="center">
 
 [![Firefox Add-on](https://img.shields.io/badge/Firefox_AMO-Install_Now-FF7139?style=for-the-badge&logo=firefox-browser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)
+[![GitHub Release](https://img.shields.io/github/v/release/mldaali/jalali-cal?style=for-the-badge&logo=github&color=blue)](https://github.com/mldaali/jalali-cal/releases/tag/v1.0.0)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Tests](https://img.shields.io/badge/Tests-56%2F56_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
 
-[**دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)
+[**دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/) • [**دانلود مستقیم بسته XPI (نسخه ۱.۰.۰)**](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi)
 
 </div>
 
@@ -37,7 +38,7 @@
 2. روی دکمه **Load Temporary Add-on...** کلیک کنید.
 3. فایل `manifest.json` را از پوشه پروژه انتخاب کنید.
 
-> همچنین می‌توانید فایل بسته‌بندی‌شده آماده `persian-calendar-v1.0.0.xpi` را مستقیماً در فایرفاکس درگ اند دراپ نمایید.
+> همچنین می‌توانید فایل بسته‌بندی‌شده [`persian-calendar-v1.0.0.xpi`](https://github.com/mldaali/jalali-cal/releases/download/v1.0.0/persian-calendar-v1.0.0.xpi) را از بخش Release دانلود کرده و مستقیماً در فایرفاکس درگ اند دراپ نمایید.
 
 ---
 
