@@ -122,8 +122,25 @@ const AppState = {
   currentViewYear: 1405,
   currentViewMonth: 8,
   selectedDay: null,
-  showBadge: true
+  showBadge: true,
+  theme: "dark"
 };
+
+/**
+ * Applies theme (dark or light) and updates UI toggle
+ */
+function applyTheme(theme) {
+  AppState.theme = theme;
+  document.documentElement.setAttribute("data-theme", theme);
+  const themeIcon = document.getElementById("themeIcon");
+  const themeBtn = document.getElementById("themeToggleBtn");
+  if (themeIcon) {
+    themeIcon.textContent = theme === "light" ? "🌙" : "☀️";
+  }
+  if (themeBtn) {
+    themeBtn.title = theme === "light" ? "تغییر به پوسته تیره" : "تغییر به پوسته روشن";
+  }
+}
 
 /**
  * Extract live dynamic Jalali date parts using native Intl API
@@ -580,6 +597,37 @@ function setupEventHandlers() {
         badgeToggle.textContent = AppState.showBadge ? "نشانگر نوار ابزار: فعال" : "نشانگر نوار ابزار: غیرفعال";
       }
     }).catch(() => {});
+  }
+
+  // 5. Theme Toggle handler
+  const themeToggleBtn = document.getElementById("themeToggleBtn");
+  if (themeToggleBtn) {
+    themeToggleBtn.addEventListener("click", async () => {
+      const nextTheme = AppState.theme === "light" ? "dark" : "light";
+      applyTheme(nextTheme);
+      try {
+        if (browserAPI.storage && browserAPI.storage.local) {
+          await browserAPI.storage.local.set({ theme: nextTheme });
+        }
+      } catch (err) {
+        console.warn("Failed to persist theme:", err);
+      }
+    });
+  }
+
+  // Load theme from storage or system preference
+  if (browserAPI.storage && browserAPI.storage.local) {
+    browserAPI.storage.local.get("theme").then(res => {
+      if (res && (res.theme === "light" || res.theme === "dark")) {
+        applyTheme(res.theme);
+      } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+        applyTheme("light");
+      } else {
+        applyTheme("dark");
+      }
+    }).catch(() => {
+      applyTheme("dark");
+    });
   }
 }
 

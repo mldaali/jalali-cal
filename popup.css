@@ -1,5 +1,6 @@
 /**
- * popup.css - Modern Clean Dark Theme for Persian Calendar Firefox Extension
+ * popup.css - Modern Clean Persian Calendar Firefox Extension
+ * Supports both Dark Mode & Light Mode with seamless theme toggling
  * Embedded Vazirmatn Typography for razor-sharp Persian text rendering
  */
 
@@ -39,7 +40,7 @@
 }
 
 /* ==========================================================================
-   Design Tokens & Variables
+   Theme Tokens (Dark Default)
    ========================================================================== */
 :root {
   --font-family-persian: 'Vazirmatn', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
@@ -63,6 +64,10 @@
   --accent-today-bg: rgba(99, 102, 241, 0.22);
   --accent-today-border: #818cf8;
 
+  --hero-card-bg: linear-gradient(145deg, #161b22, #1c2333);
+  --hero-title-color: #ffffff;
+  --divider-subtle: rgba(255, 255, 255, 0.06);
+
   --radius-sm: 6px;
   --radius-md: 10px;
   --radius-lg: 14px;
@@ -71,6 +76,40 @@
   --shadow-sm: 0 1px 2px rgba(0, 0, 0, 0.4);
   --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.5);
   --shadow-glow: 0 0 12px rgba(99, 102, 241, 0.35);
+  --scrollbar-track: #0d1117;
+}
+
+/* ==========================================================================
+   Light Mode Theme
+   ========================================================================== */
+[data-theme="light"] {
+  --bg-primary: #f8fafc;
+  --bg-card: #ffffff;
+  --bg-elevated: #f1f5f9;
+  --bg-hover: #e2e8f0;
+  --border-subtle: #e2e8f0;
+  --border-active: #2563eb;
+  
+  --text-main: #0f172a;
+  --text-muted: #475569;
+  --text-dim: #64748b;
+  
+  --accent-emerald: #059669;
+  --accent-blue: #0284c7;
+  --accent-indigo: #4f46e5;
+  --accent-holiday: #e11d48;
+  --accent-holiday-bg: rgba(225, 29, 72, 0.08);
+  --accent-today-bg: rgba(79, 70, 229, 0.12);
+  --accent-today-border: #6366f1;
+
+  --hero-card-bg: linear-gradient(145deg, #ffffff, #f8fafc);
+  --hero-title-color: #0f172a;
+  --divider-subtle: rgba(0, 0, 0, 0.06);
+
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.06);
+  --shadow-glow: 0 0 10px rgba(79, 70, 229, 0.22);
+  --scrollbar-track: #f8fafc;
 }
 
 /* ==========================================================================
@@ -99,6 +138,20 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   text-rendering: optimizeLegibility;
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+
+/* Smooth transitions for theme switching */
+.today-hero-card,
+.calendar-table-wrapper,
+.day-details-card,
+.converter-card,
+.month-events-container,
+.tabs-nav,
+.theme-toggle-btn,
+.nav-btn,
+.today-shortcut-btn {
+  transition: background-color 0.2s ease, border-color 0.2s ease, box-shadow 0.2s ease, color 0.2s ease;
 }
 
 /* Custom Scrollbar */
@@ -106,7 +159,7 @@ body {
   width: 5px;
 }
 ::-webkit-scrollbar-track {
-  background: var(--bg-primary);
+  background: var(--scrollbar-track);
 }
 ::-webkit-scrollbar-thumb {
   background: var(--border-subtle);
@@ -152,6 +205,37 @@ body {
   color: var(--text-main);
 }
 
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.theme-toggle-btn {
+  background: var(--bg-elevated);
+  border: 1px solid var(--border-subtle);
+  color: var(--text-main);
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  font-size: 13px;
+  outline: none;
+}
+
+.theme-toggle-btn:hover {
+  background: var(--bg-hover);
+  border-color: var(--border-active);
+  transform: scale(1.04);
+}
+
+.theme-toggle-btn:active {
+  transform: scale(0.95);
+}
+
 .live-clock-badge {
   display: flex;
   align-items: center;
@@ -164,7 +248,7 @@ body {
   font-family: var(--font-family-persian);
   font-weight: 600;
   font-variant-numeric: tabular-nums;
-  border: 1px solid rgba(16, 185, 129, 0.2);
+  border: 1px solid rgba(16, 185, 129, 0.25);
 }
 
 .clock-dot {
@@ -184,7 +268,7 @@ body {
    Today Hero Card
    ========================================================================== */
 .today-hero-card {
-  background: linear-gradient(145deg, #161b22, #1c2333);
+  background: var(--hero-card-bg);
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   padding: 11px 14px;
@@ -203,7 +287,7 @@ body {
 .today-jalali-title {
   font-size: 15.5px;
   font-weight: 700;
-  color: #ffffff;
+  color: var(--hero-title-color);
 }
 
 .today-status-badge {
@@ -313,7 +397,6 @@ body {
   cursor: pointer;
   font-size: 16px;
   font-weight: 700;
-  transition: all 0.15s ease;
   font-family: var(--font-family-persian);
 }
 
@@ -330,7 +413,6 @@ body {
   font-size: 15px;
   font-weight: 700;
   color: var(--text-main);
-  letter-spacing: normal;
 }
 
 .today-shortcut-btn {
@@ -342,7 +424,6 @@ body {
   font-size: 11.5px;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.15s ease;
   font-family: var(--font-family-persian);
 }
 
@@ -359,6 +440,7 @@ body {
   border-radius: var(--radius-md);
   border: 1px solid var(--border-subtle);
   padding: 8px 6px;
+  box-shadow: var(--shadow-sm);
 }
 
 .weekdays-grid {
@@ -398,7 +480,6 @@ body {
   border-radius: var(--radius-sm);
   cursor: pointer;
   background: transparent;
-  transition: all 0.15s ease;
   border: 1px solid transparent;
 }
 
@@ -418,6 +499,10 @@ body {
 
 .day-cell.today .jalali-num {
   font-weight: 700;
+  color: var(--accent-indigo);
+}
+
+[data-theme="dark"] .day-cell.today .jalali-num {
   color: #ffffff;
 }
 
@@ -476,13 +561,14 @@ body {
   flex-direction: column;
   gap: 6px;
   min-height: 72px;
+  box-shadow: var(--shadow-sm);
 }
 
 .details-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--divider-subtle);
   padding-bottom: 4px;
 }
 
@@ -542,6 +628,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 6px;
+  box-shadow: var(--shadow-sm);
 }
 
 .month-event-row {
@@ -610,6 +697,7 @@ body {
   display: flex;
   flex-direction: column;
   gap: 12px;
+  box-shadow: var(--shadow-sm);
 }
 
 .converter-section-title {
@@ -695,7 +783,7 @@ body {
   font-size: 11px;
   color: var(--text-dim);
   padding-top: 4px;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
+  border-top: 1px solid var(--divider-subtle);
   font-family: var(--font-family-persian);
 }
 
