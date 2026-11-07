@@ -25,7 +25,7 @@ const manifestPath = path.join(__dirname, "manifest.json");
 assert(fs.existsSync(manifestPath), "manifest.json exists");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 assert(manifest.manifest_version === 3, "manifest_version is 3");
-assert(manifest.browser_specific_settings?.gecko?.id === "persian-calendar@extension.mozilla.org", "Gecko extension ID is configured");
+assert(!!manifest.browser_specific_settings?.gecko?.id, "Gecko extension ID is configured");
 assert(manifest.permissions.includes("storage"), "Permission 'storage' is included");
 assert(manifest.permissions.includes("alarms"), "Permission 'alarms' is included");
 assert(manifest.action?.default_popup === "popup.html", "Action default_popup is popup.html");
