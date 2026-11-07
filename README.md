@@ -1,50 +1,72 @@
 # 📅 تقویم فارسی | Persian Jalali Calendar
-> افزونه تقویم هجری شمسی برای موزیلا فایرفاکس (Manifest V3) با داشبورد فوق فشرده و طراحی مدرن Catppuccin.
 
-[![Firefox Add-on](https://img.shields.io/badge/Firefox-Manifest%20V3-orange.svg)](https://addons.mozilla.org/)
-[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](#)
-[![Tests](https://img.shields.io/badge/Tests-56%2F56%20Passed-brightgreen.svg)](#)
+> افزونه مدرن و فوق‌فشرده تقویم هجری شمسی برای موزیلا فایرفاکس (Firefox Manifest V3) با طراحی Catppuccin، تایپوگرافی آفلاین وزیرمتن و نشانگر زنده نوار ابزار.
 
----
+<div align="center">
 
-## ✨ ویژگی‌ها (Features)
+[![Firefox Add-on](https://img.shields.io/badge/Firefox_AMO-Install_Now-FF7139?style=for-the-badge&logo=firefox-browser&logoColor=white)](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
+[![Tests](https://img.shields.io/badge/Tests-56%2F56_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
 
-- **طراحی تک‌صفحه‌ای بدون اسکرول (Zero-Scroll)**: ابعاد فشرده ۲۸۰ پیکسلی با چیدمان داشبورد و دسترسی به تمام اطلاعات تقویم در یک نگاه بدون نیاز به اسکرول.
-- **محاسبه بی‌درنگ تاریخ (Intl API)**: نمایش زنده و دقیق تاریخ خورشیدی، میلادی و قمری با ثانیه‌شمار دیجیتال بومی بدون نیاز به راه‌اندازی مجدد مرورگر.
-- **مناسبت‌ها و تعطیلات سال ۱۴۰۵**: کپسول هوشمند نمایش وضعیت روز (تعطیل رسمی، رویداد ملی/مذهبی یا روز عادی کاری).
-- **پوسته مدرن Catppuccin**: پشتیبانی از هر دو تم تاریک (Mocha) و روشن (Latte) با سوییچ لحظه‌ای و ذخیره انتخاب کاربر.
-- **تایپوگرافی آفلاین «وزیرمتن»**: همراه با فونت استاندارد Vazirmatn درون افزونه با بارگذاری آفلاین و شفافیت کریستالی.
-- **نشانگر نوار ابزار (Badge)**: نمایش عدد روز جاری به خط فارسی روی آیکون فایرفاکس.
+[**دریافت از فروشگاه رسمی افزونه‌های فایرفاکس (Firefox Add-ons)**](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)
+
+</div>
 
 ---
 
-## 🚀 نصب و اجرا در فایرفاکس (Installation)
+## ✨ ویژگی‌های کلیدی (Key Features)
 
+* **طراحی تک‌صفحه‌ای بدون اسکرول (Zero-Scroll Dashboard):** ابعاد فشرده ۲۸۰ پیکسلی بدون نوار اسکرول اضافی با دسترسی سریع به تمام روزهای ماه و مناسبت‌ها در یک نگاه.
+* **آیکون زنده نوار ابزار (Dynamic Canvas Icon):** رندر بی‌درنگ عدد روز جاری با فونت فارسی و کنتراست ۲۱:۱ روی نوار ابزار فایرفاکس همراه با تم متمایز روزهای جمعه و تعطیل.
+* **تقویم تعاملی و کپی سریع (Click-to-Copy):** امکان کلیک روی تمام روزهای ماه و مشاهده تاریخ معادل میلادی/قمری و کپی آسان تاریخ به کلیپ‌بورد با یک کلیک.
+* **کپسول هوشمند مناسبت‌ها:** نمایش پویای مناسبت‌های ملی و مذهبی سال ۱۴۰۵ به همراه برچسب قرمز برای تعطیلات رسمی (بدون اشغال فضای اضافی در روزهای عادی).
+* **دو پوسته تاریک و روشن (Catppuccin Mocha & Latte):** هماهنگ با سلیقه کاربر و قابلیت ذخیره خودکار پوسته انتخابی.
+* **تایپوگرافی استاندارد آفلاین (Vazirmatn):** فونت‌های استاندارد وزیرمتن به‌صورت توکار در بسته افزونه جهت اجرای کاملاً آفلاین و حفظ حریم خصوصی.
+* **امنیت و حریم خصوصی مطلق:** بدون ارسال هیچ‌گونه داده به اینترنت (`data_collection: none`) و سازگار با سخت‌گیرانه‌ترین استانداردهای امنیتی Mozilla AMO.
+
+---
+
+## 🚀 نصب (Installation)
+
+### ۱. نصب مستقیم از فروشگاه موزیلا (پیشنهادی)
+به صفحه رسمی افزونه در فروشگاه موزیلا بروید و روی **Add to Firefox** کلیک کنید:
+👉 **[نصب تقویم فارسی از Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)**
+
+### ۲. نصب دستی نسخه توسعه (Developer Mode)
 1. در فایرفاکس به آدرس `about:debugging#/runtime/this-firefox` بروید.
 2. روی دکمه **Load Temporary Add-on...** کلیک کنید.
-3. فایل `manifest.json` را انتخاب کنید.
+3. فایل `manifest.json` را از پوشه پروژه انتخاب کنید.
 
-> **نصب آسان:** فایل بسته‌بندی‌شده `persian-calendar-v1.0.0.xpi` نیز جهت نصب مستقیم یا درگ اند دراپ در فایرفاکس در دسترس است.
+> همچنین می‌توانید فایل بسته‌بندی‌شده آماده `persian-calendar-v1.0.0.xpi` را مستقیماً در فایرفاکس درگ اند دراپ نمایید.
 
 ---
 
 ## 📁 ساختار پروژه (Structure)
 
 ```text
-├── manifest.json       # پیکربندی استاندارد Firefox Manifest V3
+├── manifest.json       # پیکربندی رسمی Firefox Manifest V3
 ├── popup.html / .css   # داشبورد فشرده ۲۸۰px با تم Catppuccin
-├── popup.js            # منطق پاپ‌آپ و محاسبات بومی Intl API
-├── events.js           # بانک جامع مناسبت‌ها و تعطیلات ۱۴۰۵
-├── background.js       # سرویس پس‌زمینه و به‌روزرسانی بج
-├── fonts/              # فونت‌های توکار و آفلاین وزیرمتن (WOFF2)
-└── icons/              # آیکون‌های استاندارد افزونه (۱۶ تا ۱۲۸px)
+├── popup.js            # منطق تعاملی، محاسبات Intl و رویدادها
+├── events.js           # بانک جامع تعطیلات و مناسبت‌های شمسی/قمری ۱۴۰۵
+├── background.js       # سرویس پس‌زمینه و موتور رندر Canvas آیکون داینامیک
+├── fonts/              # فونت‌های توکار وزیرمتن (WOFF2)
+├── icons/              # آیکون‌های وکتور و شطرنجی (۱۶ تا ۵۱۲px)
+└── test-extension.js   # مجموعه تست‌های جامع اعتبارسنجی
 ```
 
 ---
 
 ## 🧪 تست‌های خودکار (Automated Tests)
 
+برای اجرای تمامی آزمون‌های سلامت افزونه (تست منیفست، امنیت CSP، محاسبات بومی Intl، تبدیل‌های دوطرفه تاریخ و تعطیلات سال ۱۴۰۵):
+
 ```bash
 node test-extension.js
 ```
-*(تمامی ۵۶ آزمون شامل تست منیفست، امنیت CSP، محاسبات Intl و تعطیلات سال ۱۴۰۵ با موفقیت پاس شده‌اند).*
+*(تمامی ۵۶ آزمون با موفقیت پاس می‌شوند).*
+
+---
+
+## 📄 مجوز (License)
+
+این پروژه تحت مجوز [MIT](LICENSE) منتشر شده است. فونت «وزیرمتن» نیز تحت مجوز [SIL Open Font License 1.1](http://scripts.sil.org/OFL) ارائه می‌شود.
