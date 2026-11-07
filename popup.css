@@ -345,6 +345,141 @@ html, body {
 }
 
 /* ==========================================================================
+   2.5 Personal Local Notes & Reminders
+   ========================================================================== */
+.note-section {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+}
+
+.note-section.hidden {
+  display: none !important;
+}
+
+.note-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  max-width: 95%;
+  background: rgba(166, 227, 161, 0.12);
+  border: 1px solid rgba(166, 227, 161, 0.35);
+  color: var(--accent-green);
+  padding: 2px 7px;
+  border-radius: 999px;
+  font-size: 10px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+[data-theme="light"] .note-pill {
+  background: rgba(64, 160, 43, 0.12);
+  border-color: rgba(64, 160, 43, 0.35);
+  color: #318a20;
+}
+
+.note-pill.hidden {
+  display: none !important;
+}
+
+.note-icon {
+  font-size: 10px;
+}
+
+.note-text {
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.note-action-btn {
+  background: transparent;
+  border: none;
+  color: inherit;
+  cursor: pointer;
+  font-size: 9px;
+  padding: 0 2px;
+  opacity: 0.7;
+  transition: opacity 0.12s ease;
+}
+
+.note-action-btn:hover {
+  opacity: 1;
+}
+
+.note-editor {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  width: 95%;
+  margin-top: 1px;
+}
+
+.note-editor.hidden {
+  display: none !important;
+}
+
+.note-input {
+  flex: 1;
+  background: var(--bg-mantle);
+  border: 1px solid var(--accent-mauve);
+  color: var(--text-primary);
+  border-radius: 4px;
+  padding: 2px 6px;
+  font-size: 10.5px;
+  font-family: inherit;
+  outline: none;
+}
+
+.note-editor-btns {
+  display: flex;
+  gap: 2px;
+}
+
+.note-btn {
+  border: none;
+  font-family: inherit;
+  font-size: 9.5px;
+  font-weight: 600;
+  padding: 2px 5px;
+  border-radius: 4px;
+  cursor: pointer;
+}
+
+.note-btn.save-btn {
+  background: var(--accent-mauve);
+  color: var(--bg-crust);
+}
+
+.note-btn.cancel-btn {
+  background: var(--card-border);
+  color: var(--text-muted);
+}
+
+/* Dots & Focus */
+.cell-dot.note-dot {
+  background: var(--accent-green);
+  box-shadow: 0 0 3px var(--accent-green);
+}
+
+.cell:focus-visible {
+  outline: 2px solid var(--accent-mauve);
+  outline-offset: -1px;
+}
+
+/* Shortcuts Footer Guide */
+.shortcuts-footer {
+  text-align: center;
+  font-size: 8.5px;
+  color: var(--text-dim);
+  padding-top: 2px;
+  user-select: none;
+}
+
+/* ==========================================================================
    3. Calendar Navigation Bar
    ========================================================================== */
 .calendar-nav-bar {

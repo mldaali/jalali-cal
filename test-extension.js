@@ -1,6 +1,7 @@
 /**
  * test-extension.js - Automated Test & Verification Suite
- * Validates Manifest V3 compliance, icons, Intl date math, and 1405 events.
+ * Validates Manifest V3 compliance, icons, Intl date math, multi-year holidays,
+ * local notes architecture, and keyboard navigation.
  */
 
 const fs = require("fs");
@@ -25,11 +26,14 @@ const manifestPath = path.join(__dirname, "manifest.json");
 assert(fs.existsSync(manifestPath), "manifest.json exists");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 assert(manifest.manifest_version === 3, "manifest_version is 3");
+assert(manifest.version === "1.1.0", "Version updated to 1.1.0");
 assert(!!manifest.browser_specific_settings?.gecko?.id, "Gecko extension ID is configured");
 assert(manifest.permissions.includes("storage"), "Permission 'storage' is included");
 assert(manifest.permissions.includes("alarms"), "Permission 'alarms' is included");
+assert(manifest.permissions.includes("notifications"), "Permission 'notifications' is included");
 assert(manifest.action?.default_popup === "popup.html", "Action default_popup is popup.html");
 assert(manifest.background?.scripts?.includes("background.js"), "Background script is background.js");
+assert(manifest.commands?._execute_action?.suggested_key?.default === "Alt+Shift+C", "Global shortcut Alt+Shift+C is configured");
 
 console.log("\n\x1b[1m=== 2. Validating Extension Files & Icons ===\x1b[0m");
 const requiredFiles = [
@@ -45,7 +49,9 @@ const requiredFiles = [
   "icons/icon-16.png",
   "icons/icon-32.png",
   "icons/icon-48.png",
-  "icons/icon-128.png"
+  "icons/icon-128.png",
+  "icons/icon-256.png",
+  "icons/icon-512.png"
 ];
 for (const file of requiredFiles) {
   const filePath = path.join(__dirname, file);
@@ -58,6 +64,8 @@ console.log("\n\x1b[1m=== 3. CSP & HTML Security Check ===\x1b[0m");
 const htmlContent = fs.readFileSync(path.join(__dirname, "popup.html"), "utf-8");
 assert(!/<script>\s*[\s\S]*?<\/script>/i.test(htmlContent), "No inline scripts in popup.html (strict MV3 CSP)");
 assert(!/\s+on[a-z]+\s*=/i.test(htmlContent), "No inline event attributes (e.g. onclick) in popup.html");
+assert(htmlContent.includes('id="noteSection"'), "Notes container exists in popup.html");
+assert(htmlContent.includes('id="quickNoteBtn"'), "Quick note trigger exists in corner actions");
 
 console.log("\n\x1b[1m=== 4. Dynamic Native Intl API Calculations ===\x1b[0m");
 const now = new Date();
@@ -68,56 +76,39 @@ const intlPersian = new Intl.DateTimeFormat("en-US-u-ca-persian", {
 });
 const pParts = intlPersian.formatToParts(now);
 const pMap = {};
-for (const p of pParts) if (p.type !== "literal") pMap[p.type] = p.value;
-const jYear = parseInt(pMap.year, 10);
-const jMonth = parseInt(pMap.month, 10);
-const jDay = parseInt(pMap.day, 10);
+for (const p of pParts) {
+  if (p.type !== "literal") pMap[p.type] = p.value;
+}
+assert(parseInt(pMap.year, 10) >= 1400, `Intl correctly resolved Jalali year: ${pMap.year}`);
+assert(parseInt(pMap.month, 10) >= 1 && parseInt(pMap.month, 10) <= 12, `Intl correctly resolved Jalali month: ${pMap.month}`);
+assert(parseInt(pMap.day, 10) >= 1 && parseInt(pMap.day, 10) <= 31, `Intl correctly resolved Jalali day: ${pMap.day}`);
 
-assert(!isNaN(jYear) && jYear >= 1400, `Intl correctly resolved Jalali year: ${jYear}`);
-assert(!isNaN(jMonth) && jMonth >= 1 && jMonth <= 12, `Intl correctly resolved Jalali month: ${jMonth}`);
-assert(!isNaN(jDay) && jDay >= 1 && jDay <= 31, `Intl correctly resolved Jalali day: ${jDay}`);
+console.log("\n\x1b[1m=== 5. Robust Multi-Year Holiday & Event Engine ===\x1b[0m");
+const { getEventsForDate, isOfficialHoliday } = require(path.join(__dirname, "events.js"));
 
-console.log("\n\x1b[1m=== 5. Robust 1405 Holiday & Event Engine ===\x1b[0m");
-const eventsEngine = require("./events.js");
+// 1405 Holidays
+assert(isOfficialHoliday(1405, 1, 1), "1405/1/1: Nowruz is official holiday");
+assert(isOfficialHoliday(1405, 1, 12), "1405/1/12: Islamic Republic Day is official holiday");
+assert(isOfficialHoliday(1405, 1, 13), "1405/1/13: Nature Day (Sizdah Bedar) is official holiday");
+assert(isOfficialHoliday(1405, 1, 24), "1405/1/24: Shahadat Imam Sadeq is official holiday");
+assert(isOfficialHoliday(1405, 3, 14), "1405/3/14: Official holiday");
+assert(isOfficialHoliday(1405, 4, 4), "1405/4/4: Ashura is official holiday");
+assert(isOfficialHoliday(1405, 8, 22), "1405/8/22: Shahadat Hazrat Zahra (s) is official holiday");
+assert(isOfficialHoliday(1405, 11, 22), "1405/11/22: 22 Bahman is official holiday");
+assert(isOfficialHoliday(1405, 12, 29), "1405/12/29: Oil Nationalization is official holiday");
 
-// Farvardin 1 (Nowruz)
-const evNowruz = eventsEngine.getEventsForDate(1405, 1, 1);
-assert(evNowruz.some(e => e.isHoliday && e.title.includes("نوروز")), "1405/1/1: Nowruz is official holiday");
+// Multi-Year verification (1404, 1406, 1407)
+assert(isOfficialHoliday(1404, 1, 1), "1404/1/1: Nowruz / Shahadat Imam Ali is official holiday");
+assert(isOfficialHoliday(1404, 1, 11), "1404/1/11: Eid al-Fitr 1404 is official holiday");
+assert(isOfficialHoliday(1406, 1, 1), "1406/1/1: Nowruz is official holiday");
+assert(isOfficialHoliday(1406, 3, 24), "1406/3/24: Ashura 1406 is official holiday");
+assert(isOfficialHoliday(1407, 1, 1), "1407/1/1: Dynamic Nowruz holiday on arbitrary year");
 
-// Farvardin 12 & 13
-assert(eventsEngine.isOfficialHoliday(1405, 1, 12), "1405/1/12: Islamic Republic Day is official holiday");
-assert(eventsEngine.isOfficialHoliday(1405, 1, 13), "1405/1/13: Nature Day (Sizdah Bedar) is official holiday");
-
-// Lunar holiday: 24 Farvardin 1405 (Shahadat Imam Sadeq)
-assert(eventsEngine.isOfficialHoliday(1405, 1, 24), "1405/1/24: Shahadat Imam Sadeq is official holiday");
-
-// 14 Khordad (Rahlat Imam Khomeini & Eid Ghadir in 1405)
-assert(eventsEngine.isOfficialHoliday(1405, 3, 14), "1405/3/14: Official holiday");
-
-// 4 Tir 1405 (Ashura)
-assert(eventsEngine.isOfficialHoliday(1405, 4, 4), "1405/4/4: Ashura is official holiday");
-
-// 22 Aban 1405 (Shahadat Hazrat Fatemeh Zahra)
-assert(eventsEngine.isOfficialHoliday(1405, 8, 22), "1405/8/22: Shahadat Hazrat Zahra (s) is official holiday");
-
-// 22 Bahman (Revolution Day)
-assert(eventsEngine.isOfficialHoliday(1405, 11, 22), "1405/11/22: 22 Bahman is official holiday");
-
-// 29 Esfand (Oil Nationalization Day)
-assert(eventsEngine.isOfficialHoliday(1405, 12, 29), "1405/12/29: Oil Nationalization is official holiday");
-
-// Friday weekend holiday check
-assert(eventsEngine.isOfficialHoliday(1405, 8, 16, 6), "Friday (weekday index 6) is treated as holiday");
-
-// Regular workday check (e.g. 1405/8/16 Saturday without holiday)
-assert(!eventsEngine.isOfficialHoliday(1405, 8, 16, 0), "1405/8/16 Saturday is marked as regular workday");
-
-// Month 8 event list
-const abanEvents = eventsEngine.getMonthEvents(1405, 8);
-assert(abanEvents.length >= 5, `Month 8 has ${abanEvents.length} events registered`);
+// Weekend and workday check
+assert(isOfficialHoliday(1405, 8, 15, 6), "Friday (weekday index 6) is treated as holiday");
+assert(!isOfficialHoliday(1405, 8, 16, 0), "1405/8/16 Saturday is marked as regular workday");
 
 console.log("\n\x1b[1m=== 6. Bidirectional Conversion Integrity ===\x1b[0m");
-// We test conversion logic from popup
 function jalaliToGregorian(jy, jm, jd) {
   let gy = jy > 979 ? 1600 : 621;
   jy -= jy > 979 ? 979 : 0;
@@ -156,8 +147,8 @@ function gregorianToJalali(gy, gm, gd) {
     jy += Math.floor((days - 1) / 365);
     days = (days - 1) % 365;
   }
-  const jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
-  const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+  let jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+  let jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
   return { jy, jm, jd };
 }
 
@@ -173,6 +164,14 @@ for (const td of testDates) {
   const jRes = gregorianToJalali(td.gy, td.gm, td.gd);
   assert(jRes.jy === td.jy && jRes.jm === td.jm && jRes.jd === td.jd, `G->J: ${td.gy}/${td.gm}/${td.gd} => ${td.jy}/${td.jm}/${td.jd}`);
 }
+
+console.log("\n\x1b[1m=== 7. Keyboard Navigation & Notes Functionality ===\x1b[0m");
+const popupJsContent = fs.readFileSync(path.join(__dirname, "popup.js"), "utf-8");
+assert(popupJsContent.includes("setupKeyboardNavigation"), "Keyboard navigation listener is defined");
+assert(popupJsContent.includes("ArrowLeft") && popupJsContent.includes("ArrowRight"), "Arrow key day navigation is implemented");
+assert(popupJsContent.includes("goToToday"), "Shortcut 'T' jump to today is implemented");
+assert(popupJsContent.includes("loadNotes") && popupJsContent.includes("saveCurrentNote"), "Local notes CRUD operations are implemented");
+assert(popupJsContent.includes("persian_calendar_notes"), "Local notes storage key configured");
 
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {

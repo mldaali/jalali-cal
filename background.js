@@ -63,6 +63,8 @@ function getTodayInfo() {
   }
 
   return {
+    year,
+    month,
     day,
     dayFa: toPersianDigits(day),
     isHoliday: holiday
@@ -165,12 +167,12 @@ function renderTileIcon(size, dayText, isHoliday) {
 async function updateDynamicIcon() {
   try {
     await ensureFontLoaded();
-    const { dayFa, isHoliday } = getTodayInfo();
+    const today = getTodayInfo();
 
     if (typeof OffscreenCanvas !== "undefined") {
-      const img16 = renderTileIcon(16, dayFa, isHoliday);
-      const img32 = renderTileIcon(32, dayFa, isHoliday);
-      const img64 = renderTileIcon(64, dayFa, isHoliday);
+      const img16 = renderTileIcon(16, today.dayFa, today.isHoliday);
+      const img32 = renderTileIcon(32, today.dayFa, today.isHoliday);
+      const img64 = renderTileIcon(64, today.dayFa, today.isHoliday);
 
       await browserAPI.action.setIcon({
         imageData: {
@@ -179,6 +181,23 @@ async function updateDynamicIcon() {
           64: img64
         }
       });
+    }
+
+    // Dynamic Tooltip with today's date & personal note
+    if (browserAPI.action && browserAPI.action.setTitle) {
+      let title = `تقویم فارسی (امروز: ${today.dayFa})`;
+      try {
+        if (browserAPI.storage && browserAPI.storage.local) {
+          const data = await browserAPI.storage.local.get("persian_calendar_notes");
+          if (data && data.persian_calendar_notes) {
+            const key = `${today.year}-${today.month}-${today.day}`;
+            if (data.persian_calendar_notes[key]) {
+              title += ` • 📝 ${data.persian_calendar_notes[key]}`;
+            }
+          }
+        }
+      } catch (e) {}
+      browserAPI.action.setTitle({ title });
     }
   } catch (err) {
     console.warn("Failed to set dynamic toolbar icon:", err);

@@ -1,9 +1,10 @@
 /**
  * popup.js - Persian Calendar Extension (Minimalist Dashboard)
- * Native Intl API calculations, interactive grid, click-to-copy, and zero-scroll UI
+ * Native Intl API calculations, interactive grid, click-to-copy,
+ * multi-year holiday engine, local notes/reminders, and keyboard navigation.
  */
 
-const browserAPI = typeof browser !== "undefined" ? browser : chrome;
+const browserAPI = typeof browser !== "undefined" ? browser : (typeof chrome !== "undefined" ? chrome : {});
 
 // Persian month names
 const PERSIAN_MONTH_NAMES = [
@@ -48,19 +49,25 @@ function jalaliToGregorian(jy, jm, jd) {
     gy += Math.floor((days - 1) / 365);
     days = (days - 1) % 365;
   }
-  let gd = days + 1;
-  const sal_a = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  let gm;
-  for (gm = 0; gm < 13 && gd > sal_a[gm]; gm++) gd -= sal_a[gm];
-  return { gy, gm, gd };
+  const salA = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let gm = 0;
+  while (days >= salA[gm]) {
+    days -= salA[gm];
+    gm++;
+  }
+  return { gy, gm, gd: days + 1 };
 }
 
 function gregorianToJalali(gy, gm, gd) {
-  const g_d_m = [0, 31, 59, 90, 120, 151, 181, 212, 243, 273, 304, 334];
-  let jy = gy > 1600 ? 979 : 0;
-  gy -= gy > 1600 ? 1600 : 621;
-  const gy2 = (gm > 2) ? (gy + 1) : gy;
-  let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd + g_d_m[gm - 1];
+  gy = parseInt(gy, 10);
+  gm = parseInt(gm, 10);
+  gd = parseInt(gd, 10);
+  const g_d_m = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let jy = gy <= 1600 ? 0 : 979;
+  gy -= gy <= 1600 ? 621 : 1600;
+  let gy2 = gm > 2 ? gy + 1 : gy;
+  let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd;
+  for (let i = 0; i < gm; ++i) days += g_d_m[i];
   jy += 33 * Math.floor(days / 12053);
   days %= 12053;
   jy += 4 * Math.floor(days / 1461);
@@ -69,26 +76,27 @@ function gregorianToJalali(gy, gm, gd) {
     jy += Math.floor((days - 1) / 365);
     days = (days - 1) % 365;
   }
-  const jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
-  const jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
+  let jm = (days < 186) ? 1 + Math.floor(days / 31) : 7 + Math.floor((days - 186) / 30);
+  let jd = 1 + ((days < 186) ? (days % 31) : ((days - 186) % 30));
   return { jy, jm, jd };
 }
 
 function isLeapJalali(year) {
-  const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097, 2192, 2262, 2324, 2394, 2456, 3178];
-  let bl = breaks.length, jp = breaks[0], jm, jump, leap, n, i;
-  if (year < jp || year >= breaks[bl - 1]) return false;
-  for (i = 1; i < bl; i += 1) {
-    jm = breaks[i];
+  const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097];
+  let jp = breaks[0];
+  if (year < jp || year >= breaks[breaks.length - 1]) return false;
+  let jump = 0;
+  for (let i = 1; i < breaks.length; i++) {
+    const jm = breaks[i];
     jump = jm - jp;
     if (year < jm) break;
     jp = jm;
   }
-  n = year - jp;
-  if (jump - n < 6) n = n - jump + ((jump + 4) / 33 | 0) * 33;
-  leap = (((n + 1) % 33) - 1) % 4;
+  let n = year - jp;
+  if (jump - n < 6) n = n - jump + Math.floor((jump + 4) / 33) * 33;
+  let leap = ((n + 1) % 33) - 1;
   if (leap === -1) leap = 4;
-  return leap === 0;
+  return leap % 4 === 0;
 }
 
 function getDaysInJalaliMonth(year, month) {
@@ -98,15 +106,21 @@ function getDaysInJalaliMonth(year, month) {
 }
 
 /**
- * App State
+ * Global App State
  */
 const AppState = {
   todayJalali: null, // { year, month, day, weekdayIndex, rawDate }
   currentViewYear: 1405,
   currentViewMonth: 8,
   selectedDay: null,
-  theme: "dark"
+  theme: "dark",
+  notes: {}, // { "1405-8-16": "یادداشت من" }
+  isEditingNote: false
 };
+
+function getDateKey(y, m, d) {
+  return `${y}-${m}-${d}`;
+}
 
 /**
  * Extract live dynamic Jalali date parts using native Intl API
@@ -117,6 +131,7 @@ function getLiveJalaliParts(date = new Date()) {
     month: "numeric",
     day: "numeric"
   });
+
   const parts = intlPersian.formatToParts(date);
   const map = {};
   for (const p of parts) {
@@ -188,6 +203,9 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
 
   // 4. Update the conditional occasion badge
   updateOccasionBadge(year, month, day, weekdayIndex, gDate);
+
+  // 5. Update local note view for this day
+  updateNoteSection(year, month, day);
 }
 
 /**
@@ -196,7 +214,7 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
  * - Rendered in Red for holidays, Blue/Violet for events.
  */
 function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
-  const events = getEventsForDate(year, month, day, gDate);
+  const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate) : [];
   const isFriday = weekdayIndex === 6;
   const officialHolidays = events.filter(e => e.isHoliday);
 
@@ -204,7 +222,8 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
   const badge = document.getElementById("occasionBadge");
   const textEl = document.getElementById("badgeText");
 
-  // If normal day with no occasions, hide the badge completely (Requirement 2)
+  if (!container || !badge || !textEl) return;
+
   if (events.length === 0 && !isFriday) {
     container.classList.add("hidden");
     return;
@@ -232,39 +251,146 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
 }
 
 /**
- * Shows temporary toast notification for Click-to-Copy
+ * Local Notes & Reminders (Feature 3)
  */
-function showCopyToast(message = "کپی شد!") {
-  const toast = document.getElementById("copyToast");
-  if (!toast) return;
-  toast.textContent = message;
-  toast.classList.add("show");
-  clearTimeout(showCopyToast._timer);
-  showCopyToast._timer = setTimeout(() => {
-    toast.classList.remove("show");
-  }, 1300);
+async function loadNotes() {
+  try {
+    if (browserAPI.storage && browserAPI.storage.local) {
+      const data = await browserAPI.storage.local.get("persian_calendar_notes");
+      if (data && data.persian_calendar_notes) {
+        AppState.notes = data.persian_calendar_notes;
+      }
+    } else if (typeof localStorage !== "undefined") {
+      const raw = localStorage.getItem("persian_calendar_notes");
+      if (raw) AppState.notes = JSON.parse(raw);
+    }
+  } catch (err) {
+    console.warn("Could not load notes:", err);
+  }
+}
+
+async function persistNotes() {
+  try {
+    if (browserAPI.storage && browserAPI.storage.local) {
+      await browserAPI.storage.local.set({ "persian_calendar_notes": AppState.notes });
+    } else if (typeof localStorage !== "undefined") {
+      localStorage.setItem("persian_calendar_notes", JSON.stringify(AppState.notes));
+    }
+  } catch (err) {
+    console.warn("Could not persist notes:", err);
+  }
+}
+
+function updateNoteSection(year, month, day) {
+  const section = document.getElementById("noteSection");
+  const pill = document.getElementById("notePill");
+  const editor = document.getElementById("noteEditor");
+  const noteText = document.getElementById("noteText");
+
+  if (!section || !pill || !editor || !noteText) return;
+
+  const key = getDateKey(year, month, day);
+  const existingNote = AppState.notes[key];
+
+  if (AppState.isEditingNote) {
+    section.classList.remove("hidden");
+    pill.classList.add("hidden");
+    editor.classList.remove("hidden");
+    const input = document.getElementById("noteInput");
+    if (input) {
+      input.value = existingNote || "";
+      setTimeout(() => input.focus(), 50);
+    }
+    return;
+  }
+
+  editor.classList.add("hidden");
+
+  if (existingNote && existingNote.trim().length > 0) {
+    section.classList.remove("hidden");
+    pill.classList.remove("hidden");
+    noteText.textContent = existingNote;
+    noteText.title = existingNote;
+  } else {
+    pill.classList.add("hidden");
+    section.classList.add("hidden");
+  }
+}
+
+async function saveCurrentNote() {
+  const input = document.getElementById("noteInput");
+  if (!input) return;
+
+  const text = input.value.trim();
+  const year = AppState.currentViewYear;
+  const month = AppState.currentViewMonth;
+  const day = AppState.selectedDay;
+  const key = getDateKey(year, month, day);
+
+  if (text.length > 0) {
+    AppState.notes[key] = text;
+    showCopyToast("یادداشت ذخیره شد!");
+  } else {
+    delete AppState.notes[key];
+  }
+
+  AppState.isEditingNote = false;
+  await persistNotes();
+  updateNoteSection(year, month, day);
+  renderCalendar();
+}
+
+async function deleteCurrentNote() {
+  const year = AppState.currentViewYear;
+  const month = AppState.currentViewMonth;
+  const day = AppState.selectedDay;
+  const key = getDateKey(year, month, day);
+
+  if (AppState.notes[key]) {
+    delete AppState.notes[key];
+    await persistNotes();
+    showCopyToast("یادداشت حذف شد");
+  }
+
+  AppState.isEditingNote = false;
+  updateNoteSection(year, month, day);
+  renderCalendar();
 }
 
 /**
- * Renders the compact month grid with clickable days
+ * Shows temporary toast notification for Click-to-Copy
+ */
+let toastTimeout = null;
+function showCopyToast(message = "کپی شد!") {
+  const toast = document.getElementById("copyToast");
+  if (!toast) return;
+
+  toast.textContent = message;
+  toast.classList.add("show");
+
+  if (toastTimeout) clearTimeout(toastTimeout);
+  toastTimeout = setTimeout(() => {
+    toast.classList.remove("show");
+  }, 1400);
+}
+
+/**
+ * Renders the compact 280px calendar matrix
  */
 function renderCalendar() {
   const year = AppState.currentViewYear;
   const month = AppState.currentViewMonth;
   const today = AppState.todayJalali;
 
-  // Title in header
   const monthName = PERSIAN_MONTH_NAMES[month - 1];
   document.getElementById("monthTitle").textContent = `${monthName} ${toPersianDigits(year)}`;
 
-  // Find start day of week for Day 1
   const gFirst = jalaliToGregorian(year, month, 1);
   const firstDate = new Date(gFirst.gy, gFirst.gm - 1, gFirst.gd);
-  const startDayOfWeek = (firstDate.getDay() + 1) % 7; // 0=شنبه ... 6=جمعه
+  const startDayOfWeek = (firstDate.getDay() + 1) % 7;
 
   const daysInCurrentMonth = getDaysInJalaliMonth(year, month);
 
-  // Preceding month padding
   const prevMonth = month === 1 ? 12 : month - 1;
   const prevYear = month === 1 ? year - 1 : year;
   const daysInPrevMonth = getDaysInJalaliMonth(prevYear, prevMonth);
@@ -278,10 +404,13 @@ function renderCalendar() {
     const cell = document.createElement("div");
     cell.className = "cell other-month";
     cell.textContent = toPersianDigits(pDay);
+    cell.tabIndex = 0;
+    cell.setAttribute("role", "button");
     cell.addEventListener("click", () => {
       AppState.currentViewYear = prevYear;
       AppState.currentViewMonth = prevMonth;
       AppState.selectedDay = pDay;
+      AppState.isEditingNote = false;
       renderCalendar();
       const g = jalaliToGregorian(prevYear, prevMonth, pDay);
       const dt = new Date(g.gy, g.gm - 1, g.gd);
@@ -295,13 +424,16 @@ function renderCalendar() {
     const cell = document.createElement("div");
     cell.className = "cell";
     cell.textContent = toPersianDigits(d);
+    cell.tabIndex = 0;
+    cell.setAttribute("role", "button");
+    cell.dataset.day = d;
 
     const gDay = jalaliToGregorian(year, month, d);
     const cellGDate = new Date(gDay.gy, gDay.gm - 1, gDay.gd);
     const dayOfWeek = (cellGDate.getDay() + 1) % 7;
 
     const isFriday = dayOfWeek === 6;
-    const events = getEventsForDate(year, month, d, cellGDate);
+    const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, cellGDate) : [];
     const isHoliday = events.some(e => e.isHoliday);
 
     if (isFriday) cell.classList.add("friday");
@@ -316,19 +448,36 @@ function renderCalendar() {
       cell.classList.add("selected");
     }
 
-    // Dot indicator if events or holidays
-    if (events.length > 0 || isHoliday) {
+    // Check if day has a personal local note
+    const key = getDateKey(year, month, d);
+    const hasNote = Boolean(AppState.notes[key]);
+
+    // Indicators
+    if (hasNote) {
+      const noteDot = document.createElement("span");
+      noteDot.className = "cell-dot note-dot";
+      noteDot.title = `یادداشت: ${AppState.notes[key]}`;
+      cell.appendChild(noteDot);
+    } else if (events.length > 0 || isHoliday) {
       const dot = document.createElement("span");
       dot.className = `cell-dot ${isHoliday ? "holiday-dot" : ""}`;
       cell.appendChild(dot);
     }
 
-    // Interactive Click: Updates hero card & occasion badge (Requirement 3)
+    // Interactive Click: Updates hero card, occasion badge, and notes
     cell.addEventListener("click", () => {
       document.querySelectorAll(".cell.selected").forEach(el => el.classList.remove("selected"));
       cell.classList.add("selected");
       AppState.selectedDay = d;
+      AppState.isEditingNote = false;
       displayDateOnHero(year, month, d, dayOfWeek, cellGDate);
+    });
+
+    cell.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") {
+        e.preventDefault();
+        cell.click();
+      }
     });
 
     matrixEl.appendChild(cell);
@@ -346,10 +495,13 @@ function renderCalendar() {
     const cell = document.createElement("div");
     cell.className = "cell other-month";
     cell.textContent = toPersianDigits(nDay);
+    cell.tabIndex = 0;
+    cell.setAttribute("role", "button");
     cell.addEventListener("click", () => {
       AppState.currentViewYear = nextYear;
       AppState.currentViewMonth = nextMonth;
       AppState.selectedDay = nDay;
+      AppState.isEditingNote = false;
       renderCalendar();
       const g = jalaliToGregorian(nextYear, nextMonth, nDay);
       const dt = new Date(g.gy, g.gm - 1, g.gd);
@@ -357,6 +509,96 @@ function renderCalendar() {
     });
     matrixEl.appendChild(cell);
   }
+}
+
+/**
+ * Step days forwards or backwards (Keyboard navigation)
+ */
+function stepDay(delta) {
+  let y = AppState.currentViewYear;
+  let m = AppState.currentViewMonth;
+  let d = (AppState.selectedDay || 1) + delta;
+
+  while (d < 1) {
+    if (m === 1) {
+      m = 12;
+      y--;
+    } else {
+      m--;
+    }
+    d += getDaysInJalaliMonth(y, m);
+  }
+
+  while (d > getDaysInJalaliMonth(y, m)) {
+    d -= getDaysInJalaliMonth(y, m);
+    if (m === 12) {
+      m = 1;
+      y++;
+    } else {
+      m++;
+    }
+  }
+
+  AppState.currentViewYear = y;
+  AppState.currentViewMonth = m;
+  AppState.selectedDay = d;
+  AppState.isEditingNote = false;
+
+  renderCalendar();
+  const g = jalaliToGregorian(y, m, d);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(y, m, d, (dt.getDay() + 1) % 7, dt);
+
+  // Focus the newly selected cell for seamless accessibility
+  const activeCell = document.querySelector(`.cell[data-day="${d}"]`);
+  if (activeCell) activeCell.focus();
+}
+
+function goToToday() {
+  if (AppState.todayJalali) {
+    AppState.currentViewYear = AppState.todayJalali.year;
+    AppState.currentViewMonth = AppState.todayJalali.month;
+    AppState.selectedDay = AppState.todayJalali.day;
+    AppState.isEditingNote = false;
+    renderCalendar();
+    displayDateOnHero(
+      AppState.todayJalali.year,
+      AppState.todayJalali.month,
+      AppState.todayJalali.day,
+      AppState.todayJalali.weekdayIndex,
+      AppState.todayJalali.rawDate
+    );
+  }
+}
+
+function goToPrevMonth() {
+  if (AppState.currentViewMonth === 1) {
+    AppState.currentViewMonth = 12;
+    AppState.currentViewYear--;
+  } else {
+    AppState.currentViewMonth--;
+  }
+  AppState.selectedDay = 1;
+  AppState.isEditingNote = false;
+  renderCalendar();
+  const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
+}
+
+function goToNextMonth() {
+  if (AppState.currentViewMonth === 12) {
+    AppState.currentViewMonth = 1;
+    AppState.currentViewYear++;
+  } else {
+    AppState.currentViewMonth++;
+  }
+  AppState.selectedDay = 1;
+  AppState.isEditingNote = false;
+  renderCalendar();
+  const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
 }
 
 /**
@@ -376,54 +618,72 @@ function applyTheme(theme) {
 }
 
 /**
+ * Setup Global Keyboard Navigation (Feature 5)
+ */
+function setupKeyboardNavigation() {
+  window.addEventListener("keydown", (e) => {
+    // If input is focused, don't intercept standard typing
+    const activeTag = document.activeElement ? document.activeElement.tagName : "";
+    if (activeTag === "INPUT" || activeTag === "TEXTAREA") {
+      if (e.key === "Escape") {
+        AppState.isEditingNote = false;
+        updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+      }
+      return;
+    }
+
+    if (e.key === "ArrowLeft") {
+      // In RTL calendar layout, left arrow moves to next day (+1)
+      e.preventDefault();
+      stepDay(1);
+    } else if (e.key === "ArrowRight") {
+      // In RTL, right arrow moves to previous day (-1)
+      e.preventDefault();
+      stepDay(-1);
+    } else if (e.key === "ArrowUp") {
+      // Move 1 week up (-7 days)
+      e.preventDefault();
+      stepDay(-7);
+    } else if (e.key === "ArrowDown") {
+      // Move 1 week down (+7 days)
+      e.preventDefault();
+      stepDay(7);
+    } else if (e.key === "t" || e.key === "T" || e.key === "ف") {
+      // Jump to Today
+      e.preventDefault();
+      goToToday();
+    } else if (e.key === "m" || e.key === "M" || e.key === "PageDown") {
+      // Next Month
+      e.preventDefault();
+      goToNextMonth();
+    } else if (e.key === "n" || e.key === "N" || e.key === "PageUp") {
+      // Quick Note Toggle
+      e.preventDefault();
+      AppState.isEditingNote = !AppState.isEditingNote;
+      updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+    } else if (e.key === "c" || e.key === "C" || e.key === "ز") {
+      // Copy Date
+      e.preventDefault();
+      const heroSolar = document.getElementById("heroSolarDate");
+      if (heroSolar && heroSolar.dataset.copyText) {
+        navigator.clipboard.writeText(heroSolar.dataset.copyText).then(() => {
+          showCopyToast("تاریخ خورشیدی کپی شد!");
+        });
+      }
+    }
+  });
+}
+
+/**
  * Setup Event Handlers
  */
 function setupEventHandlers() {
   // 1. Month Navigation
-  document.getElementById("prevMonthBtn").addEventListener("click", () => {
-    if (AppState.currentViewMonth === 1) {
-      AppState.currentViewMonth = 12;
-      AppState.currentViewYear--;
-    } else {
-      AppState.currentViewMonth--;
-    }
-    AppState.selectedDay = 1;
-    renderCalendar();
-    const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
-    const dt = new Date(g.gy, g.gm - 1, g.gd);
-    displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
-  });
-
-  document.getElementById("nextMonthBtn").addEventListener("click", () => {
-    if (AppState.currentViewMonth === 12) {
-      AppState.currentViewMonth = 1;
-      AppState.currentViewYear++;
-    } else {
-      AppState.currentViewMonth++;
-    }
-    AppState.selectedDay = 1;
-    renderCalendar();
-    const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, 1);
-    const dt = new Date(g.gy, g.gm - 1, g.gd);
-    displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, 1, (dt.getDay() + 1) % 7, dt);
-  });
+  document.getElementById("prevMonthBtn").addEventListener("click", goToPrevMonth);
+  document.getElementById("nextMonthBtn").addEventListener("click", goToNextMonth);
 
   // 2. Jump to Today Button
-  document.getElementById("jumpTodayBtn").addEventListener("click", () => {
-    if (AppState.todayJalali) {
-      AppState.currentViewYear = AppState.todayJalali.year;
-      AppState.currentViewMonth = AppState.todayJalali.month;
-      AppState.selectedDay = AppState.todayJalali.day;
-      renderCalendar();
-      displayDateOnHero(
-        AppState.todayJalali.year,
-        AppState.todayJalali.month,
-        AppState.todayJalali.day,
-        AppState.todayJalali.weekdayIndex,
-        AppState.todayJalali.rawDate
-      );
-    }
-  });
+  document.getElementById("jumpTodayBtn").addEventListener("click", goToToday);
 
   // 3. Click-to-Copy Handlers
   document.getElementById("heroSolarDate").addEventListener("click", () => {
@@ -440,19 +700,64 @@ function setupEventHandlers() {
     }
   });
 
-  // 4. Refresh Button
+  // 4. Quick Note Actions
+  const quickNoteBtn = document.getElementById("quickNoteBtn");
+  if (quickNoteBtn) {
+    quickNoteBtn.addEventListener("click", () => {
+      AppState.isEditingNote = !AppState.isEditingNote;
+      updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+    });
+  }
+
+  const noteText = document.getElementById("noteText");
+  if (noteText) {
+    noteText.addEventListener("click", () => {
+      AppState.isEditingNote = true;
+      updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+    });
+  }
+
+  const saveNoteBtn = document.getElementById("saveNoteBtn");
+  if (saveNoteBtn) {
+    saveNoteBtn.addEventListener("click", saveCurrentNote);
+  }
+
+  const cancelNoteBtn = document.getElementById("cancelNoteBtn");
+  if (cancelNoteBtn) {
+    cancelNoteBtn.addEventListener("click", () => {
+      AppState.isEditingNote = false;
+      updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+    });
+  }
+
+  const noteInput = document.getElementById("noteInput");
+  if (noteInput) {
+    noteInput.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") {
+        e.preventDefault();
+        saveCurrentNote();
+      }
+    });
+  }
+
+  const delNoteBtn = document.getElementById("delNoteBtn");
+  if (delNoteBtn) {
+    delNoteBtn.addEventListener("click", deleteCurrentNote);
+  }
+
+  // 5. Refresh Button
   const refreshBtn = document.getElementById("refreshBtn");
   if (refreshBtn) {
     refreshBtn.addEventListener("click", () => {
       refreshBtn.classList.add("rotating");
       setTimeout(() => refreshBtn.classList.remove("rotating"), 360);
 
-      // Re-fetch current real time
       const now = new Date();
       AppState.todayJalali = getLiveJalaliParts(now);
       AppState.currentViewYear = AppState.todayJalali.year;
       AppState.currentViewMonth = AppState.todayJalali.month;
       AppState.selectedDay = AppState.todayJalali.day;
+      AppState.isEditingNote = false;
 
       renderCalendar();
       displayDateOnHero(
@@ -463,7 +768,6 @@ function setupEventHandlers() {
         AppState.todayJalali.rawDate
       );
 
-      // Trigger background icon update
       try {
         if (browserAPI.runtime && browserAPI.runtime.sendMessage) {
           browserAPI.runtime.sendMessage({ action: "updateIcon" });
@@ -472,7 +776,7 @@ function setupEventHandlers() {
     });
   }
 
-  // 5. Theme Toggle Button
+  // 6. Theme Toggle Button
   const themeToggleBtn = document.getElementById("themeToggleBtn");
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", async () => {
@@ -505,14 +809,16 @@ function setupEventHandlers() {
 }
 
 // Bootstrap on DOM Ready
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
   const now = new Date();
   AppState.todayJalali = getLiveJalaliParts(now);
   AppState.currentViewYear = AppState.todayJalali.year;
   AppState.currentViewMonth = AppState.todayJalali.month;
   AppState.selectedDay = AppState.todayJalali.day;
 
+  await loadNotes();
   setupEventHandlers();
+  setupKeyboardNavigation();
   renderCalendar();
 
   // Initially display today

@@ -15,6 +15,9 @@
         <button class="corner-icon-btn" id="themeToggleBtn" title="تغییر پوسته" aria-label="تغییر پوسته">
           <span id="themeIcon">☀️</span>
         </button>
+        <button class="corner-icon-btn" id="quickNoteBtn" title="ثبت یادداشت برای روز انتخابی" aria-label="یادداشت">
+          <span id="quickNoteIcon">📝</span>
+        </button>
         <button class="corner-icon-btn" id="refreshBtn" title="به‌روزرسانی" aria-label="به‌روزرسانی">
           <svg class="refresh-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M21.5 2v6h-6M2.5 22v-6h6M2 11.5a10 10 0 0 1 18.8-4.3M22 12.5a10 10 0 0 1-18.8 4.2"/>
@@ -23,7 +26,7 @@
       </div>
 
       <!-- Main Solar Date (Click-to-Copy) -->
-      <div class="solar-date-row clickable-copy" id="heroSolarDate" title="کلیک برای کپی تاریخ خورشیدی">
+      <div class="solar-date-row clickable-copy" id="heroSolarDate" title="کلیک برای کپی تاریخ خورشیدی (کلید C)">
         <span class="solar-weekday" id="heroWeekday">...</span>
         <div class="solar-day-group">
           <span class="solar-day-num" id="heroDayNum">--</span>
@@ -50,14 +53,33 @@
       </div>
     </div>
 
+    <!-- Personal Local Note Section (Hidden when no note and not editing) -->
+    <div class="note-section hidden" id="noteSection">
+      <!-- Read Note Card -->
+      <div class="note-pill hidden" id="notePill">
+        <span class="note-icon">📌</span>
+        <span class="note-text" id="noteText" title="برای ویرایش کلیک کنید"></span>
+        <button class="note-action-btn" id="delNoteBtn" title="حذف یادداشت" aria-label="حذف یادداشت">✕</button>
+      </div>
+
+      <!-- Inline Note Input Form -->
+      <div class="note-editor hidden" id="noteEditor">
+        <input type="text" id="noteInput" class="note-input" maxlength="70" placeholder="یادداشت برای این روز..." autocomplete="off" />
+        <div class="note-editor-btns">
+          <button id="saveNoteBtn" class="note-btn save-btn">ثبت</button>
+          <button id="cancelNoteBtn" class="note-btn cancel-btn">لغو</button>
+        </div>
+      </div>
+    </div>
+
     <!-- Calendar Month Navigation Bar -->
     <div class="calendar-nav-bar">
-      <button class="nav-arrow" id="prevMonthBtn" title="ماه قبل" aria-label="ماه قبل">›</button>
+      <button class="nav-arrow" id="prevMonthBtn" title="ماه قبل (N)" aria-label="ماه قبل">›</button>
       <div class="month-title-wrapper">
         <span class="month-title" id="monthTitle">...</span>
-        <button class="jump-today-btn" id="jumpTodayBtn" title="بازگشت به امروز">امروز</button>
+        <button class="jump-today-btn" id="jumpTodayBtn" title="بازگشت به امروز (T)">امروز</button>
       </div>
-      <button class="nav-arrow" id="nextMonthBtn" title="ماه بعد" aria-label="ماه بعد">‹</button>
+      <button class="nav-arrow" id="nextMonthBtn" title="ماه بعد (M)" aria-label="ماه بعد">‹</button>
     </div>
 
     <!-- Calendar Matrix Grid -->
@@ -72,6 +94,11 @@
         <div class="weekday-cell friday-col">ج</div>
       </div>
       <div class="days-matrix" id="daysMatrix"></div>
+    </div>
+
+    <!-- Minimalist Shortcut Footer Guide -->
+    <div class="shortcuts-footer" title="کلیدهای میانبر فعال تقویم">
+      <span>⌨ میانبرها: ←/→ روزها • T امروز • N یادداشت • C کپی</span>
     </div>
   </div>
 
