@@ -291,8 +291,10 @@ function updateNoteSection(year, month, day) {
 
   const key = getDateKey(year, month, day);
   const existingNote = AppState.notes[key];
+  const occasionContainer = document.getElementById("occasionContainer");
 
   if (AppState.isEditingNote) {
+    if (occasionContainer) occasionContainer.classList.add("hidden");
     section.classList.remove("hidden");
     pill.classList.add("hidden");
     editor.classList.remove("hidden");
@@ -336,6 +338,10 @@ async function saveCurrentNote() {
 
   AppState.isEditingNote = false;
   await persistNotes();
+  const gDate = jalaliToGregorian(year, month, day);
+  const dObj = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+  const weekdayIndex = (dObj.getDay() + 1) % 7;
+  updateOccasionBadge(year, month, day, weekdayIndex, dObj);
   updateNoteSection(year, month, day);
   renderCalendar();
 }
@@ -736,6 +742,10 @@ function setupEventHandlers() {
     cancelNoteBtn.addEventListener("click", (e) => {
       e.stopPropagation();
       AppState.isEditingNote = false;
+      const gDate = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+      const dObj = new Date(gDate.gy, gDate.gm - 1, gDate.gd);
+      const weekdayIndex = (dObj.getDay() + 1) % 7;
+      updateOccasionBadge(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay, weekdayIndex, dObj);
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
     });
   }

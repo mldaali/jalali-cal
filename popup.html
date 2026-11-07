@@ -49,29 +49,31 @@
       <div class="copy-toast" id="copyToast">کپی شد!</div>
     </section>
 
-    <!-- Conditional Occasion / Holiday Badge (Hidden if no events) -->
-    <div class="occasion-container hidden" id="occasionContainer">
-      <div class="occasion-badge" id="occasionBadge">
-        <span class="badge-dot" id="badgeDot"></span>
-        <span class="badge-text" id="badgeText"></span>
-      </div>
-    </div>
-
-    <!-- Personal Local Note Section (Hidden when no note and not editing) -->
-    <div class="note-section hidden" id="noteSection">
-      <!-- Read Note Card -->
-      <div class="note-pill hidden" id="notePill">
-        <span class="note-icon">📌</span>
-        <span class="note-text" id="noteText" title="برای ویرایش کلیک کنید"></span>
-        <button class="note-action-btn" id="delNoteBtn" title="حذف یادداشت" aria-label="حذف یادداشت">✕</button>
+    <!-- Unified Zero-Jitter Status Strip (Fixed 24px height slot prevents UI jump) -->
+    <div class="day-status-slot" id="dayStatusSlot">
+      <!-- Occasion / Holiday Badge -->
+      <div class="occasion-container" id="occasionContainer">
+        <div class="occasion-badge hidden" id="occasionBadge">
+          <span class="badge-dot" id="badgeDot"></span>
+          <span class="badge-text" id="badgeText"></span>
+        </div>
       </div>
 
-      <!-- Inline Note Input Form -->
-      <div class="note-editor hidden" id="noteEditor">
-        <input type="text" id="noteInput" class="note-input" maxlength="70" placeholder="یادداشت برای این روز..." autocomplete="off" />
-        <div class="note-editor-btns">
-          <button id="saveNoteBtn" class="note-btn save-btn">ثبت</button>
-          <button id="cancelNoteBtn" class="note-btn cancel-btn">لغو</button>
+      <!-- Personal Local Note View -->
+      <div class="note-section" id="noteSection">
+        <div class="note-pill hidden" id="notePill">
+          <span class="note-icon">📌</span>
+          <span class="note-text" id="noteText" title="برای ویرایش کلیک کنید"></span>
+          <button class="note-action-btn" id="delNoteBtn" title="حذف یادداشت" aria-label="حذف یادداشت">✕</button>
+        </div>
+
+        <!-- Inline Note Input Form -->
+        <div class="note-editor hidden" id="noteEditor">
+          <input type="text" id="noteInput" class="note-input" maxlength="70" placeholder="یادداشت برای این روز..." autocomplete="off" />
+          <div class="note-editor-btns">
+            <button id="saveNoteBtn" class="note-btn save-btn">ثبت</button>
+            <button id="cancelNoteBtn" class="note-btn cancel-btn">لغو</button>
+          </div>
         </div>
       </div>
     </div>

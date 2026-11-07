@@ -294,12 +294,31 @@ html, body {
 }
 
 /* ==========================================================================
-   2. Conditional Occasion / Holiday Badge
+   2. Unified Day Status Slot (Strict 24px Fixed Height - Zero Layout Shift)
    ========================================================================== */
+.day-status-slot {
+  height: 24px;
+  min-height: 24px;
+  max-height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  overflow: hidden;
+  position: relative;
+  width: 100%;
+  box-sizing: border-box;
+  margin: 1px 0;
+}
+
 .occasion-container {
   display: flex;
+  align-items: center;
   justify-content: center;
-  margin: 1px 0 2px 0;
+  max-width: 100%;
+  min-width: 0;
+  height: 24px;
+  flex: 0 1 auto;
 }
 
 .occasion-container.hidden {
@@ -311,15 +330,21 @@ html, body {
   align-items: center;
   gap: 5px;
   max-width: 100%;
-  padding: 2.5px 8px;
+  height: 22px;
+  box-sizing: border-box;
+  padding: 2px 8px;
   border-radius: 999px;
   font-size: 10.5px;
   font-weight: 600;
-  line-height: 1.2;
+  line-height: 1;
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   border: 1px solid transparent;
+}
+
+.occasion-badge.hidden {
+  display: none !important;
 }
 
 .badge-dot {
@@ -361,9 +386,12 @@ html, body {
    ========================================================================== */
 .note-section {
   display: flex;
-  flex-direction: column;
   align-items: center;
-  width: 100%;
+  justify-content: center;
+  max-width: 100%;
+  min-width: 0;
+  height: 24px;
+  flex: 0 1 auto;
 }
 
 .note-section.hidden {
@@ -373,8 +401,10 @@ html, body {
 .note-pill {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  max-width: 95%;
+  gap: 4px;
+  max-width: 100%;
+  height: 22px;
+  box-sizing: border-box;
   background: rgba(166, 227, 161, 0.12);
   border: 1px solid rgba(166, 227, 161, 0.35);
   color: var(--accent-green);
@@ -382,7 +412,10 @@ html, body {
   border-radius: 999px;
   font-size: 10px;
   font-weight: 500;
-  line-height: 1.2;
+  line-height: 1;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 [data-theme="light"] .note-pill {
@@ -426,8 +459,9 @@ html, body {
   display: flex;
   align-items: center;
   gap: 4px;
-  width: 95%;
-  margin-top: 1px;
+  width: 100%;
+  height: 24px;
+  box-sizing: border-box;
 }
 
 .note-editor.hidden {
@@ -436,11 +470,13 @@ html, body {
 
 .note-input {
   flex: 1;
+  height: 22px;
+  box-sizing: border-box;
   background: var(--bg-mantle);
   border: 1px solid var(--accent-mauve);
   color: var(--text-primary);
   border-radius: 4px;
-  padding: 2px 6px;
+  padding: 1px 6px;
   font-size: 10.5px;
   font-family: inherit;
   outline: none;
@@ -452,11 +488,16 @@ html, body {
 }
 
 .note-btn {
+  height: 22px;
+  box-sizing: border-box;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   border: none;
   font-family: inherit;
   font-size: 9.5px;
   font-weight: 600;
-  padding: 2px 5px;
+  padding: 0 6px;
   border-radius: 4px;
   cursor: pointer;
 }
