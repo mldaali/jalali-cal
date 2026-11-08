@@ -1,0 +1,15 @@
+{
+  "authority": "University of Tehran Geophysics Institute Calendar Center",
+  "lastSyncedAt": "2026-11-08T15:07:13.787Z",
+  "supportedYears": [
+    1404,
+    1405,
+    1406
+  ],
+  "activeYear": 1405,
+  "files": {
+    "1404": "official-events-1404.json",
+    "1405": "official-events-1405.json",
+    "1406": "official-events-1406.json"
+  }
+}

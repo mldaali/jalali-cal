@@ -380,6 +380,25 @@ function updateGamingToggleUI() {
 }
 
 /**
+ * Load official pre-synced calendar data for a specific year
+ */
+async function loadOfficialCalendarData(year) {
+  try {
+    if (typeof loadOfficialYearData !== "function") return;
+    const url = (browserAPI.runtime && browserAPI.runtime.getURL)
+      ? browserAPI.runtime.getURL(`official-events-${year}.json`)
+      : `official-events-${year}.json`;
+    const res = await fetch(url);
+    if (res.ok) {
+      const json = await res.json();
+      loadOfficialYearData(year, json);
+    }
+  } catch (e) {
+    // Graceful fallback to built-in multi-year astronomical engine
+  }
+}
+
+/**
  * Event Categories Filter Management
  */
 async function loadEventCategories() {
@@ -835,11 +854,15 @@ function goToToday() {
 }
 
 function goToPrevMonth() {
+  const oldYear = AppState.currentViewYear;
   if (AppState.currentViewMonth === 1) {
     AppState.currentViewMonth = 12;
     AppState.currentViewYear--;
   } else {
     AppState.currentViewMonth--;
+  }
+  if (oldYear !== AppState.currentViewYear) {
+    loadOfficialCalendarData(AppState.currentViewYear);
   }
   AppState.selectedDay = 1;
   AppState.isEditingNote = false;
@@ -850,11 +873,15 @@ function goToPrevMonth() {
 }
 
 function goToNextMonth() {
+  const oldYear = AppState.currentViewYear;
   if (AppState.currentViewMonth === 12) {
     AppState.currentViewMonth = 1;
     AppState.currentViewYear++;
   } else {
     AppState.currentViewMonth++;
+  }
+  if (oldYear !== AppState.currentViewYear) {
+    loadOfficialCalendarData(AppState.currentViewYear);
   }
   AppState.selectedDay = 1;
   AppState.isEditingNote = false;
@@ -1528,6 +1555,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   AppState.currentViewMonth = AppState.todayJalali.month;
   AppState.selectedDay = AppState.todayJalali.day;
 
+  await loadOfficialCalendarData(AppState.currentViewYear);
   await loadNotes();
   await loadGamingEvents();
   await loadEventCategories();

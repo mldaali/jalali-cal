@@ -430,6 +430,14 @@ function getHijriParts(gDate, jYear = null, jMonth = null, jDay = null) {
   }
 }
 
+const OFFICIAL_YEARS_CACHE = {};
+
+function loadOfficialYearData(year, data) {
+  if (year && data && data.days) {
+    OFFICIAL_YEARS_CACHE[year] = data;
+  }
+}
+
 /**
  * Get all events for a given Jalali date (with optional categories filter)
  * @param {number} jYear
@@ -443,8 +451,21 @@ function getEventsForDate(jYear, jMonth, jDay, gDate = null, filterCategories = 
   let events = [];
   const key = `${jMonth}-${jDay}`;
 
+  // 0. Use official pre-synced dataset if loaded for this year
+  if (OFFICIAL_YEARS_CACHE[jYear] && OFFICIAL_YEARS_CACHE[jYear].days && OFFICIAL_YEARS_CACHE[jYear].days[key]) {
+    const dayData = OFFICIAL_YEARS_CACHE[jYear].days[key];
+    if (Array.isArray(dayData.events) && dayData.events.length > 0) {
+      events = dayData.events.map(e => ({
+        title: e.title,
+        isHoliday: !!e.isHoliday,
+        category: e.category || "national",
+        hijriDateStr: e.dateString
+      }));
+    }
+  }
+
   // 1. Solar Events (National, Ancient, Cultural, International)
-  if (SOLAR_EVENTS[key]) {
+  if (events.length === 0 && SOLAR_EVENTS[key]) {
     events = events.concat(SOLAR_EVENTS[key].map(e => ({ ...e })));
   }
 
@@ -460,12 +481,12 @@ function getEventsForDate(jYear, jMonth, jDay, gDate = null, filterCategories = 
         if (!events.some(e => e.title === ev.title)) events.push({ ...ev });
       }
     }
-  } else {
-    // Dynamic Astronomical / Intl Calculation for ANY arbitrary year outside 1404-1406
+  } else if (events.length === 0 || !events.some(e => e.category === "religious")) {
+    // Dynamic Astronomical / Intl Calculation for ANY arbitrary year outside pre-synced tables
     if (!gDate) {
       gDate = jalaliToGregorianInternal(jYear, jMonth, jDay);
     }
-    const hijri = getHijriParts(gDate);
+    const hijri = getHijriParts(gDate, jYear, jMonth, jDay);
     if (hijri) {
       const hKey = `${hijri.hMonth}-${hijri.hDay}`;
       if (HIJRI_EVENTS_MAP[hKey]) {
@@ -576,6 +597,8 @@ if (typeof module !== "undefined" && module.exports) {
     setGamingEventsData,
     getGamingEventsForDate,
     formatIranianIslamicDate,
-    LUNAR_MONTH_OFFSETS
+    LUNAR_MONTH_OFFSETS,
+    loadOfficialYearData,
+    OFFICIAL_YEARS_CACHE
   };
 }

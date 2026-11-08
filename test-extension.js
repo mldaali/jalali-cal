@@ -379,6 +379,30 @@ assert(fs.existsSync(syncWorkflow), "Automated GitHub Actions workflow sync-time
 const syncWorkflowContent = fs.readFileSync(syncWorkflow, "utf-8");
 assert(syncWorkflowContent.includes("workflow_dispatch"), "sync workflow supports manual run via workflow_dispatch");
 assert(syncWorkflowContent.includes("cron:"), "sync workflow has automated schedule configured");
+assert(syncWorkflowContent.includes("official-events-*.json"), "sync workflow tracks multi-year official event files");
+
+console.log("\n=== 13. Multi-Year Extensibility & Future Year Architecture ===");
+const eventsManifestPath = path.join(__dirname, "events-manifest.json");
+assert(fs.existsSync(eventsManifestPath), "events-manifest.json exists");
+const manifestJson = JSON.parse(fs.readFileSync(eventsManifestPath, "utf-8"));
+assert(Array.isArray(manifestJson.supportedYears) && manifestJson.supportedYears.includes(1404), "1404 indexed in manifest");
+assert(manifestJson.supportedYears.includes(1405), "1405 indexed in manifest");
+assert(manifestJson.supportedYears.includes(1406), "1406 indexed in manifest");
+
+assert(fs.existsSync(path.join(__dirname, "official-events-1404.json")), "official-events-1404.json exists");
+assert(fs.existsSync(path.join(__dirname, "official-events-1406.json")), "official-events-1406.json exists");
+
+const json1404 = JSON.parse(fs.readFileSync(path.join(__dirname, "official-events-1404.json"), "utf-8"));
+assert(json1404.totalDays === 366, "1404 leap year has 366 days");
+assert(json1404.totalHolidays >= 25, "1404 has official holidays");
+
+const json1406 = JSON.parse(fs.readFileSync(path.join(__dirname, "official-events-1406.json"), "utf-8"));
+assert(json1406.totalDays === 365, "1406 has 365 days");
+assert(json1406.totalHolidays >= 25, "1406 has official holidays");
+
+const { loadOfficialYearData } = require(path.join(__dirname, "events.js"));
+assert(typeof loadOfficialYearData === "function", "loadOfficialYearData is exported from events.js");
+assert(popupJsContent.includes("loadOfficialCalendarData"), "loadOfficialCalendarData dynamic year loader exists in popup.js");
 
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {

@@ -26,13 +26,13 @@ jobs:
 
       - name: Commit and Push If Updated
         run: |
-          if ! git diff --quiet official-events-1405.json events.js; then
+          if [ -n "$(git status --porcelain official-events-*.json events-manifest.json events.js)" ]; then
             git config user.name "github-actions[bot]"
             git config user.email "github-actions[bot]@users.noreply.github.com"
-            git add official-events-1405.json events.js
-            git commit -m "chore(calendar): Automated sync of official events from time.ir [skip ci]"
+            git add official-events-*.json events-manifest.json events.js
+            git commit -m "chore(calendar): Automated multi-year sync of official calendar events [skip ci]"
             git push
             echo "✅ Successfully committed and pushed updated official calendar data."
           else
-            echo "ℹ️ Official calendar data is already fully synchronized with time.ir."
+            echo "ℹ️ Official calendar datasets are already fully synchronized."
           fi
