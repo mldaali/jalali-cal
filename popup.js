@@ -206,7 +206,7 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
     if (relEv && relEv.hijriDateStr) {
       document.getElementById("heroIslamic").textContent = relEv.hijriDateStr;
     } else if (typeof formatIranianIslamicDate === "function") {
-      document.getElementById("heroIslamic").textContent = formatIranianIslamicDate(gDate);
+      document.getElementById("heroIslamic").textContent = formatIranianIslamicDate(gDate, year, month, day);
     } else {
       const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
         day: "numeric",

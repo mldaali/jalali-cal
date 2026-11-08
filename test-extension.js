@@ -333,6 +333,53 @@ assert(cssContent.includes("stroke: currentColor"), "Filter SVG has default visi
 assert(cssContent.includes("button, input, optgroup, select, textarea"), "Button/input typography reset enforces font inheritance");
 assert(cssContent.includes("events-filter-overlay") && cssContent.includes("Vazirmatn"), "Filter overlay explicitly applies Vazirmatn font family");
 
+console.log("\n=== 12. Authoritative Time.ir Synchronization & Official Calendar Alignment ===");
+const officialFile = path.join(__dirname, "official-events-1405.json");
+assert(fs.existsSync(officialFile), "official-events-1405.json exists in extension bundle");
+
+const officialJson = JSON.parse(fs.readFileSync(officialFile, "utf-8"));
+assert(officialJson.year === 1405, "official dataset year is 1405");
+assert(officialJson.totalDays === 365, "official dataset has all 365 days of 1405");
+assert(officialJson.totalHolidays === 26, "official dataset has exactly 26 holiday dates");
+assert(Array.isArray(officialJson.events) && officialJson.events.length >= 230, "official dataset contains complete suite of events (230+ events)");
+
+// Verify 100% agreement on all 26 holiday dates
+let allHolidaysMatch = true;
+const monthDays1405 = [31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+for (let m = 1; m <= 12; m++) {
+  for (let d = 1; d <= monthDays1405[m - 1]; d++) {
+    const key = `${m}-${d}`;
+    const isOfficial = officialJson.days[key].isHoliday;
+    const isEngineHoliday = isOfficialHoliday(1405, m, d);
+    if (isOfficial !== isEngineHoliday) {
+      allHolidaysMatch = false;
+      console.error(`Holiday mismatch on ${key}: official=${isOfficial}, engine=${isEngineHoliday}`);
+    }
+  }
+}
+assert(allHolidaysMatch, "All official holiday dates across entire 1405 year match 100% with time.ir");
+
+// Verify lunar Hijri calculation agreement across all 365 days
+const { getExactHijriFor1405 } = require(path.join(__dirname, "events.js"));
+let allHijriDaysMatch = true;
+for (const [key, dayObj] of Object.entries(officialJson.days)) {
+  const [m, d] = key.split("-").map(Number);
+  const calc = getExactHijriFor1405(m, d);
+  if (calc.day !== dayObj.hijri.day) {
+    allHijriDaysMatch = false;
+    console.error(`Hijri day mismatch on ${key}: calc=${calc.day}, official=${dayObj.hijri.day}`);
+  }
+}
+assert(allHijriDaysMatch, "All 365 days of 1405 lunar Hijri dates match 100% with time.ir (0 mismatches)");
+
+// Verify sync script and workflow
+assert(fs.existsSync(path.join(__dirname, "scripts", "sync-timeir-events.js")), "Autonomous sync-timeir-events.js script exists");
+const syncWorkflow = path.join(__dirname, ".github", "workflows", "sync-timeir-events.yml");
+assert(fs.existsSync(syncWorkflow), "Automated GitHub Actions workflow sync-timeir-events.yml exists");
+const syncWorkflowContent = fs.readFileSync(syncWorkflow, "utf-8");
+assert(syncWorkflowContent.includes("workflow_dispatch"), "sync workflow supports manual run via workflow_dispatch");
+assert(syncWorkflowContent.includes("cron:"), "sync workflow has automated schedule configured");
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");

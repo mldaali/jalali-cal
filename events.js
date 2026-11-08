@@ -267,6 +267,79 @@ function jalaliToGregorianInternal(jy, jm, jd) {
   return new Date(gy, gm - 1, days + 1);
 }
 
+function gregorianToJalaliInternal(gy, gm, gd) {
+  gy = parseInt(gy, 10);
+  gm = parseInt(gm, 10);
+  gd = parseInt(gd, 10);
+  const g_d_m = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let jy = gy <= 1600 ? 0 : 979;
+  gy -= gy <= 1600 ? 621 : 1600;
+  let gy2 = gm > 2 ? gy + 1 : gy;
+  let days = (365 * gy) + Math.floor((gy2 + 3) / 4) - Math.floor((gy2 + 99) / 100) + Math.floor((gy2 + 399) / 400) - 80 + gd;
+  for (let i = 0; i < gm; ++i) days += g_d_m[i];
+  jy += 33 * Math.floor(days / 12053);
+  days %= 12053;
+  jy += 4 * Math.floor(days / 1461);
+  days %= 1461;
+  if (days > 365) {
+    jy += Math.floor((days - 1) / 365);
+    days = (days - 1) % 365;
+  }
+  const salA = [0, 31, 31, 31, 31, 31, 31, 30, 30, 30, 30, 30, 29];
+  let jm = 0;
+  for (jm = 0; jm < 13; jm++) {
+    const v = salA[jm];
+    if (days < v) break;
+    days -= v;
+  }
+  return { jy, jm, jd: days + 1 };
+}
+
+const FARSI_DIGITS = ["۰", "۱", "۲", "۳", "۴", "۵", "۶", "۷", "۸", "۹"];
+function toPersianDigits(n) {
+  return String(n).replace(/\d/g, d => FARSI_DIGITS[Number(d)]);
+}
+
+// Authoritative lunar month starts for 1405 strictly calibrated against Time.ir
+// (Tehran University Geophysics Institute Calendar Center official dates)
+const HIJRI_1405_MONTHS = [
+  { startJDayOfYear: 1, year: 1447, month: 10, name: "شوال" },
+  { startJDayOfYear: 30, year: 1447, month: 11, name: "ذوالقعده" },
+  { startJDayOfYear: 59, year: 1447, month: 12, name: "ذوالحجه" },
+  { startJDayOfYear: 88, year: 1448, month: 1, name: "محرم" },
+  { startJDayOfYear: 118, year: 1448, month: 2, name: "صفر" },
+  { startJDayOfYear: 147, year: 1448, month: 3, name: "ربیع‌الاول" },
+  { startJDayOfYear: 177, year: 1448, month: 4, name: "ربیع‌الثانی" },
+  { startJDayOfYear: 206, year: 1448, month: 5, name: "جمادی‌الاول" },
+  { startJDayOfYear: 236, year: 1448, month: 6, name: "جمادی‌الثانی" },
+  { startJDayOfYear: 266, year: 1448, month: 7, name: "رجب" },
+  { startJDayOfYear: 296, year: 1448, month: 8, name: "شعبان" },
+  { startJDayOfYear: 325, year: 1448, month: 9, name: "رمضان" },
+  { startJDayOfYear: 355, year: 1448, month: 10, name: "شوال" }
+];
+
+function getJalaliDayOfYear(m, d) {
+  if (m <= 6) return (m - 1) * 31 + d;
+  return 186 + (m - 7) * 30 + d;
+}
+
+function getExactHijriFor1405(jm, jd) {
+  const doy = getJalaliDayOfYear(jm, jd);
+  let cur = HIJRI_1405_MONTHS[0];
+  for (let i = 1; i < HIJRI_1405_MONTHS.length; i++) {
+    if (doy >= HIJRI_1405_MONTHS[i].startJDayOfYear) cur = HIJRI_1405_MONTHS[i];
+    else break;
+  }
+  const hDay = doy - cur.startJDayOfYear + 1;
+  return {
+    year: cur.year,
+    month: cur.month,
+    monthName: cur.name,
+    day: hDay,
+    formatted: `${toPersianDigits(hDay)} ${cur.name}`
+  };
+}
+
 const LUNAR_MONTH_OFFSETS = {
   // Iranian crescent sighting offsets relative to Saudi Umm al-Qura
   "1446-9": 0, "1446-10": -1, "1446-11": -1, "1446-12": 0,
@@ -278,8 +351,18 @@ const LUNAR_MONTH_OFFSETS = {
   "1449-7": -1, "1449-8": -1, "1449-9": 0, "1449-10": -1, "1449-11": -1, "1449-12": -1
 };
 
-function formatIranianIslamicDate(gDate) {
+function formatIranianIslamicDate(gDate, jYear = null, jMonth = null, jDay = null) {
   try {
+    if (jYear === 1405 && jMonth && jDay) {
+      return getExactHijriFor1405(jMonth, jDay).formatted;
+    }
+    if (gDate) {
+      const jDate = gregorianToJalaliInternal(gDate.getFullYear(), gDate.getMonth() + 1, gDate.getDate());
+      if (jDate.jy === 1405) {
+        return getExactHijriFor1405(jDate.jm, jDate.jd).formatted;
+      }
+    }
+
     const formatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
       day: "numeric",
       month: "numeric",
@@ -304,8 +387,20 @@ function formatIranianIslamicDate(gDate) {
   }
 }
 
-function getHijriParts(gDate) {
+function getHijriParts(gDate, jYear = null, jMonth = null, jDay = null) {
   try {
+    if (jYear === 1405 && jMonth && jDay) {
+      const h1405 = getExactHijriFor1405(jMonth, jDay);
+      return { hDay: h1405.day, hMonth: h1405.month, hYear: h1405.year, monthName: h1405.monthName };
+    }
+    if (gDate) {
+      const jDate = gregorianToJalaliInternal(gDate.getFullYear(), gDate.getMonth() + 1, gDate.getDate());
+      if (jDate.jy === 1405) {
+        const h1405 = getExactHijriFor1405(jDate.jm, jDate.jd);
+        return { hDay: h1405.day, hMonth: h1405.month, hYear: h1405.year, monthName: h1405.monthName };
+      }
+    }
+
     const formatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
       day: "numeric",
       month: "numeric",
@@ -469,6 +564,10 @@ if (typeof module !== "undefined" && module.exports) {
     LUNAR_HOLIDAYS_1405,
     LUNAR_HOLIDAYS_1406,
     HIJRI_EVENTS_MAP,
+    HIJRI_1405_MONTHS,
+    getExactHijriFor1405,
+    gregorianToJalaliInternal,
+    toPersianDigits,
     isLeapJalaliYear,
     getHijriParts,
     getEventsForDate,

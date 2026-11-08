@@ -1,0 +1,38 @@
+name: Official Time.ir Calendar Events Sync
+
+on:
+  schedule:
+    # Run at 04:00 UTC on the 1st day of every month
+    - cron: '0 4 1 * *'
+  workflow_dispatch: # Enable manual run from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  sync-timeir-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Time.ir Synchronizer
+        run: node scripts/sync-timeir-events.js
+
+      - name: Commit and Push If Updated
+        run: |
+          if ! git diff --quiet official-events-1405.json events.js; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add official-events-1405.json events.js
+            git commit -m "chore(calendar): Automated sync of official events from time.ir [skip ci]"
+            git push
+            echo "✅ Successfully committed and pushed updated official calendar data."
+          else
+            echo "ℹ️ Official calendar data is already fully synchronized with time.ir."
+          fi
