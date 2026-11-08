@@ -173,6 +173,13 @@ assert(popupJsContent.includes("goToToday"), "Shortcut 'T' jump to today is impl
 assert(popupJsContent.includes("loadNotes") && popupJsContent.includes("saveCurrentNote"), "Local notes CRUD operations are implemented");
 assert(popupJsContent.includes("persian_calendar_notes"), "Local notes storage key configured");
 
+console.log("\n\x1b[1m=== 8. Automatic System Theme Adaptation ===\x1b[0m");
+assert(popupJsContent.includes("getSystemTheme"), "System theme detection helper is defined");
+assert(popupJsContent.includes("prefers-color-scheme"), "prefers-color-scheme media query integration is implemented");
+assert(popupJsContent.includes("darkModeMediaQuery.addEventListener") || popupJsContent.includes("darkModeMediaQuery.addListener"), "Live system theme change listener is configured");
+assert(htmlContent.includes('id="themeToggleBtn"'), "Theme toggle button exists in popup.html");
+assert(popupJsContent.includes('"themeMode": "auto"') || popupJsContent.includes('themeMode: "auto"'), "Default theme mode is set to auto");
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");

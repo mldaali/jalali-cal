@@ -99,6 +99,47 @@
 }
 
 /* ==========================================================================
+   Automatic System Theme Adaptation (prefers-color-scheme)
+   Adapts to light scheme when theme is "auto" (or unforced)
+   ========================================================================== */
+@media (prefers-color-scheme: light) {
+  :root[data-theme="auto"],
+  :root:not([data-theme="dark"]):not([data-theme="light"]) {
+    --bg-base: #eff1f5;
+    --bg-mantle: #ffffff;
+    --bg-crust: #dce0e8;
+    --bg-surface0: #ccd0da;
+    --bg-surface1: #bcc0cc;
+    --bg-surface2: #acb0be;
+
+    --text-primary: #4c4f69;
+    --text-muted: #6c6f85;
+    --text-dim: #9ca0b0;
+
+    --accent-mauve: #8839ef;
+    --accent-blue: #1e66f5;
+    --accent-sapphire: #209fb5;
+    --accent-red: #d20f39;
+    --accent-green: #40a02b;
+
+    --card-bg: #ffffff;
+    --card-border: var(--bg-surface0);
+    --card-hover: var(--bg-base);
+
+    --today-bg: rgba(136, 57, 239, 0.14);
+    --today-border: var(--accent-mauve);
+    --today-glow: 0 0 6px rgba(136, 57, 239, 0.25);
+  }
+
+  :root[data-theme="auto"] .note-pill,
+  :root:not([data-theme="dark"]):not([data-theme="light"]) .note-pill {
+    background: rgba(64, 160, 43, 0.12);
+    border-color: rgba(64, 160, 43, 0.35);
+    color: #318a20;
+  }
+}
+
+/* ==========================================================================
    Global Reset & Container (Strict Zero-Scroll 280px)
    ========================================================================== */
 * {

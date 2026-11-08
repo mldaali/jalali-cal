@@ -113,7 +113,8 @@ const AppState = {
   currentViewYear: 1405,
   currentViewMonth: 8,
   selectedDay: null,
-  theme: "dark",
+  themeMode: "auto", // "auto", "light", or "dark"
+  theme: "dark",     // effective theme: "light" or "dark"
   notes: {}, // { "1405-8-16": "یادداشت من" }
   isEditingNote: false
 };
@@ -608,18 +609,63 @@ function goToNextMonth() {
 }
 
 /**
- * Apply Dark or Light Theme
+ * Detect current system color scheme preference
  */
-function applyTheme(theme) {
-  AppState.theme = theme;
-  document.documentElement.setAttribute("data-theme", theme);
+function getSystemTheme() {
+  if (typeof window !== "undefined" && window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
+    return "light";
+  }
+  return "dark";
+}
+
+/**
+ * Resolve effective theme ("light" or "dark") given a mode ("auto", "light", or "dark")
+ */
+function resolveEffectiveTheme(mode) {
+  if (mode === "auto") {
+    return getSystemTheme();
+  }
+  return mode === "light" ? "light" : "dark";
+}
+
+/**
+ * Apply Theme Mode: "auto", "light", or "dark"
+ * Automatically adapts to system theme in real time when set to "auto".
+ */
+function applyTheme(themeMode) {
+  if (themeMode !== "auto" && themeMode !== "light" && themeMode !== "dark") {
+    themeMode = "auto";
+  }
+
+  AppState.themeMode = themeMode;
+  const effectiveTheme = resolveEffectiveTheme(themeMode);
+  AppState.theme = effectiveTheme;
+
+  // Set attribute on html element
+  document.documentElement.setAttribute("data-theme", themeMode);
+
   const themeIcon = document.getElementById("themeIcon");
   const themeBtn = document.getElementById("themeToggleBtn");
+
   if (themeIcon) {
-    themeIcon.textContent = theme === "light" ? "🌙" : "☀️";
+    if (themeMode === "auto") {
+      themeIcon.textContent = "🌓";
+    } else if (themeMode === "light") {
+      themeIcon.textContent = "☀️";
+    } else {
+      themeIcon.textContent = "🌙";
+    }
   }
+
   if (themeBtn) {
-    themeBtn.title = theme === "light" ? "تغییر به پوسته تیره" : "تغییر به پوسته روشن";
+    if (themeMode === "auto") {
+      const modeFa = effectiveTheme === "light" ? "روشن" : "تیره";
+      themeBtn.title = `پوسته: خودکار بر اساس سیستم (${modeFa}) • کلیک برای تغییر`;
+    } else if (themeMode === "light") {
+      themeBtn.title = "پوسته: روشن • کلیک برای تغییر به تیره";
+    } else {
+      themeBtn.title = "پوسته: تیره • کلیک برای تغییر به خودکار بر اساس سیستم";
+    }
   }
 }
 
@@ -680,6 +726,11 @@ function setupKeyboardNavigation() {
           showCopyToast("تاریخ خورشیدی کپی شد!");
         });
       }
+    } else if (e.key === "d" || e.key === "D" || e.key === "ی") {
+      // Toggle theme mode (Auto -> Light -> Dark -> Auto)
+      e.preventDefault();
+      const themeBtn = document.getElementById("themeToggleBtn");
+      if (themeBtn) themeBtn.click();
     }
   });
 }
@@ -805,31 +856,70 @@ function setupEventHandlers() {
   if (themeToggleBtn) {
     themeToggleBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
-      const nextTheme = AppState.theme === "light" ? "dark" : "light";
-      applyTheme(nextTheme);
+      let nextMode;
+      if (AppState.themeMode === "auto") {
+        nextMode = AppState.theme === "light" ? "dark" : "light";
+      } else if (AppState.themeMode === "light") {
+        nextMode = "dark";
+      } else {
+        nextMode = "auto";
+      }
+
+      applyTheme(nextMode);
+
       try {
         if (browserAPI.storage && browserAPI.storage.local) {
-          await browserAPI.storage.local.set({ theme: nextTheme });
+          await browserAPI.storage.local.set({ theme: nextMode });
         }
       } catch (err) {
         console.warn("Theme storage error:", err);
       }
     });
+
+    // Right-click shortcut to quickly restore Auto (System Theme)
+    themeToggleBtn.addEventListener("contextmenu", async (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      applyTheme("auto");
+      try {
+        if (browserAPI.storage && browserAPI.storage.local) {
+          await browserAPI.storage.local.set({ theme: "auto" });
+        }
+      } catch (err) {
+        console.warn("Theme storage error:", err);
+      }
+      showCopyToast("پوسته خودکار فعال شد");
+    });
   }
 
-  // Load persisted theme
+  // 7. Live System Theme Listener (tracks OS/browser theme changes in real-time)
+  if (typeof window !== "undefined" && window.matchMedia) {
+    const darkModeMediaQuery = window.matchMedia("(prefers-color-scheme: dark)");
+    const handleSystemThemeChange = () => {
+      if (AppState.themeMode === "auto") {
+        applyTheme("auto");
+      }
+    };
+    if (darkModeMediaQuery.addEventListener) {
+      darkModeMediaQuery.addEventListener("change", handleSystemThemeChange);
+    } else if (darkModeMediaQuery.addListener) {
+      darkModeMediaQuery.addListener(handleSystemThemeChange);
+    }
+  }
+
+  // 8. Load persisted theme from storage (defaults to "auto" system preference)
   if (browserAPI.storage && browserAPI.storage.local) {
     browserAPI.storage.local.get("theme").then(res => {
-      if (res && (res.theme === "light" || res.theme === "dark")) {
+      if (res && (res.theme === "auto" || res.theme === "light" || res.theme === "dark")) {
         applyTheme(res.theme);
-      } else if (window.matchMedia && window.matchMedia("(prefers-color-scheme: light)").matches) {
-        applyTheme("light");
       } else {
-        applyTheme("dark");
+        applyTheme("auto");
       }
     }).catch(() => {
-      applyTheme("dark");
+      applyTheme("auto");
     });
+  } else {
+    applyTheme("auto");
   }
 }
 
