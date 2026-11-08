@@ -236,9 +236,9 @@ assert(typeof getGamingEventsForDate === "function", "getGamingEventsForDate is 
 setGamingEventsData(gamingData.events);
 
 // Test GTA 6 release date match
-const gtaDate = new Date(2026, 10, 17); // Nov 17, 2026
+const gtaDate = new Date(2026, 10, 19); // Nov 19, 2026
 const gtaMatches = getGamingEventsForDate(gtaDate);
-assert(gtaMatches.some(e => e.title.includes("Grand Theft Auto VI")), "GTA 6 release date correctly matched on 2026-11-17");
+assert(gtaMatches.some(e => e.title.includes("Grand Theft Auto VI")), "GTA 6 release date correctly matched on 2026-11-19");
 
 // Test The Game Awards annual event match
 const tgaDate = new Date(2026, 11, 10); // Dec 10
