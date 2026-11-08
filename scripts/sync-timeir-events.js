@@ -32,6 +32,7 @@ const USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36
  */
 const EVENT_DESCRIPTIONS = {
   // بهار - فروردین
+  "روز جهانی نوروز": "روز جهانی نوروز، ثبت‌شده در مجمع عمومی سازمان ملل متحد (یونسکو) به عنوان نماد جهانی صلح، دوستی و همبستگی اقوام و ملل.",
   "نوروز": "آغاز سال نو خورشیدی و جشن باستانی اعتدال بهاری، کهن‌ترین سنت و نماد پیوند ملی ایرانیان.",
   "سیزده": "روز طبیعت و پایان جشن‌های نوروز با حضور در دامان طبیعت و پاسداشت سبزه و آب‌های روان.",
   "جمهوری اسلامی": "سالروز اعلام رسمی نتایج همه‌پرسی تغییر نظام سیاسی کشور در سال ۱۳۵۸.",
@@ -316,6 +317,29 @@ function resolveDescription(e) {
   return "";
 }
 
+const ANCIENT_KEYWORDS = [
+  "نوروز", "سیزده", "یلدا", "چله", "تیرگان", "مهرگان", "سده", "اسفند", "سپندارمذ",
+  "بهمنگان", "آبانگاه", "آبانگان", "آذرگان", "شهریورگان", "امردادگان", "اَمردادگان",
+  "خردادگان", "فروردینگان", "سروشگان", "بهاربد", "آب‌پاشونک", "آب پاشونک", "خرم‌روز",
+  "خرم روز", "دیگان", "زرتشت", "میتراکانا", "کوروش", "میانه بهار", "میانه پاییز", "میانه زمستان"
+];
+
+function resolveCategory(base, title) {
+  if (base === 2) return "religious";
+  if (base === 1) return "international";
+  if (title) {
+    if (title.includes("روز جهانی نوروز") || title.includes("بین‌المللی") || title.includes("جهانی")) {
+      return "international";
+    }
+    for (const kw of ANCIENT_KEYWORDS) {
+      if (title.includes(kw)) {
+        return "ancient";
+      }
+    }
+  }
+  return "national";
+}
+
 /**
  * Fetch HTML for a given year from time.ir with fallback
  */
@@ -484,7 +508,7 @@ function processYearlyCalendar(yearlyCalendar, targetYear = 1405) {
           title: e.title,
           description: resolveDescription(e),
           base: e.base,
-          category: e.base === 0 ? "solar" : e.base === 2 ? "religious" : "international",
+          category: resolveCategory(e.base, e.title),
           isHoliday: e.is_holiday,
           dateString: e.date_string,
           hijriYear: e.hijri_year,
@@ -512,7 +536,7 @@ function processYearlyCalendar(yearlyCalendar, targetYear = 1405) {
           jalaliDate: dayKey,
           title: e.title,
           description: resolveDescription(e),
-          category: e.base === 0 ? "solar" : e.base === 2 ? "religious" : "international",
+          category: resolveCategory(e.base, e.title),
           isHoliday: e.is_holiday,
           dateString: e.date_string
         });
