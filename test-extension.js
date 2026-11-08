@@ -404,39 +404,39 @@ const { loadOfficialYearData } = require(path.join(__dirname, "events.js"));
 assert(typeof loadOfficialYearData === "function", "loadOfficialYearData is exported from events.js");
 assert(popupJsContent.includes("loadOfficialCalendarData"), "loadOfficialCalendarData dynamic year loader exists in popup.js");
 
-console.log("\n=== 14. Event Descriptions & Rich Metadata Synchronization ===");
-assert(cssContent.includes(".event-row-desc"), "popup.css defines styling for .event-row-desc");
-assert(popupJsContent.includes("event-row-desc"), "popup.js creates event-row-desc element in Month Events HUD");
+console.log("\n=== 14. Minimalist Event Design & Clean Categorization ===");
+assert(!cssContent.includes(".event-row-desc"), "popup.css keeps events clean and minimal without .event-row-desc bloat");
+assert(!popupJsContent.includes("event-row-desc"), "popup.js keeps Month Events HUD clean and minimal without descriptive bloat");
 
-// Validate 100% event description coverage across multi-year official datasets
+// Validate clean categorization (zero raw 'solar' tags) across multi-year official datasets
 [1404, 1405, 1406].forEach(yr => {
   const yrData = JSON.parse(fs.readFileSync(path.join(__dirname, `official-events-${yr}.json`), "utf-8"));
   let yrEventsCount = 0;
-  let yrWithDescCount = 0;
   for (const day of Object.values(yrData.days)) {
     for (const ev of day.events) {
       yrEventsCount++;
-      if (ev.description && typeof ev.description === "string" && ev.description.trim().length > 0) {
-        yrWithDescCount++;
-      }
+      assert(ev.category !== "solar", `Event "${ev.title}" in ${yr} is properly categorized, not 'solar'`);
+      assert(["ancient", "religious", "national", "international"].includes(ev.category), `Event "${ev.title}" has valid category: ${ev.category}`);
     }
   }
   assert(yrEventsCount > 0, `Year ${yr} has official events (${yrEventsCount} total)`);
-  assert(yrWithDescCount === yrEventsCount, `Year ${yr} has 100% description coverage (${yrWithDescCount}/${yrEventsCount})`);
 });
 
-// Test that runtime getEventsForDate populates description with loaded official data
+// Test that runtime getEventsForDate with loaded official data has ZERO duplicate 13 Rajab
 const json1405 = JSON.parse(fs.readFileSync(path.join(__dirname, "official-events-1405.json"), "utf-8"));
 loadOfficialYearData(1405, json1405);
 
-const nowruzEvs = getEventsForDate(1405, 1, 1);
-assert(nowruzEvs.some(e => e.description && e.description.includes("آغاز سال نو")), "Nowruz 1405/1/1 returns rich description");
-
-const yaldaEvs = getEventsForDate(1405, 9, 30);
-assert(yaldaEvs.some(e => e.description && e.description.includes("یلدا")), "Yalda 1405/9/30 returns rich description");
-
 const rajabEvs = getEventsForDate(1405, 10, 2);
-assert(rajabEvs.some(e => e.description && e.description.includes("امیرالمؤمنین")), "13 Rajab 1405/10/2 returns rich description");
+assert(rajabEvs.length === 1, "13 Rajab 1405/10/2 has exactly ONE event (zero duplication)");
+assert(rajabEvs[0].title.includes("ولادت") && rajabEvs[0].title.includes("پدر"), "13 Rajab event title correctly resolved");
+assert(rajabEvs[0].isHoliday === true, "13 Rajab is an official holiday");
+assert(rajabEvs[0].category === "religious", "13 Rajab is categorized as religious");
+
+const nowruzDayEvs = getEventsForDate(1405, 1, 1);
+assert(nowruzDayEvs.length === 3, "1405/1/1 has 3 distinct events");
+assert(nowruzDayEvs.some(e => e.title.includes("جشن سال نو") && e.category === "ancient"), "Nowruz is categorized as ancient");
+assert(nowruzDayEvs.some(e => e.title.includes("عید سعید فطر") && e.category === "religious"), "Eid al-Fitr is categorized as religious");
+assert(nowruzDayEvs.some(e => e.title.includes("روز جهانی نوروز") && e.category === "international"), "World Nowruz Day is categorized as international");
 
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
