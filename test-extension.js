@@ -26,7 +26,7 @@ const manifestPath = path.join(__dirname, "manifest.json");
 assert(fs.existsSync(manifestPath), "manifest.json exists");
 const manifest = JSON.parse(fs.readFileSync(manifestPath, "utf-8"));
 assert(manifest.manifest_version === 3, "manifest_version is 3");
-assert(manifest.version === "1.1.0", "Version updated to 1.1.0");
+assert(manifest.version === "1.2.0", "Version updated to 1.2.0");
 assert(!!manifest.browser_specific_settings?.gecko?.id, "Gecko extension ID is configured");
 assert(manifest.permissions.includes("storage"), "Permission 'storage' is included");
 assert(manifest.permissions.includes("alarms"), "Permission 'alarms' is included");

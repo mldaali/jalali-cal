@@ -58,7 +58,7 @@
 👉 **[نصب تقویم فارسی از Mozilla Add-ons](https://addons.mozilla.org/en-US/firefox/addon/persian-calendar-%D8%AA%D9%82%D9%88%DB%8C%D9%85-%D8%AE%D9%88%D8%B1%D8%B4%DB%8C%D8%AF%DB%8C/)**
 
 ### ۲. نصب دستی بسته رسمی (XPI File)
-فایل آماده `persian-calendar-v1.1.0.xpi` را از [بخش Release گیت‌هاب](https://github.com/mldaali/jalali-cal/releases) دانلود کرده و مستقیماً داخل پنجره فایرفاکس بکشید و رها کنید (Drag & Drop).
+فایل آماده `persian-calendar-v1.2.0.xpi` را از [بخش Release گیت‌هاب](https://github.com/mldaali/jalali-cal/releases) دانلود کرده و مستقیماً داخل پنجره فایرفاکس بکشید و رها کنید (Drag & Drop).
 
 ### ۳. نصب نسخه توسعه (Developer Mode)
 1. در فایرفاکس به آدرس `about:debugging#/runtime/this-firefox` بروید.
