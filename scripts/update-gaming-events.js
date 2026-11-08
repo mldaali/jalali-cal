@@ -51,8 +51,8 @@ async function main() {
     try {
       const now = new Date();
       const currentYear = now.getFullYear();
-      const nextYear = currentYear + 1;
-      const url = `https://api.rawg.io/api/games?key=${apiKey}&dates=${currentYear}-01-01,${nextYear}-12-31&ordering=-added&page_size=25`;
+      const futureYear = currentYear + 2;
+      const url = `https://api.rawg.io/api/games?key=${apiKey}&dates=${currentYear}-01-01,${futureYear}-12-31&ordering=-added&page_size=40`;
       const res = await fetchJson(url);
 
       if (res && res.results) {

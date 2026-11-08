@@ -240,6 +240,11 @@ const gtaDate = new Date(2026, 10, 19); // Nov 19, 2026
 const gtaMatches = getGamingEventsForDate(gtaDate);
 assert(gtaMatches.some(e => e.title.includes("Grand Theft Auto VI")), "GTA 6 release date correctly matched on 2026-11-19");
 
+// Test God of War: Laufey release date match
+const gowDate = new Date(2027, 4, 20); // May 20, 2027
+const gowMatches = getGamingEventsForDate(gowDate);
+assert(gowMatches.some(e => e.title.includes("God of War: Laufey")), "God of War: Laufey release date correctly matched on 2027-05-20");
+
 // Test The Game Awards annual event match
 const tgaDate = new Date(2026, 11, 10); // Dec 10
 const tgaMatches = getGamingEventsForDate(tgaDate);
