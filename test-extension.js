@@ -191,6 +191,12 @@ assert(popupJsContent.includes("isHoldingEventsKey"), "isHoldingEventsKey tracki
 assert(popupJsContent.includes("keyup"), "Keyup listener configured for release-to-hide");
 assert(popupJsContent.includes("blur"), "Window blur safety net listener configured");
 
+const showOverlayFn = popupJsContent.slice(
+  popupJsContent.indexOf("function showMonthEventsOverlay"),
+  popupJsContent.indexOf("function hideMonthEventsOverlay")
+);
+assert(!showOverlayFn.includes("تعطیل هفتگی"), "Regular Fridays without events are excluded from month events list");
+
 // Test getMonthSummaryEvents algorithm logic
 const testMonthEvents = [];
 for (let d = 1; d <= 31; d++) {
@@ -202,6 +208,15 @@ for (let d = 1; d <= 31; d++) {
 }
 assert(testMonthEvents.length > 0, `Month summary events correctly collects Farvardin holidays/events (${testMonthEvents.length} days with events found)`);
 console.log(`  Found ${testMonthEvents.length} event days in 1404 Farvardin (Nowruz holidays verified)`);
+
+// Test that Fridays without events are excluded while Fridays with events are kept
+const dt15 = new Date(2026, 9, 23 + 15 - 1);
+const evs15 = getEventsForDate(1405, 8, 15, dt15);
+assert(evs15.length === 0, "1405/8/15 Friday has no events and will be excluded");
+
+const dt22 = new Date(2026, 9, 23 + 22 - 1);
+const evs22 = getEventsForDate(1405, 8, 22, dt22);
+assert(evs22.length > 0, "1405/8/22 Friday has official event (Shahadat Hazrat Zahra) and will be included");
 
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {

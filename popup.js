@@ -688,7 +688,8 @@ function getMonthSummaryEvents(year, month) {
     const noteKey = getDateKey(year, month, d);
     const userNote = AppState.notes ? AppState.notes[noteKey] : null;
 
-    if (evs.length > 0 || isFriday || (userNote && userNote.trim())) {
+    // Only list days that have actual occasions/events or personal notes (Fridays without events are not listed)
+    if (evs.length > 0 || (userNote && userNote.trim())) {
       list.push({
         day: d,
         weekday: PERSIAN_WEEKDAYS[weekdayIndex],
@@ -758,11 +759,6 @@ function showMonthEventsOverlay() {
           t.textContent = ev.isHoliday ? `${ev.title} (تعطیل)` : ev.title;
           content.appendChild(t);
         });
-      } else if (item.isFriday) {
-        const t = document.createElement("div");
-        t.className = "event-row-title is-holiday";
-        t.textContent = "جمعه (تعطیل هفتگی)";
-        content.appendChild(t);
       }
 
       if (item.note) {
