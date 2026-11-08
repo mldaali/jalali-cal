@@ -10,12 +10,18 @@
   <div class="app-dashboard">
     <!-- Main Hero Date Card with Embedded Minimalist Corner Actions -->
     <section class="hero-date-card" id="heroCard">
-      <!-- Right Corner Actions: Theme Toggle & Gaming Events Toggle -->
+      <!-- Right Corner Actions: Theme Toggle & Events Filter -->
       <div class="corner-actions corner-right">
         <button class="corner-icon-btn" id="themeToggleBtn" title="پوسته: خودکار بر اساس سیستم" aria-label="تغییر پوسته">
           <span id="themeIcon">🌓</span>
         </button>
-        <button class="corner-icon-btn" id="gamingToggleBtn" title="رویدادهای گیمینگ: غیرفعال (کلیک برای فعال‌سازی)" aria-label="رویدادهای گیمینگ">
+        <button class="corner-icon-btn" id="eventsFilterBtn" title="فیلتر دسته‌بندی مناسبت‌ها (باستانی، مذهبی، ملی، جهانی، گیمینگ)" aria-label="فیلتر مناسبت‌ها">
+          <svg class="filter-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/>
+          </svg>
+        </button>
+        <!-- Retained for backwards compatibility -->
+        <button class="corner-icon-btn hidden" id="gamingToggleBtn" title="رویدادهای گیمینگ" aria-label="رویدادهای گیمینگ">
           <span id="gamingIcon" class="gaming-icon-muted">🎮</span>
         </button>
       </div>
@@ -131,10 +137,72 @@
             <span class="events-header-icon">📅</span>
             <span class="events-header-title" id="eventsOverlayTitle">رویدادهای ماه</span>
           </div>
-          <span class="events-overlay-hint">رها کردن E: بستن</span>
-          <button class="events-overlay-close-btn" id="closeEventsOverlayBtn" title="بستن (Escape)" aria-label="بستن">✕</button>
+          <div class="events-header-actions">
+            <button class="events-hud-filter-btn" id="hudFilterBtn" title="تنظیم دسته‌بندی مناسبت‌ها">🏷️ فیلتر</button>
+            <span class="events-overlay-hint">رها کردن E: بستن</span>
+            <button class="events-overlay-close-btn" id="closeEventsOverlayBtn" title="بستن (Escape)" aria-label="بستن">✕</button>
+          </div>
         </div>
         <div class="events-overlay-list" id="eventsOverlayList"></div>
+      </div>
+    </div>
+
+    <!-- Event Categories Filter Modal -->
+    <div class="events-filter-overlay hidden" id="eventsFilterOverlay" aria-hidden="true">
+      <div class="filter-overlay-card">
+        <div class="filter-overlay-header">
+          <div class="filter-header-title-group">
+            <span class="filter-header-icon">🏷️</span>
+            <span class="filter-header-title">فیلتر دسته‌بندی مناسبت‌ها</span>
+          </div>
+          <button class="filter-overlay-close-btn" id="closeFilterOverlayBtn" title="بستن (Escape)" aria-label="بستن">✕</button>
+        </div>
+        <div class="filter-options-list">
+          <label class="filter-option-item" for="filterAncient">
+            <input type="checkbox" id="filterAncient" class="filter-checkbox" checked>
+            <span class="filter-option-badge">🏛️</span>
+            <div class="filter-option-text">
+              <span class="filter-option-name">مناسبت‌های باستانی و کهن ایران</span>
+              <span class="filter-option-desc">نوروز، یلدا، سده، مهرگان، روز کوروش و فردوسی</span>
+            </div>
+          </label>
+          <label class="filter-option-item" for="filterReligious">
+            <input type="checkbox" id="filterReligious" class="filter-checkbox" checked>
+            <span class="filter-option-badge">🌙</span>
+            <div class="filter-option-text">
+              <span class="filter-option-name">مناسبت‌های مذهبی و اسلامی</span>
+              <span class="filter-option-desc">اعیاد فطر و قربان، غدیر، ولادت‌ها و سوگواری‌ها</span>
+            </div>
+          </label>
+          <label class="filter-option-item" for="filterNational">
+            <input type="checkbox" id="filterNational" class="filter-checkbox" checked>
+            <span class="filter-option-badge">🇮🇷</span>
+            <div class="filter-option-text">
+              <span class="filter-option-name">مناسبت‌های ملی و تاریخی ایران</span>
+              <span class="filter-option-desc">ملی شدن نفت، ۲۲ بهمن، روز ارتش، خلیج فارس</span>
+            </div>
+          </label>
+          <label class="filter-option-item" for="filterInternational">
+            <input type="checkbox" id="filterInternational" class="filter-checkbox" checked>
+            <span class="filter-option-badge">🌍</span>
+            <div class="filter-option-text">
+              <span class="filter-option-name">مناسبت‌های جهانی و بین‌المللی</span>
+              <span class="filter-option-desc">روز جهانی کتاب، کارگر، بهداشت، زمین و...</span>
+            </div>
+          </label>
+          <label class="filter-option-item" for="filterGaming">
+            <input type="checkbox" id="filterGaming" class="filter-checkbox">
+            <span class="filter-option-badge">🎮</span>
+            <div class="filter-option-text">
+              <span class="filter-option-name">رویدادها و انتشار بازی‌های ویدئویی</span>
+              <span class="filter-option-desc">The Game Awards، عرضه بازی‌ها و شاهکارهای آینده</span>
+            </div>
+          </label>
+        </div>
+        <div class="filter-overlay-footer">
+          <button id="selectAllFiltersBtn" class="filter-action-btn">انتخاب همه</button>
+          <button id="resetFiltersBtn" class="filter-action-btn secondary">پیش‌فرض</button>
+        </div>
       </div>
     </div>
   </div>

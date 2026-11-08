@@ -262,6 +262,40 @@ assert(bgContent.includes("dailyGamingSyncAlarm"), "dailyGamingSyncAlarm is regi
 assert(fs.existsSync(path.join(__dirname, "scripts", "update-gaming-events.js")), "Autonomous GitHub action script exists");
 assert(fs.existsSync(path.join(__dirname, ".github", "workflows", "update-gaming-events.yml")), "Automated GitHub Actions workflow exists");
 
+console.log("\n\x1b[1m=== 11. Event Categories Filter & Personalization ===\x1b[0m");
+assert(htmlContent.includes('id="eventsFilterBtn"'), "Events filter button exists in popup.html");
+assert(htmlContent.includes('id="eventsFilterOverlay"'), "Events filter overlay modal markup exists in popup.html");
+assert(htmlContent.includes('id="filterAncient"'), "Ancient Iranian events checkbox exists");
+assert(htmlContent.includes('id="filterReligious"'), "Religious events checkbox exists");
+assert(htmlContent.includes('id="filterNational"'), "National events checkbox exists");
+assert(htmlContent.includes('id="filterInternational"'), "International events checkbox exists");
+assert(htmlContent.includes('id="filterGaming"'), "Gaming events checkbox exists");
+assert(htmlContent.includes('id="selectAllFiltersBtn"'), "Select all filters button exists");
+assert(htmlContent.includes('id="resetFiltersBtn"'), "Reset filters button exists");
+assert(htmlContent.includes('id="hudFilterBtn"'), "HUD Month events quick filter trigger exists");
+
+assert(popupJsContent.includes("loadEventCategories"), "loadEventCategories function exists in popup.js");
+assert(popupJsContent.includes("openFilterOverlay"), "openFilterOverlay function exists in popup.js");
+assert(popupJsContent.includes("closeFilterOverlay"), "closeFilterOverlay function exists in popup.js");
+assert(popupJsContent.includes("onFilterOptionChanged"), "onFilterOptionChanged handler exists in popup.js");
+
+const nowruzAll = getEventsForDate(1405, 1, 1);
+assert(nowruzAll.length >= 2, "1405/1/1 has both Nowruz and Eid al-Fitr");
+
+const nowruzAncientOnly = getEventsForDate(1405, 1, 1, null, { ancient: true, religious: false });
+assert(nowruzAncientOnly.some(e => e.title.includes("نوروز")), "Ancient filter includes Nowruz");
+assert(!nowruzAncientOnly.some(e => e.title.includes("فطر")), "Ancient filter excludes religious Eid al-Fitr");
+
+const nowruzReligiousOnly = getEventsForDate(1405, 1, 1, null, { ancient: false, religious: true });
+assert(!nowruzReligiousOnly.some(e => e.title.includes("نوروز")), "Religious filter excludes Nowruz");
+assert(nowruzReligiousOnly.some(e => e.title.includes("فطر")), "Religious filter includes Eid al-Fitr");
+
+const cyrusDayFiltered = getEventsForDate(1405, 8, 7, null, { ancient: false });
+assert(!cyrusDayFiltered.some(e => e.title.includes("کوروش")), "Disabling ancient excludes Cyrus Day");
+
+const cyrusDayIncluded = getEventsForDate(1405, 8, 7, null, { ancient: true });
+assert(cyrusDayIncluded.some(e => e.title.includes("کوروش")), "Enabling ancient includes Cyrus Day");
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");

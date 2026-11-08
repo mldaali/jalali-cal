@@ -117,7 +117,14 @@ const AppState = {
   theme: "dark",     // effective theme: "light" or "dark"
   notes: {}, // { "1405-8-16": "یادداشت من" }
   isEditingNote: false,
-  enableGamingEvents: false
+  enableGamingEvents: false,
+  eventCategories: {
+    ancient: true,
+    religious: true,
+    national: true,
+    international: true,
+    gaming: false
+  }
 };
 
 function getDateKey(y, m, d) {
@@ -216,11 +223,11 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
  * - Rendered in Red for holidays, Blue/Violet for events.
  */
 function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
-  const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate) : [];
+  const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate, AppState.eventCategories) : [];
   const isFriday = weekdayIndex === 6;
   const officialHolidays = events.filter(e => e.isHoliday);
   const gamingEvents = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function" && gDate)
-    ? getGamingEventsForDate(gDate)
+    ? getGamingEventsForDate(gDate, AppState.eventCategories)
     : [];
 
   const container = document.getElementById("occasionContainer");
@@ -361,6 +368,156 @@ function updateGamingToggleUI() {
   } else {
     icon.className = "gaming-icon-muted";
     btn.title = "رویدادهای گیمینگ: غیرفعال (کلیک برای فعال‌سازی)";
+  }
+}
+
+/**
+ * Event Categories Filter Management
+ */
+async function loadEventCategories() {
+  const defaultCategories = {
+    ancient: true,
+    religious: true,
+    national: true,
+    international: true,
+    gaming: false
+  };
+
+  try {
+    if (browserAPI.storage && browserAPI.storage.local) {
+      const res = await browserAPI.storage.local.get(["eventCategories", "enableGamingEvents"]);
+      if (res && res.eventCategories && typeof res.eventCategories === "object") {
+        AppState.eventCategories = { ...defaultCategories, ...res.eventCategories };
+      } else {
+        AppState.eventCategories = { ...defaultCategories };
+        if (res && typeof res.enableGamingEvents === "boolean") {
+          AppState.eventCategories.gaming = res.enableGamingEvents;
+        }
+      }
+    } else if (typeof localStorage !== "undefined") {
+      const raw = localStorage.getItem("eventCategories");
+      if (raw) {
+        AppState.eventCategories = { ...defaultCategories, ...JSON.parse(raw) };
+      } else {
+        AppState.eventCategories = { ...defaultCategories };
+      }
+    }
+  } catch (err) {
+    console.warn("Could not load event categories:", err);
+    AppState.eventCategories = { ...defaultCategories };
+  }
+
+  AppState.enableGamingEvents = Boolean(AppState.eventCategories.gaming);
+  updateFilterCheckboxUI();
+  updateGamingToggleUI();
+}
+
+function updateFilterCheckboxUI() {
+  const map = {
+    ancient: "filterAncient",
+    religious: "filterReligious",
+    national: "filterNational",
+    international: "filterInternational",
+    gaming: "filterGaming"
+  };
+
+  for (const [cat, id] of Object.entries(map)) {
+    const el = document.getElementById(id);
+    if (el) {
+      el.checked = AppState.eventCategories[cat] !== false;
+    }
+  }
+}
+
+async function saveEventCategories() {
+  try {
+    AppState.enableGamingEvents = Boolean(AppState.eventCategories.gaming);
+    if (browserAPI.storage && browserAPI.storage.local) {
+      await browserAPI.storage.local.set({
+        eventCategories: AppState.eventCategories,
+        enableGamingEvents: AppState.enableGamingEvents
+      });
+    } else if (typeof localStorage !== "undefined") {
+      localStorage.setItem("eventCategories", JSON.stringify(AppState.eventCategories));
+      localStorage.setItem("enableGamingEvents", String(AppState.enableGamingEvents));
+    }
+  } catch (err) {
+    console.warn("Could not save event categories:", err);
+  }
+  updateGamingToggleUI();
+}
+
+function openFilterOverlay() {
+  const overlay = document.getElementById("eventsFilterOverlay");
+  if (overlay) {
+    updateFilterCheckboxUI();
+    overlay.classList.remove("hidden");
+    overlay.setAttribute("aria-hidden", "false");
+  }
+}
+
+function closeFilterOverlay() {
+  const overlay = document.getElementById("eventsFilterOverlay");
+  if (overlay) {
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+}
+
+async function onFilterOptionChanged(category, isChecked) {
+  AppState.eventCategories[category] = isChecked;
+  if (category === "gaming") {
+    AppState.enableGamingEvents = isChecked;
+  }
+  await saveEventCategories();
+  renderCalendar();
+  const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay, (dt.getDay() + 1) % 7, dt);
+
+  const monthOverlay = document.getElementById("monthEventsOverlay");
+  if (monthOverlay && !monthOverlay.classList.contains("hidden")) {
+    showMonthEventsOverlay();
+  }
+}
+
+async function selectAllFilterCategories() {
+  for (const k of Object.keys(AppState.eventCategories)) {
+    AppState.eventCategories[k] = true;
+  }
+  AppState.enableGamingEvents = true;
+  updateFilterCheckboxUI();
+  await saveEventCategories();
+  showCopyToast("همه دسته‌ها فعال شدند");
+  renderCalendar();
+  const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay, (dt.getDay() + 1) % 7, dt);
+  const monthOverlay = document.getElementById("monthEventsOverlay");
+  if (monthOverlay && !monthOverlay.classList.contains("hidden")) {
+    showMonthEventsOverlay();
+  }
+}
+
+async function resetFilterCategories() {
+  AppState.eventCategories = {
+    ancient: true,
+    religious: true,
+    national: true,
+    international: true,
+    gaming: false
+  };
+  AppState.enableGamingEvents = false;
+  updateFilterCheckboxUI();
+  await saveEventCategories();
+  showCopyToast("تنظیمات فیلتر به حالت پیش‌فرض بازگشت");
+  renderCalendar();
+  const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+  const dt = new Date(g.gy, g.gm - 1, g.gd);
+  displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay, (dt.getDay() + 1) % 7, dt);
+  const monthOverlay = document.getElementById("monthEventsOverlay");
+  if (monthOverlay && !monthOverlay.classList.contains("hidden")) {
+    showMonthEventsOverlay();
   }
 }
 
@@ -522,7 +679,7 @@ function renderCalendar() {
     const dayOfWeek = (cellGDate.getDay() + 1) % 7;
 
     const isFriday = dayOfWeek === 6;
-    const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, cellGDate) : [];
+    const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, cellGDate, AppState.eventCategories) : [];
     const isHoliday = events.some(e => e.isHoliday);
 
     if (isFriday) cell.classList.add("friday");
@@ -541,7 +698,7 @@ function renderCalendar() {
     const key = getDateKey(year, month, d);
     const hasNote = Boolean(AppState.notes[key]);
     const gamingEvs = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function")
-      ? getGamingEventsForDate(cellGDate)
+      ? getGamingEventsForDate(cellGDate, AppState.eventCategories)
       : [];
 
     // Indicators
@@ -552,7 +709,8 @@ function renderCalendar() {
       cell.appendChild(noteDot);
     } else if (events.length > 0 || isHoliday) {
       const dot = document.createElement("span");
-      dot.className = `cell-dot ${isHoliday ? "holiday-dot" : ""}`;
+      const primaryCat = events[0]?.category || "national";
+      dot.className = `cell-dot ${isHoliday ? "holiday-dot" : `${primaryCat}-dot`}`;
       cell.appendChild(dot);
     } else if (gamingEvs.length > 0) {
       const gamingDot = document.createElement("span");
@@ -774,11 +932,11 @@ function getMonthSummaryEvents(year, month) {
     const dt = new Date(g.gy, g.gm - 1, g.gd);
     const weekdayIndex = (dt.getDay() + 1) % 7;
     const isFriday = weekdayIndex === 6;
-    const evs = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, dt) : [];
+    const evs = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, dt, AppState.eventCategories) : [];
     const noteKey = getDateKey(year, month, d);
     const userNote = AppState.notes ? AppState.notes[noteKey] : null;
     const gamingEvs = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function")
-      ? getGamingEventsForDate(dt)
+      ? getGamingEventsForDate(dt, AppState.eventCategories)
       : [];
 
     // Only list days that have actual occasions/events, personal notes, or gaming events (when enabled)
@@ -851,7 +1009,27 @@ function showMonthEventsOverlay() {
         item.events.forEach(ev => {
           const t = document.createElement("div");
           t.className = `event-row-title ${ev.isHoliday ? "is-holiday" : ""}`;
-          t.textContent = ev.isHoliday ? `${ev.title} (تعطیل)` : ev.title;
+
+          const cat = ev.category || "national";
+          const catLabels = {
+            ancient: "🏛️ باستانی",
+            religious: "🌙 مذهبی",
+            national: "🇮🇷 ملی",
+            international: "🌍 جهانی"
+          };
+          const badgeSpan = document.createElement("span");
+          badgeSpan.className = `event-row-badge is-${cat}`;
+          badgeSpan.textContent = catLabels[cat] || cat;
+          badgeSpan.style.marginRight = "4px";
+          badgeSpan.style.fontSize = "7.5px";
+          badgeSpan.style.padding = "0 4px";
+          badgeSpan.style.display = "inline-block";
+          t.appendChild(badgeSpan);
+
+          const titleSpan = document.createElement("span");
+          titleSpan.textContent = ev.isHoliday ? ` ${ev.title} (تعطیل)` : ` ${ev.title}`;
+          t.appendChild(titleSpan);
+
           content.appendChild(t);
         });
       }
@@ -860,7 +1038,20 @@ function showMonthEventsOverlay() {
         item.gamingEvents.forEach(gev => {
           const t = document.createElement("div");
           t.className = "event-row-title is-gaming";
-          t.textContent = `🎮 ${gev.title}`;
+
+          const badgeSpan = document.createElement("span");
+          badgeSpan.className = "event-row-badge is-gaming";
+          badgeSpan.textContent = "🎮 گیمینگ";
+          badgeSpan.style.marginRight = "4px";
+          badgeSpan.style.fontSize = "7.5px";
+          badgeSpan.style.padding = "0 4px";
+          badgeSpan.style.display = "inline-block";
+          t.appendChild(badgeSpan);
+
+          const titleSpan = document.createElement("span");
+          titleSpan.textContent = ` ${gev.title}`;
+          t.appendChild(titleSpan);
+
           content.appendChild(t);
         });
       }
@@ -924,6 +1115,7 @@ function setupKeyboardNavigation() {
     }
 
     if (e.key === "Escape") {
+      closeFilterOverlay();
       hideMonthEventsOverlay();
       AppState.isEditingNote = false;
       updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
@@ -1234,16 +1426,9 @@ function setupEventHandlers() {
     gamingToggleBtn.addEventListener("click", async (e) => {
       e.stopPropagation();
       AppState.enableGamingEvents = !AppState.enableGamingEvents;
-      try {
-        if (browserAPI.storage && browserAPI.storage.local) {
-          await browserAPI.storage.local.set({ enableGamingEvents: AppState.enableGamingEvents });
-        } else if (typeof localStorage !== "undefined") {
-          localStorage.setItem("enableGamingEvents", String(AppState.enableGamingEvents));
-        }
-      } catch (err) {
-        console.warn("Could not save gaming setting:", err);
-      }
-      updateGamingToggleUI();
+      AppState.eventCategories.gaming = AppState.enableGamingEvents;
+      await saveEventCategories();
+      updateFilterCheckboxUI();
       showCopyToast(AppState.enableGamingEvents ? "رویدادهای گیمینگ فعال شد 🎮" : "رویدادهای گیمینگ غیرفعال شد");
       renderCalendar();
       const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
@@ -1255,6 +1440,74 @@ function setupEventHandlers() {
       if (overlay && !overlay.classList.contains("hidden")) {
         showMonthEventsOverlay();
       }
+    });
+  }
+
+  // 11. Event Categories Filter Modal Handlers
+  const eventsFilterBtn = document.getElementById("eventsFilterBtn");
+  if (eventsFilterBtn) {
+    eventsFilterBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openFilterOverlay();
+    });
+  }
+
+  const hudFilterBtn = document.getElementById("hudFilterBtn");
+  if (hudFilterBtn) {
+    hudFilterBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      openFilterOverlay();
+    });
+  }
+
+  const closeFilterOverlayBtn = document.getElementById("closeFilterOverlayBtn");
+  if (closeFilterOverlayBtn) {
+    closeFilterOverlayBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      closeFilterOverlay();
+    });
+  }
+
+  const eventsFilterOverlay = document.getElementById("eventsFilterOverlay");
+  if (eventsFilterOverlay) {
+    eventsFilterOverlay.addEventListener("click", (e) => {
+      if (e.target === eventsFilterOverlay) {
+        closeFilterOverlay();
+      }
+    });
+  }
+
+  // Category Checkboxes
+  const categoryMap = [
+    { id: "filterAncient", cat: "ancient" },
+    { id: "filterReligious", cat: "religious" },
+    { id: "filterNational", cat: "national" },
+    { id: "filterInternational", cat: "international" },
+    { id: "filterGaming", cat: "gaming" }
+  ];
+
+  categoryMap.forEach(({ id, cat }) => {
+    const chk = document.getElementById(id);
+    if (chk) {
+      chk.addEventListener("change", (e) => {
+        onFilterOptionChanged(cat, e.target.checked);
+      });
+    }
+  });
+
+  const selectAllFiltersBtn = document.getElementById("selectAllFiltersBtn");
+  if (selectAllFiltersBtn) {
+    selectAllFiltersBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      selectAllFilterCategories();
+    });
+  }
+
+  const resetFiltersBtn = document.getElementById("resetFiltersBtn");
+  if (resetFiltersBtn) {
+    resetFiltersBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      resetFilterCategories();
     });
   }
 }
@@ -1269,6 +1522,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
   await loadNotes();
   await loadGamingEvents();
+  await loadEventCategories();
   setupEventHandlers();
   setupKeyboardNavigation();
   renderCalendar();
