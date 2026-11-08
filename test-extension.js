@@ -250,8 +250,8 @@ const tgaDate = new Date(2026, 11, 10); // Dec 10
 const tgaMatches = getGamingEventsForDate(tgaDate);
 assert(tgaMatches.some(e => e.title.includes("The Game Awards")), "The Game Awards event matched on 12-10");
 
-assert(htmlContent.includes('id="gamingToggleBtn"'), "Gaming toggle button exists in popup.html");
-assert(htmlContent.includes('id="gamingIcon"'), "Gaming icon exists in popup.html");
+assert(!htmlContent.includes('id="gamingToggleBtn"'), "Standalone gaming toggle button is cleanly removed from popup.html");
+assert(htmlContent.includes('id="filterGaming"'), "Gaming events are integrated into category filter in popup.html");
 assert(popupJsContent.includes("enableGamingEvents: false"), "Gaming events are strictly opt-in (default disabled)");
 assert(popupJsContent.includes("loadGamingEvents"), "loadGamingEvents function exists in popup.js");
 
@@ -295,6 +295,12 @@ assert(!cyrusDayFiltered.some(e => e.title.includes("کوروش")), "Disabling a
 
 const cyrusDayIncluded = getEventsForDate(1405, 8, 7, null, { ancient: true });
 assert(cyrusDayIncluded.some(e => e.title.includes("کوروش")), "Enabling ancient includes Cyrus Day");
+
+const cssContent = fs.readFileSync(path.join(__dirname, "popup.css"), "utf-8");
+assert(!cssContent.includes("stroke: var(--text-color)"), "Filter SVG does not reference undefined --text-color");
+assert(cssContent.includes("stroke: currentColor"), "Filter SVG has default visible stroke (currentColor)");
+assert(cssContent.includes("button, input, optgroup, select, textarea"), "Button/input typography reset enforces font inheritance");
+assert(cssContent.includes("events-filter-overlay") && cssContent.includes("Vazirmatn"), "Filter overlay explicitly applies Vazirmatn font family");
 
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
