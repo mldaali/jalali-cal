@@ -132,89 +132,90 @@ const SOLAR_EVENTS = {
 };
 
 // 2. Precalculated Lunar Holidays for 1404, 1405, and 1406 (All categorized as "religious")
+// Calibrated with official Calendar Center of Geophysics Institute, University of Tehran
 const LUNAR_HOLIDAYS_1404 = {
-  "1-1": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious" }],
-  "1-11": [{ title: "عید سعید فطر", isHoliday: true, category: "religious" }],
-  "1-12": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious" }],
-  "2-4": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "3-16": [{ title: "عید سعید قربان", isHoliday: true, category: "religious" }],
-  "3-24": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious" }],
-  "4-14": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious" }],
-  "4-15": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious" }],
-  "5-23": [{ title: "اربعین حسینی", isHoliday: true, category: "religious" }],
-  "5-31": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious" }],
-  "6-2": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious" }],
-  "6-10": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious" }],
-  "6-19": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "9-3": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious" }],
-  "10-12": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious" }],
-  "10-26": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious" }],
-  "11-14": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious" }],
-  "12-20": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious" }],
-  "12-30": [{ title: "عید سعید فطر", isHoliday: true, category: "religious" }]
+  "1-1": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۱ رمضان" }],
+  "1-11": [{ title: "عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۱ شوال" }],
+  "1-12": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۲ شوال" }],
+  "2-4": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۵ شوال" }],
+  "3-16": [{ title: "عید سعید قربان", isHoliday: true, category: "religious", hijriDateStr: "۱۰ ذی‌الحجه" }],
+  "3-24": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious", hijriDateStr: "۱۸ ذی‌الحجه" }],
+  "4-14": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۹ محرم" }],
+  "4-15": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۱۰ محرم" }],
+  "5-23": [{ title: "اربعین حسینی", isHoliday: true, category: "religious", hijriDateStr: "۲۰ صفر" }],
+  "6-1": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۸ صفر" }],
+  "6-2": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious", hijriDateStr: "۳۰ صفر" }],
+  "6-10": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious", hijriDateStr: "۸ ربیع‌الاول" }],
+  "6-19": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۱۷ ربیع‌الاول" }],
+  "9-3": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious", hijriDateStr: "۳ جمادی‌الثانی" }],
+  "10-13": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious", hijriDateStr: "۱۳ رجب" }],
+  "10-27": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious", hijriDateStr: "۲۷ رجب" }],
+  "11-15": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious", hijriDateStr: "۱۵ شعبان" }],
+  "12-20": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۱ رمضان" }]
 };
 
 const LUNAR_HOLIDAYS_1405 = {
-  "1-1": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious" }],
-  "1-24": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "3-6": [{ title: "عید سعید قربان", isHoliday: true, category: "religious" }],
-  "3-14": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious" }],
-  "4-3": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious" }],
-  "4-4": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious" }],
-  "5-12": [{ title: "اربعین حسینی", isHoliday: true, category: "religious" }],
-  "5-20": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious" }],
-  "5-22": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious" }],
-  "5-30": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious" }],
-  "6-8": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "8-22": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious" }],
-  "10-1": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious" }],
-  "10-15": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious" }],
-  "11-3": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious" }],
-  "12-9": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious" }],
-  "12-18": [{ title: "عید سعید فطر", isHoliday: true, category: "religious" }],
-  "12-19": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious" }]
+  "1-1": [{ title: "عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۱ شوال" }],
+  "1-2": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۲ شوال" }],
+  "1-25": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۵ شوال" }],
+  "3-6": [{ title: "عید سعید قربان", isHoliday: true, category: "religious", hijriDateStr: "۱۰ ذی‌الحجه" }],
+  "3-14": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious", hijriDateStr: "۱۸ ذی‌الحجه" }],
+  "4-3": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۹ محرم" }],
+  "4-4": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۱۰ محرم" }],
+  "5-13": [{ title: "اربعین حسینی", isHoliday: true, category: "religious", hijriDateStr: "۲۰ صفر" }],
+  "5-21": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۸ صفر" }],
+  "5-22": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious", hijriDateStr: "۳۰ صفر" }],
+  "5-30": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious", hijriDateStr: "۸ ربیع‌الاول" }],
+  "6-8": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۱۷ ربیع‌الاول" }],
+  "8-22": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious", hijriDateStr: "۳ جمادی‌الثانی" }],
+  "10-2": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious", hijriDateStr: "۱۳ رجب" }],
+  "10-16": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious", hijriDateStr: "۲۷ رجب" }],
+  "11-4": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious", hijriDateStr: "۱۵ شعبان" }],
+  "12-9": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۱ رمضان" }],
+  "12-19": [{ title: "عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۱ شوال" }],
+  "12-20": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۲ شوال" }]
 };
 
 const LUNAR_HOLIDAYS_1406 = {
-  "1-13": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "2-26": [{ title: "عید سعید قربان", isHoliday: true, category: "religious" }],
-  "3-4": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious" }],
-  "3-23": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious" }],
-  "3-24": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious" }],
-  "5-2": [{ title: "اربعین حسینی", isHoliday: true, category: "religious" }],
-  "5-10": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious" }],
-  "5-12": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious" }],
-  "5-20": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious" }],
-  "5-29": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious" }],
-  "8-11": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious" }],
-  "9-20": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious" }],
-  "10-4": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious" }],
-  "10-22": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious" }],
-  "11-28": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious" }],
-  "12-8": [{ title: "عید سعید فطر", isHoliday: true, category: "religious" }],
-  "12-9": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious" }]
+  "1-14": [{ title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۵ شوال" }],
+  "2-27": [{ title: "عید سعید قربان", isHoliday: true, category: "religious", hijriDateStr: "۱۰ ذی‌الحجه" }],
+  "3-4": [{ title: "عید سعید غدیر خم", isHoliday: true, category: "religious", hijriDateStr: "۱۸ ذی‌الحجه" }],
+  "3-24": [{ title: "تاسوعای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۹ محرم" }],
+  "3-25": [{ title: "عاشورای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۱۰ محرم" }],
+  "5-3": [{ title: "اربعین حسینی", isHoliday: true, category: "religious", hijriDateStr: "۲۰ صفر" }],
+  "5-11": [{ title: "رحلت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۸ صفر" }],
+  "5-13": [{ title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious", hijriDateStr: "۳۰ صفر" }],
+  "5-20": [{ title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious", hijriDateStr: "۸ ربیع‌الاول" }],
+  "5-29": [{ title: "میلاد پیامبر اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۱۷ ربیع‌الاول" }],
+  "8-12": [{ title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious", hijriDateStr: "۳ جمادی‌الثانی" }],
+  "9-21": [{ title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious", hijriDateStr: "۱۳ رجب" }],
+  "10-5": [{ title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious", hijriDateStr: "۲۷ رجب" }],
+  "10-23": [{ title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious", hijriDateStr: "۱۵ شعبان" }],
+  "11-28": [{ title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۱ رمضان" }],
+  "12-8": [{ title: "عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۱ شوال" }],
+  "12-9": [{ title: "تعطیل به مناسبت عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۲ شوال" }]
 };
 
 // 3. Canonical Islamic calendar events mapped to Hijri (Lunar) month & day
 const HIJRI_EVENTS_MAP = {
-  "1-9": { title: "تاسوعای حسینی", isHoliday: true, category: "religious" },
-  "1-10": { title: "عاشورای حسینی", isHoliday: true, category: "religious" },
-  "2-20": { title: "اربعین حسینی", isHoliday: true, category: "religious" },
-  "2-28": { title: "رحلت حضرت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious" },
-  "2-29": { title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious" },
-  "2-30": { title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious" },
-  "3-8": { title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious" },
-  "3-17": { title: "میلاد حضرت رسول اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious" },
-  "6-3": { title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious" },
-  "7-13": { title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious" },
-  "7-27": { title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious" },
-  "8-15": { title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious" },
-  "9-21": { title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious" },
-  "10-1": { title: "عید سعید فطر", isHoliday: true, category: "religious" },
-  "10-2": { title: "تعطیل به مناسبت عید فطر", isHoliday: true, category: "religious" },
-  "10-25": { title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious" },
-  "12-10": { title: "عید سعید قربان", isHoliday: true, category: "religious" },
-  "12-18": { title: "عید سعید غدیر خم", isHoliday: true, category: "religious" }
+  "1-9": { title: "تاسوعای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۹ محرم" },
+  "1-10": { title: "عاشورای حسینی", isHoliday: true, category: "religious", hijriDateStr: "۱۰ محرم" },
+  "2-20": { title: "اربعین حسینی", isHoliday: true, category: "religious", hijriDateStr: "۲۰ صفر" },
+  "2-28": { title: "رحلت حضرت پیامبر اکرم (ص) و شهادت امام حسن مجتبی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۸ صفر" },
+  "2-29": { title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۹ صفر" },
+  "2-30": { title: "شهادت امام رضا (ع)", isHoliday: true, category: "religious", hijriDateStr: "۳۰ صفر" },
+  "3-8": { title: "شهادت امام حسن عسکری (ع)", isHoliday: true, category: "religious", hijriDateStr: "۸ ربیع‌الاول" },
+  "3-17": { title: "میلاد حضرت رسول اکرم (ص) و امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۱۷ ربیع‌الاول" },
+  "6-3": { title: "شهادت حضرت فاطمه زهرا (س)", isHoliday: true, category: "religious", hijriDateStr: "۳ جمادی‌الثانی" },
+  "7-13": { title: "ولادت حضرت علی (ع) و روز پدر", isHoliday: true, category: "religious", hijriDateStr: "۱۳ رجب" },
+  "7-27": { title: "مبعث حضرت رسول اکرم (ص)", isHoliday: true, category: "religious", hijriDateStr: "۲۷ رجب" },
+  "8-15": { title: "ولادت حضرت قائم (عج) - نیمه شعبان", isHoliday: true, category: "religious", hijriDateStr: "۱۵ شعبان" },
+  "9-21": { title: "شهادت حضرت علی (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۱ رمضان" },
+  "10-1": { title: "عید سعید فطر", isHoliday: true, category: "religious", hijriDateStr: "۱ شوال" },
+  "10-2": { title: "تعطیل به مناسبت عید فطر", isHoliday: true, category: "religious", hijriDateStr: "۲ شوال" },
+  "10-25": { title: "شهادت امام جعفر صادق (ع)", isHoliday: true, category: "religious", hijriDateStr: "۲۵ شوال" },
+  "12-10": { title: "عید سعید قربان", isHoliday: true, category: "religious", hijriDateStr: "۱۰ ذی‌الحجه" },
+  "12-18": { title: "عید سعید غدیر خم", isHoliday: true, category: "religious", hijriDateStr: "۱۸ ذی‌الحجه" }
 };
 
 /**
@@ -238,53 +239,32 @@ function isLeapJalaliYear(year) {
 }
 
 function jalaliToGregorianInternal(jy, jm, jd) {
-  const breaks = [-61, 9, 38, 199, 426, 686, 756, 818, 1111, 1181, 1210, 1635, 2060, 2097];
-  let bl = breaks.length;
-  let jp = breaks[0];
-  let jmVal = 0;
-  let jump = 0;
-  for (let i = 1; i < bl; i++) {
-    jmVal = breaks[i];
-    jump = jmVal - jp;
-    if (jy < jmVal) break;
-    jp = jmVal;
+  jy = parseInt(jy, 10);
+  jm = parseInt(jm, 10);
+  jd = parseInt(jd, 10);
+  let gy = jy > 979 ? 1600 : 621;
+  jy -= jy > 979 ? 979 : 0;
+  let days = (365 * jy) + (Math.floor(jy / 33) * 8) + Math.floor(((jy % 33) + 3) / 4) + 78 + jd + ((jm < 7) ? (jm - 1) * 31 : ((jm - 7) * 30) + 186);
+  gy += 400 * Math.floor(days / 146097);
+  days %= 146097;
+  if (days > 36524) {
+    gy += 100 * Math.floor(--days / 36524);
+    days %= 36524;
+    if (days >= 365) days++;
   }
-  let n = jy - jp;
-  let leapJ = Math.floor(n / 33) * 8 + Math.floor(((n % 33) + 3) / 4);
-  if (jump === 33 && jump - n === 4) leapJ += 1;
-  let leapG = Math.floor(jp / 33) * 8 + Math.floor(((jp % 33) + 3) / 4);
-  let days = (jy - 979) * 365 + (leapJ - leapG);
-  for (let i = 0; i < jm - 1; ++i) {
-    days += (i < 6) ? 31 : 30;
+  gy += 4 * Math.floor(days / 1461);
+  days %= 1461;
+  if (days > 365) {
+    gy += Math.floor((days - 1) / 365);
+    days = (days - 1) % 365;
   }
-  days += jd - 1;
-  let gDays = days + 79;
-  let gy = 1600 + 400 * Math.floor(gDays / 146097);
-  let rem = gDays % 146097;
-  let leap = true;
-  if (rem >= 36525) {
-    rem--;
-    gy += 100 * Math.floor(rem / 36524);
-    rem = rem % 36524;
-    if (rem >= 365) rem++;
-    else leap = false;
-  }
-  gy += 4 * Math.floor(rem / 1461);
-  rem %= 1461;
-  if (rem >= 366) {
-    leap = false;
-    rem--;
-    gy += Math.floor(rem / 365);
-    rem = rem % 365;
-  }
-  const gMonthDays = [0, 31, (leap ? 29 : 28), 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
-  let gm = 1;
-  while (gm <= 12 && rem >= gMonthDays[gm]) {
-    rem -= gMonthDays[gm];
+  const salA = [0, 31, ((gy % 4 === 0 && gy % 100 !== 0) || (gy % 400 === 0)) ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+  let gm = 0;
+  while (days >= salA[gm]) {
+    days -= salA[gm];
     gm++;
   }
-  let gd = rem + 1;
-  return new Date(gy, gm - 1, gd);
+  return new Date(gy, gm - 1, days + 1);
 }
 
 function getHijriParts(gDate) {
@@ -326,20 +306,19 @@ function getEventsForDate(jYear, jMonth, jDay, gDate = null, filterCategories = 
   }
 
   // 2. Lunar Hijri Events
-  if (jYear === 1404 && LUNAR_HOLIDAYS_1404[key]) {
-    for (const ev of LUNAR_HOLIDAYS_1404[key]) {
-      if (!events.some(e => e.title === ev.title)) events.push({ ...ev });
-    }
-  } else if (jYear === 1405 && LUNAR_HOLIDAYS_1405[key]) {
-    for (const ev of LUNAR_HOLIDAYS_1405[key]) {
-      if (!events.some(e => e.title === ev.title)) events.push({ ...ev });
-    }
-  } else if (jYear === 1406 && LUNAR_HOLIDAYS_1406[key]) {
-    for (const ev of LUNAR_HOLIDAYS_1406[key]) {
-      if (!events.some(e => e.title === ev.title)) events.push({ ...ev });
+  let lunarTable = null;
+  if (jYear === 1404) lunarTable = LUNAR_HOLIDAYS_1404;
+  else if (jYear === 1405) lunarTable = LUNAR_HOLIDAYS_1405;
+  else if (jYear === 1406) lunarTable = LUNAR_HOLIDAYS_1406;
+
+  if (lunarTable) {
+    if (lunarTable[key]) {
+      for (const ev of lunarTable[key]) {
+        if (!events.some(e => e.title === ev.title)) events.push({ ...ev });
+      }
     }
   } else {
-    // Dynamic Astronomical / Intl Calculation for ANY arbitrary year
+    // Dynamic Astronomical / Intl Calculation for ANY arbitrary year outside 1404-1406
     if (!gDate) {
       gDate = jalaliToGregorianInternal(jYear, jMonth, jDay);
     }

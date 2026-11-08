@@ -201,11 +201,17 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
 
   // 3. Hijri Subtitle
   try {
-    const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
-      day: "numeric",
-      month: "long"
-    });
-    document.getElementById("heroIslamic").textContent = intlIslamic.format(gDate);
+    const dayEvents = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate) : [];
+    const relEv = dayEvents.find(e => e.category === "religious" && e.hijriDateStr);
+    if (relEv && relEv.hijriDateStr) {
+      document.getElementById("heroIslamic").textContent = relEv.hijriDateStr;
+    } else {
+      const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
+        day: "numeric",
+        month: "long"
+      });
+      document.getElementById("heroIslamic").textContent = intlIslamic.format(gDate);
+    }
   } catch (e) {
     document.getElementById("heroIslamic").textContent = "";
   }

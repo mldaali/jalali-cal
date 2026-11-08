@@ -95,23 +95,42 @@ const { getEventsForDate, isOfficialHoliday } = require(path.join(__dirname, "ev
 assert(isOfficialHoliday(1405, 1, 1), "1405/1/1: Nowruz is official holiday");
 assert(isOfficialHoliday(1405, 1, 12), "1405/1/12: Islamic Republic Day is official holiday");
 assert(isOfficialHoliday(1405, 1, 13), "1405/1/13: Nature Day (Sizdah Bedar) is official holiday");
-assert(isOfficialHoliday(1405, 1, 24), "1405/1/24: Shahadat Imam Sadeq is official holiday");
+assert(isOfficialHoliday(1405, 1, 25), "1405/1/25: Shahadat Imam Sadeq is official holiday");
 assert(isOfficialHoliday(1405, 3, 14), "1405/3/14: Official holiday");
 assert(isOfficialHoliday(1405, 4, 4), "1405/4/4: Ashura is official holiday");
+assert(isOfficialHoliday(1405, 5, 13), "1405/5/13: Arbaeen is official holiday");
+assert(isOfficialHoliday(1405, 5, 21), "1405/5/21: 28 Safar is official holiday");
 assert(isOfficialHoliday(1405, 8, 22), "1405/8/22: Shahadat Hazrat Zahra (s) is official holiday");
+assert(isOfficialHoliday(1405, 10, 2), "1405/10/2: Veladat Imam Ali is official holiday");
+assert(isOfficialHoliday(1405, 10, 16), "1405/10/16: Mab'ath is official holiday");
+assert(isOfficialHoliday(1405, 11, 4), "1405/11/4: Nimeh Sha'ban is official holiday");
 assert(isOfficialHoliday(1405, 11, 22), "1405/11/22: 22 Bahman is official holiday");
+assert(isOfficialHoliday(1405, 12, 19), "1405/12/19: Eid al-Fitr is official holiday");
 assert(isOfficialHoliday(1405, 12, 29), "1405/12/29: Oil Nationalization is official holiday");
 
 // Multi-Year verification (1404, 1406, 1407)
 assert(isOfficialHoliday(1404, 1, 1), "1404/1/1: Nowruz / Shahadat Imam Ali is official holiday");
 assert(isOfficialHoliday(1404, 1, 11), "1404/1/11: Eid al-Fitr 1404 is official holiday");
+assert(isOfficialHoliday(1404, 5, 23), "1404/5/23: Arbaeen 1404 is official holiday");
+assert(isOfficialHoliday(1404, 6, 1), "1404/6/1: 28 Safar 1404 is official holiday");
+assert(isOfficialHoliday(1404, 10, 13), "1404/10/13: Veladat Imam Ali 1404 is official holiday");
+assert(isOfficialHoliday(1404, 10, 27), "1404/10/27: Mab'ath 1404 is official holiday");
+assert(isOfficialHoliday(1404, 11, 15), "1404/11/15: Nimeh Sha'ban 1404 is official holiday");
 assert(isOfficialHoliday(1406, 1, 1), "1406/1/1: Nowruz is official holiday");
-assert(isOfficialHoliday(1406, 3, 24), "1406/3/24: Ashura 1406 is official holiday");
+assert(isOfficialHoliday(1406, 3, 24), "1406/3/24: Tasu'a 1406 is official holiday");
+assert(isOfficialHoliday(1406, 3, 25), "1406/3/25: Ashura 1406 is official holiday");
+assert(isOfficialHoliday(1406, 5, 3), "1406/5/3: Arbaeen 1406 is official holiday");
+assert(isOfficialHoliday(1406, 5, 11), "1406/5/11: 28 Safar 1406 is official holiday");
+assert(isOfficialHoliday(1406, 8, 12), "1406/8/12: Shahadat Hazrat Zahra (s) 1406 is official holiday");
+assert(isOfficialHoliday(1406, 9, 21), "1406/9/21: Veladat Imam Ali 1406 is official holiday");
+assert(isOfficialHoliday(1406, 10, 5), "1406/10/5: Mab'ath 1406 is official holiday");
+assert(isOfficialHoliday(1406, 10, 23), "1406/10/23: Nimeh Sha'ban 1406 is official holiday");
 assert(isOfficialHoliday(1407, 1, 1), "1407/1/1: Dynamic Nowruz holiday on arbitrary year");
 
 // Weekend and workday check
 assert(isOfficialHoliday(1405, 8, 15, 6), "Friday (weekday index 6) is treated as holiday");
 assert(!isOfficialHoliday(1405, 8, 16, 0), "1405/8/16 Saturday is marked as regular workday");
+assert(!isOfficialHoliday(1405, 8, 18, 1), "1405/8/18 Monday is regular workday without phantom holiday");
 
 console.log("\n\x1b[1m=== 6. Bidirectional Conversion Integrity ===\x1b[0m");
 function jalaliToGregorian(jy, jm, jd) {
