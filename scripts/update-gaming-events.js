@@ -6,9 +6,9 @@
  * conventions, and milestone anniversaries.
  *
  * Sources:
- * 1. Wikipedia API (List of video games released in YYYY) - free, unauthenticated,
- *    updated continuously by the global gaming community with official citations.
- * 2. RAWG Video Games Database API (if RAWG_API_KEY is configured).
+ * 1. Wikipedia API (List of video games released in YYYY for 2025, 2026, 2027)
+ *    - Free, unauthenticated, updated continuously with official verified citations.
+ * 2. RAWG Video Games Database API (if RAWG_API_KEY is configured in env).
  * 3. Verified offline master registry with fallback preservation.
  */
 
@@ -28,14 +28,24 @@ function normalizeTitle(t) {
   if (!t) return "";
   return t
     .toLowerCase()
-    .replace(/\b(release|launch|window|anniversary|video game|the)\b/gi, "")
+    .replace(/\b(release|launch|window|anniversary|video game|the|sid meier's|part|edition)\b/gi, "")
     .replace(/[^a-z0-9]/g, "");
 }
 
-function isBaseRelease(typeStr) {
-  if (!typeStr) return true;
-  const lower = typeStr.toLowerCase();
-  return !lower.includes("port") && !lower.includes("expansion") && !lower.includes("dlc");
+function calculateSimilarity(s1, s2) {
+  if (s1 === s2) return 1.0;
+  if (!s1 || !s2) return 0;
+  const bigrams = s => {
+    const bg = new Set();
+    for (let i = 0; i < s.length - 1; i++) bg.add(s.slice(i, i + 2));
+    return bg;
+  };
+  const b1 = bigrams(s1), b2 = bigrams(s2);
+  let inter = 0;
+  for (const b of b1) {
+    if (b2.has(b)) inter++;
+  }
+  return (2 * inter) / (b1.size + b2.size);
 }
 
 function fetchJson(url) {
@@ -47,7 +57,7 @@ function fetchJson(url) {
           "User-Agent": "JalaliCalBot/2.0 (https://github.com/mldaali/jalali-cal; dev@jalali.org)",
           "Accept": "application/json"
         },
-        timeout: 10000
+        timeout: 12000
       },
       res => {
         if (res.statusCode < 200 || res.statusCode >= 300) {
@@ -73,111 +83,142 @@ function fetchJson(url) {
 }
 
 /**
- * Parse Wikipedia full-page wikitext for release tables.
+ * Fetch and parse release tables from Wikipedia for a given year.
  */
-async function syncFromWikipedia(year, existingEvents) {
-  console.log(`🌐 Fetching Wikipedia release schedule for ${year}...`);
-  try {
-    const pageUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=List_of_video_games_released_in_${year}&prop=wikitext&format=json`;
-    const res = await fetchJson(pageUrl);
-    const wikitext = res.parse?.wikitext?.["*"] || "";
-    if (!wikitext) {
-      console.warn(`  ⚠️ No wikitext found for year ${year}`);
-      return 0;
-    }
-
-    const rows = wikitext.split(/\n\|-/);
-    let currentMonth = "";
-    let changesCount = 0;
-
-    for (const row of rows) {
-      const cells = row.split(/\n\|\s*/).map(c => c.trim()).filter(Boolean);
-      if (cells.length < 2) continue;
-
-      let dateCell = cells[0];
-      let titleCell = cells[1];
-      let typeCell = cells[3] || "";
-
-      for (const m of Object.keys(MONTH_MAP)) {
-        if (dateCell.includes(m) && dateCell.includes("rowspan")) {
-          currentMonth = m;
-          dateCell = cells[1];
-          titleCell = cells[2];
-          typeCell = cells[4] || "";
-          break;
-        }
-      }
-
-      if (!dateCell || !titleCell) continue;
-
-      // Filter out non-base releases (ports, DLCs, expansions)
-      if (!isBaseRelease(typeCell)) continue;
-
-      let month = currentMonth;
-      let day = "";
-      const dtsMatch = dateCell.match(/\{\{dts\|([A-Za-z]+)(?:\s+(\d+))?\}\}/);
-      if (dtsMatch) {
-        month = dtsMatch[1];
-        day = dtsMatch[2] ? dtsMatch[2].padStart(2, "0") : "01";
-      } else {
-        const dayMatch = dateCell.match(/([A-Za-z]+)?\s*(\d+)/);
-        if (dayMatch) {
-          if (dayMatch[1] && MONTH_MAP[dayMatch[1]]) month = dayMatch[1];
-          day = dayMatch[2].padStart(2, "0");
-        }
-      }
-
-      if (!month || !day || !MONTH_MAP[month]) continue;
-
-      const tMatch = titleCell.match(/\x27\x27\[\[(?:[^\]|]+\|)?([^\]]+)\]\]\x27\x27/) ||
-                     titleCell.match(/\[\[(?:[^\]|]+\|)?([^\]]+)\]\]/) ||
-                     titleCell.match(/\x27\x27([^\x27]+)\x27\x27/);
-      if (!tMatch) continue;
-
-      const rawTitle = tMatch[1].replace(/<[^>]+>/g, "").trim();
-      if (!rawTitle || rawTitle.includes("File:") || rawTitle.includes("Category:")) continue;
-
-      const isoDate = `${year}-${MONTH_MAP[month]}-${day}`;
-      const normWikiTitle = normalizeTitle(rawTitle);
-
-      // Match ONLY base releases (never touch annual recurring expos or historical milestone anniversaries)
-      const matchedEvent = existingEvents.find(e => {
-        if (!e.titleEn || e.type !== "release" || e.date.length === 5) return false;
-        const normExisting = normalizeTitle(e.titleEn);
-        return normExisting === normWikiTitle;
-      });
-
-      if (matchedEvent) {
-        // If year matches or if Wikipedia has a verified newer date in current year
-        if (matchedEvent.date !== isoDate && (!matchedEvent._updatedInCurrentRun || isoDate < matchedEvent.date)) {
-          console.log(`  🔄 Date confirmed via Wikipedia for "${matchedEvent.titleEn}": ${matchedEvent.date} -> ${isoDate}`);
-          matchedEvent.date = isoDate;
-          matchedEvent._updatedInCurrentRun = true;
-          changesCount++;
-        }
-      }
-    }
-
-    console.log(`  ✔ Wikipedia ${year} schedule checked (${changesCount} date adjustments).`);
-    return changesCount;
-  } catch (err) {
-    console.warn(`  ⚠️ Wikipedia sync for ${year} encountered warning: ${err.message}`);
-    return 0;
+async function fetchWikiGamesForYear(year) {
+  const pageUrl = `https://en.wikipedia.org/w/api.php?action=parse&page=List_of_video_games_released_in_${year}&prop=wikitext&format=json`;
+  const res = await fetchJson(pageUrl);
+  const wikitext = res.parse?.wikitext?.["*"] || "";
+  if (!wikitext) {
+    console.warn(`  ⚠️ No wikitext found for year ${year}`);
+    return [];
   }
+
+  const rows = wikitext.split(/\n\|-/);
+  const games = [];
+
+  for (const row of rows) {
+    const cells = row.split(/\n\|\s*/).map(c => c.trim());
+    if (cells.length < 5) continue;
+
+    const dateCell = cells[1];
+    const titleCell = cells[2];
+    const typeCell = cells[4] || "";
+    const devCell = cells[6] || "";
+    const pubCell = cells[7] || "";
+
+    const dMatch = dateCell.match(/\{\{dts\|([A-Za-z]+)\s+(\d+)\}\}/) || dateCell.match(/([A-Za-z]+)\s+(\d+)/);
+    if (!dMatch) continue;
+    const mName = dMatch[1];
+    const day = dMatch[2].padStart(2, "0");
+    if (!MONTH_MAP[mName]) continue;
+
+    const tMatch = titleCell.match(/\x27\x27\[\[(?:[^\]|]+\|)?([^\]]+)\]\]\x27\x27/) ||
+                   titleCell.match(/\[\[(?:[^\]|]+\|)?([^\]]+)\]\]/) ||
+                   titleCell.match(/\x27\x27([^\x27]+)\x27\x27/);
+    if (!tMatch) continue;
+
+    const rawTitle = tMatch[1].replace(/<[^>]+>/g, "").trim();
+    if (!rawTitle || rawTitle.includes("File:") || rawTitle.includes("Category:")) continue;
+
+    const isoDate = `${year}-${MONTH_MAP[mName]}-${day}`;
+    games.push({
+      date: isoDate,
+      title: rawTitle,
+      type: typeCell,
+      dev: devCell,
+      pub: pubCell
+    });
+  }
+
+  return games;
 }
 
 /**
- * Secondary RAWG sync (if key is configured).
+ * Synchronize verified dates from Wikipedia across target years.
+ */
+async function syncFromWikipedia(existingEvents) {
+  console.log("🌐 Fetching Wikipedia video game release schedules for 2025, 2026, 2027...");
+  let totalChanges = 0;
+  const allWikiGames = [];
+
+  for (const year of [2025, 2026, 2027]) {
+    try {
+      const yearGames = await fetchWikiGamesForYear(year);
+      console.log(`  ✔ Wikipedia ${year}: parsed ${yearGames.length} dated game entries.`);
+      allWikiGames.push(...yearGames);
+    } catch (err) {
+      console.warn(`  ⚠️ Wikipedia fetch error for ${year}: ${err.message}`);
+    }
+  }
+
+  // Canonical alias overrides for specific games
+  const ALIAS_MAP = {
+    "gta6": ["grandtheftautovi", "grandtheftauto6", "gta6"],
+    "god_of_war_laufey": ["godofwarlaufey"],
+    "god_of_war_sons_of_sparta": ["godofwarsonsofsparta"],
+    "death_stranding_2": ["deathstranding2onthebeach", "deathstranding2"],
+    "resident_evil_requiem": ["residentevilrequiem"],
+    "control_resonant": ["controlresonant"],
+    "oblivion_remastered": ["theelderscrollsivoblivionremastered", "oblivionremastered"],
+    "witcher_3_remastered": ["thewitcher3wildhuntremastered", "witcher3remastered"],
+    "forza_horizon_6": ["forzahorizon6"],
+    "project_007": ["007firstlight"],
+    "halo_campaign_evolved": ["halocampaignevolved"],
+    "silent_hill_townfall": ["silenthilltownfall"],
+    "gears_e_day": ["gearsofwareday"],
+    "marvel_wolverine": ["marvelswolverine"],
+    "civ7": ["civilizationvii", "sidmeierscivilizationvii"]
+  };
+
+  for (const ev of existingEvents) {
+    if (ev.type !== "release" || ev.date.length === 5) continue;
+
+    const normEn = normalizeTitle(ev.titleEn);
+    const aliases = ALIAS_MAP[ev.id] || [normEn];
+
+    // Pass 1: exact normalized match
+    let match = allWikiGames.find(w => {
+      const wNorm = normalizeTitle(w.title);
+      return aliases.some(al => wNorm === al);
+    });
+
+    // Pass 2: highest similarity match >= 0.85
+    if (!match) {
+      let maxSim = 0;
+      for (const w of allWikiGames) {
+        const wNorm = normalizeTitle(w.title);
+        for (const al of aliases) {
+          const sim = calculateSimilarity(wNorm, al);
+          if (sim > maxSim && sim >= 0.85) {
+            maxSim = sim;
+            match = w;
+          }
+        }
+      }
+    }
+
+    if (match) {
+      if (ev.date !== match.date) {
+        console.log(`  🔄 Confirmed date adjustment via Wikipedia for "${ev.titleEn}": ${ev.date} -> ${match.date}`);
+        ev.date = match.date;
+        totalChanges++;
+      }
+    }
+  }
+
+  return totalChanges;
+}
+
+/**
+ * Secondary RAWG sync (if RAWG_API_KEY is configured).
  */
 async function syncFromRAWG(apiKey, existingEvents) {
   if (!apiKey) return 0;
   console.log("🔑 Querying RAWG API for high-anticipation releases...");
   let count = 0;
   try {
-    const now = new Date();
-    const curYear = now.getFullYear();
-    const futureYear = curYear + 2;
-    const url = `https://api.rawg.io/api/games?key=${apiKey}&dates=${curYear}-01-01,${futureYear}-12-31&ordering=-added&page_size=30`;
+    const url = `https://api.rawg.io/api/games?key=${apiKey}&dates=2025-01-01,2027-12-31&ordering=-added&page_size=40`;
     const res = await fetchJson(url);
 
     if (res && res.results) {
@@ -189,71 +230,59 @@ async function syncFromRAWG(apiKey, existingEvents) {
           return normalizeTitle(e.titleEn) === normName;
         });
 
-        if (existing) {
-          if (existing.date !== game.released) {
-            console.log(`  🔄 Date updated via RAWG for "${existing.titleEn}": ${existing.date} -> ${game.released}`);
-            existing.date = game.released;
-            count++;
-          }
+        if (existing && existing.date !== game.released) {
+          console.log(`  🔄 Date updated via RAWG for "${existing.titleEn}": ${existing.date} -> ${game.released}`);
+          existing.date = game.released;
+          count++;
         }
       }
     }
   } catch (err) {
-    console.warn("  ⚠️ RAWG API sync warning:", err.message);
+    console.warn("  ⚠️ RAWG sync warning:", err.message);
   }
   return count;
 }
 
+/**
+ * Main Autonomous Runner
+ */
 async function main() {
   console.log("🎮 Starting multi-source gaming events intelligence update...");
+  let dataset = { version: "1.2.0", lastUpdated: new Date().toISOString().slice(0, 10), events: [] };
 
-  if (!fs.existsSync(DATA_FILE)) {
-    console.error("❌ Data file not found:", DATA_FILE);
-    process.exit(1);
+  if (fs.existsSync(DATA_FILE)) {
+    try {
+      dataset = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
+      console.log(`  Loaded ${dataset.events.length} current gaming events from storage.`);
+    } catch (e) {
+      console.error("  ❌ Failed to parse existing gaming-events.json:", e);
+    }
   }
 
-  const currentData = JSON.parse(fs.readFileSync(DATA_FILE, "utf-8"));
-  const existingEvents = currentData.events || [];
-  console.log(`Current catalog contains ${existingEvents.length} gaming entries.`);
+  let changes = 0;
 
-  let totalChanges = 0;
-
-  // 1. Wikipedia Sync (2025, 2026, 2027)
-  const years = [2025, 2026, 2027];
-  for (const yr of years) {
-    const changes = await syncFromWikipedia(yr, existingEvents);
-    totalChanges += changes;
-  }
+  // 1. Wikipedia Multi-Year Sync
+  changes += await syncFromWikipedia(dataset.events);
 
   // 2. RAWG Sync
-  const apiKey = process.env.RAWG_API_KEY;
-  if (apiKey) {
-    totalChanges += await syncFromRAWG(apiKey, existingEvents);
-  } else {
-    console.log("ℹ️ RAWG_API_KEY not configured; completed Wikipedia intelligence sync & integrity verification.");
+  const rawgKey = process.env.RAWG_API_KEY || "";
+  if (rawgKey) {
+    changes += await syncFromRAWG(rawgKey, dataset.events);
   }
 
-  // Clean temp tracking flag
-  for (const e of existingEvents) {
-    delete e._updatedInCurrentRun;
-  }
+  // 3. Sort chronologically by date
+  dataset.events.sort((a, b) => a.date.localeCompare(b.date));
+  dataset.lastUpdated = new Date().toISOString().slice(0, 10);
 
-  // 3. Sort chronologically (recurring MM-DD and specific YYYY-MM-DD)
-  existingEvents.sort((a, b) => {
-    const da = a.date.length === 5 ? `2026-${a.date}` : a.date;
-    const db = b.date.length === 5 ? `2026-${b.date}` : b.date;
-    return da.localeCompare(db);
-  });
-
-  const todayStr = new Date().toISOString().split("T")[0];
-  currentData.lastUpdated = todayStr;
-  currentData.events = existingEvents;
-
-  fs.writeFileSync(DATA_FILE, JSON.stringify(currentData, null, 2) + "\n", "utf-8");
-  console.log(`✅ Multi-source database verified (${existingEvents.length} events total, ${totalChanges} adjustments applied).`);
+  fs.writeFileSync(DATA_FILE, JSON.stringify(dataset, null, 2), "utf-8");
+  console.log(`✨ Gaming events database synchronization complete! (${changes} dates confirmed/updated, ${dataset.events.length} total events saved).`);
 }
 
-main().catch(err => {
-  console.error("❌ Error running update script:", err);
-  process.exit(1);
-});
+if (require.main === module) {
+  main().catch(err => {
+    console.error("Fatal error during gaming events update:", err);
+    process.exit(1);
+  });
+}
+
+module.exports = { syncFromWikipedia, syncFromRAWG, main, fetchWikiGamesForYear };

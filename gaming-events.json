@@ -3,6 +3,182 @@
   "lastUpdated": "2026-11-08",
   "events": [
     {
+      "id": "dice_awards",
+      "date": "02-13",
+      "title": "جوایز سالانه آکادمی هنرها و علوم تعاملی (D.I.C.E. Awards)",
+      "titleEn": "D.I.C.E. Awards",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "bafta_games",
+      "date": "04-11",
+      "title": "مراسم جوایز بازی سال آکادمی بریتانیا (BAFTA Games Awards)",
+      "titleEn": "BAFTA Games Awards",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "witcher3_anniv",
+      "date": "05-19",
+      "title": "سالروز انتشار شاهکار بی‌همتای The Witcher 3: Wild Hunt (2015)",
+      "titleEn": "The Witcher 3 Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "playstation_showcase",
+      "date": "05-28",
+      "title": "رویداد ویژه رونمایی‌های جدید پلی‌استیشن (PlayStation Showcase)",
+      "titleEn": "PlayStation Showcase",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "sgf",
+      "date": "06-07",
+      "title": "رویداد تابستانی بازی‌های ویدئویی (Summer Game Fest)",
+      "titleEn": "Summer Game Fest (SGF)",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "pc_gaming_show",
+      "date": "06-08",
+      "title": "رویداد اختصاصی بازی‌های پی‌سی (PC Gaming Show)",
+      "titleEn": "PC Gaming Show",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "xbox_showcase",
+      "date": "06-09",
+      "title": "رویداد سالانه اختصاصی بازی‌های ایکس‌باکس (Xbox Games Showcase)",
+      "titleEn": "Xbox Games Showcase",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "nintendo_direct",
+      "date": "06-18",
+      "title": "رویداد بزرگ تابستان نینتندو دایرکت (Nintendo Direct)",
+      "titleEn": "Nintendo Direct Showcase",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "mario_64_anniv",
+      "date": "06-23",
+      "title": "سالروز عرضه نینتندو ۶۴ و تحول بازی‌های سه‌بعدی با Super Mario 64 (1996)",
+      "titleEn": "Super Mario 64 Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "gamescom",
+      "date": "08-20",
+      "title": "افتتاحیه بزرگترین نمایشگاه گیمینگ جهان (Gamescom ONL)",
+      "titleEn": "Gamescom Opening Night Live",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "dark_souls_anniv",
+      "date": "09-22",
+      "title": "سالروز تولد سبک انقلابی سولز با انتشار Dark Souls (2011)",
+      "titleEn": "Dark Souls Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "tgs",
+      "date": "09-25",
+      "title": "نمایشگاه بازی‌های توکیو در ژاپن (Tokyo Game Show)",
+      "titleEn": "Tokyo Game Show (TGS)",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "gta_sa_anniv",
+      "date": "10-26",
+      "title": "سالروز انتشار خاطره‌انگیزترین بازی دوران Grand Theft Auto: San Andreas (2004)",
+      "titleEn": "GTA: San Andreas Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "skyrim_anniv",
+      "date": "11-11",
+      "title": "سالروز انتشار بازی افسانه‌ای The Elder Scrolls V: Skyrim (2011)",
+      "titleEn": "Skyrim Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "halo_xbox_anniv",
+      "date": "11-15",
+      "title": "سالروز معرفی کنسول نخست Xbox و بازی تاریخ‌ساز Halo: CE (2001)",
+      "titleEn": "Original Xbox & Halo Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "hl2_anniv",
+      "date": "11-16",
+      "title": "سالروز انتشار شاهکار انقلابی نیمه‌عمر Half-Life 2 (2004)",
+      "titleEn": "Half-Life 2 Release Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "minecraft_anniv",
+      "date": "11-18",
+      "title": "سالروز انتشار نسخه نهایی و پرفروش‌ترین بازی تاریخ Minecraft (2011)",
+      "titleEn": "Minecraft Official Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "zelda_oot_anniv",
+      "date": "11-21",
+      "title": "سالروز انتشار بالاترین امتیاز تاریخ متامنتقدین The Legend of Zelda: Ocarina of Time (1998)",
+      "titleEn": "Zelda: Ocarina of Time Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "wow_anniv",
+      "date": "11-23",
+      "title": "سالروز تولد دنیای اسطوره‌ای وارکرفت World of Warcraft (2004)",
+      "titleEn": "World of Warcraft Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "ps1_japan_anniv",
+      "date": "12-03",
+      "title": "سالروز عرضه نخستین کنسول خاکستری رنگ PlayStation در ژاپن (1994)",
+      "titleEn": "PlayStation Japan Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "tga",
+      "date": "12-10",
+      "title": "مراسم باشکوه جوایز بازی سال (The Game Awards)",
+      "titleEn": "The Game Awards (TGA)",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "doom_1993_anniv",
+      "date": "12-10",
+      "title": "سالروز انتشار نسخه انقلابی نخستین بازی DOOM توسط جان کارمک (1993)",
+      "titleEn": "Original DOOM 1993 Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
       "id": "civ7",
       "date": "2025-02-11",
       "title": "انتشار بازی Sid Meier's Civilization VII (Firaxis / 2K)",
@@ -59,6 +235,14 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
+      "id": "oblivion_remastered",
+      "date": "2025-04-22",
+      "title": "انتشار نسخه ریمستر The Elder Scrolls IV: Oblivion Remastered (Bethesda)",
+      "titleEn": "The Elder Scrolls IV: Oblivion Remastered Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
       "id": "doom_dark_ages",
       "date": "2025-05-15",
       "title": "انتشار بازی DOOM: The Dark Ages (id Software / Bethesda)",
@@ -71,6 +255,14 @@
       "date": "2025-06-10",
       "title": "انتشار بازی بقای جهان‌باز سیاره آراکیس Dune: Awakening (Funcom)",
       "titleEn": "Dune: Awakening Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "death_stranding_2",
+      "date": "2025-06-26",
+      "title": "انتشار بازی Death Stranding 2: On the Beach (Kojima Productions / Sony)",
+      "titleEn": "Death Stranding 2: On the Beach Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     },
@@ -95,14 +287,6 @@
       "date": "2025-09-12",
       "title": "انتشار بازی لوتر شوتر دیوانه‌وار Borderlands 4 (Gearbox / 2K)",
       "titleEn": "Borderlands 4 Release",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "death_stranding_2",
-      "date": "2025-09-26",
-      "title": "انتشار بازی Death Stranding 2: On The Beach (Kojima Productions / Sony)",
-      "titleEn": "Death Stranding 2 Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     },
@@ -147,12 +331,36 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "dice_awards",
-      "date": "02-13",
-      "title": "جوایز سالانه آکادمی هنرها و علوم تعاملی (D.I.C.E. Awards)",
-      "titleEn": "D.I.C.E. Awards",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
+      "id": "yakuza_kiwami_3",
+      "date": "2026-02-12",
+      "title": "انتشار بازی Yakuza Kiwami 3 & Dark Ties (Sega / RGG Studio)",
+      "titleEn": "Yakuza Kiwami 3 & Dark Ties Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "god_of_war_sons_of_sparta",
+      "date": "2026-02-12",
+      "title": "انتشار بازی اکشن ماجراجویی God of War: Sons of Sparta (Santa Monica Studio / Sony)",
+      "titleEn": "God of War: Sons of Sparta Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "resident_evil_requiem",
+      "date": "2026-02-27",
+      "title": "انتشار بازی ترس و بقای نسل جدید Resident Evil Requiem (Capcom)",
+      "titleEn": "Resident Evil Requiem Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "mh_stories_3",
+      "date": "2026-03-13",
+      "title": "انتشار بازی Monster Hunter Stories 3: Twisted Reflection (Capcom)",
+      "titleEn": "Monster Hunter Stories 3: Twisted Reflection Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
     },
     {
       "id": "crimson_desert",
@@ -163,20 +371,12 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "pokemon_champions",
-      "date": "2026-04-08",
-      "title": "انتشار بازی مسابقه‌ای قهرمانان Pokémon Champions (Game Freak / Nintendo)",
-      "titleEn": "Pokémon Champions Release",
+      "id": "dissidia_ff",
+      "date": "2026-03-24",
+      "title": "انتشار بازی مبارزه‌ای آرنا Dissidia Duellum Final Fantasy (Square Enix)",
+      "titleEn": "Dissidia Duellum Final Fantasy Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "bafta_games",
-      "date": "04-11",
-      "title": "مراسم جوایز بازی سال آکادمی بریتانیا (BAFTA Games Awards)",
-      "titleEn": "BAFTA Games Awards",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
     },
     {
       "id": "subnautica_2",
@@ -185,14 +385,6 @@
       "titleEn": "Subnautica 2 Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "witcher3_anniv",
-      "date": "05-19",
-      "title": "سالروز انتشار شاهکار بی‌همتای The Witcher 3: Wild Hunt (2015)",
-      "titleEn": "The Witcher 3 Launch Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
     },
     {
       "id": "forza_horizon_6",
@@ -211,68 +403,12 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "playstation_showcase",
-      "date": "05-28",
-      "title": "رویداد ویژه رونمایی‌های جدید پلی‌استیشن (PlayStation Showcase)",
-      "titleEn": "PlayStation Showcase",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "sgf",
-      "date": "06-07",
-      "title": "رویداد تابستانی بازی‌های ویدئویی (Summer Game Fest)",
-      "titleEn": "Summer Game Fest (SGF)",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "pc_gaming_show",
-      "date": "06-08",
-      "title": "رویداد اختصاصی بازی‌های پی‌سی (PC Gaming Show)",
-      "titleEn": "PC Gaming Show",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "xbox_showcase",
-      "date": "06-09",
-      "title": "رویداد سالانه اختصاصی بازی‌های ایکس‌باکس (Xbox Games Showcase)",
-      "titleEn": "Xbox Games Showcase",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "nintendo_direct",
-      "date": "06-18",
-      "title": "رویداد بزرگ تابستان نینتندو دایرکت (Nintendo Direct)",
-      "titleEn": "Nintendo Direct Showcase",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "mario_64_anniv",
-      "date": "06-23",
-      "title": "سالروز عرضه نینتندو ۶۴ و تحول بازی‌های سه‌بعدی با Super Mario 64 (1996)",
-      "titleEn": "Super Mario 64 Launch",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "ac_black_flag_resynced",
-      "date": "2026-07-09",
-      "title": "بازسازی مدرن شاهکار دزدان دریایی Assassin's Creed Black Flag Resynced (Ubisoft)",
-      "titleEn": "Assassin's Creed Black Flag Resynced",
+      "id": "halo_campaign_evolved",
+      "date": "2026-07-28",
+      "title": "انتشار بازآفرینی حماسی Halo: Campaign Evolved (343 Industries / Xbox)",
+      "titleEn": "Halo: Campaign Evolved Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "gamescom",
-      "date": "08-20",
-      "title": "افتتاحیه بزرگترین نمایشگاه گیمینگ جهان (Gamescom ONL)",
-      "titleEn": "Gamescom Opening Night Live",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
     },
     {
       "id": "marvel_wolverine",
@@ -283,26 +419,34 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "dark_souls_anniv",
-      "date": "09-22",
-      "title": "سالروز تولد سبک انقلابی سولز با انتشار Dark Souls (2011)",
-      "titleEn": "Dark Souls Launch Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
+      "id": "control_resonant",
+      "date": "2026-09-24",
+      "title": "انتشار بازی ماورایی و اکشن معمایی Control Resonant (Remedy Entertainment)",
+      "titleEn": "Control Resonant Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "tgs",
-      "date": "09-25",
-      "title": "نمایشگاه بازی‌های توکیو در ژاپن (Tokyo Game Show)",
-      "titleEn": "Tokyo Game Show (TGS)",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
+      "id": "silent_hill_townfall",
+      "date": "2026-09-24",
+      "title": "انتشار بازی روان‌شناختی دلهره‌آور Silent Hill: Townfall (No Code / Konami)",
+      "titleEn": "Silent Hill: Townfall Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "witcher_3_remastered",
+      "date": "2026-09-29",
+      "title": "انتشار نسخه بازسازی The Witcher 3: Wild Hunt – Remastered (CD Projekt Red)",
+      "titleEn": "The Witcher 3: Wild Hunt – Remastered Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
     },
     {
       "id": "ace_combat_8",
       "date": "2026-10-02",
       "title": "انتشار شبیه‌ساز نبرد هوایی Ace Combat 8: Wings of Theve (Bandai Namco)",
-      "titleEn": "Ace Combat 8: Wings of Theve",
+      "titleEn": "Ace Combat 8: Wings of Theve Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     },
@@ -315,60 +459,12 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "witcher_4",
-      "date": "2026-10-23",
-      "title": "حماسه آغازین جدید ویچر The Witcher 4: Polaris (CD Projekt Red)",
-      "titleEn": "The Witcher 4 Release Window",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "gta_sa_anniv",
-      "date": "10-26",
-      "title": "سالروز انتشار خاطره‌انگیزترین بازی دوران Grand Theft Auto: San Andreas (2004)",
-      "titleEn": "GTA: San Andreas Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
       "id": "phantom_blade_zero",
       "date": "2026-10-29",
       "title": "انتشار بازی اکشن کونگ‌فو پانک Phantom Blade Zero (S-Game)",
       "titleEn": "Phantom Blade Zero Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "skyrim_anniv",
-      "date": "11-11",
-      "title": "سالروز انتشار بازی افسانه‌ای The Elder Scrolls V: Skyrim (2011)",
-      "titleEn": "Skyrim Launch Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "halo_xbox_anniv",
-      "date": "11-15",
-      "title": "سالروز معرفی کنسول نخست Xbox و بازی تاریخ‌ساز Halo: CE (2001)",
-      "titleEn": "Original Xbox & Halo Launch",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "hl2_anniv",
-      "date": "11-16",
-      "title": "سالروز انتشار شاهکار انقلابی نیمه‌عمر Half-Life 2 (2004)",
-      "titleEn": "Half-Life 2 Release Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "minecraft_anniv",
-      "date": "11-18",
-      "title": "سالروز انتشار نسخه نهایی و پرفروش‌ترین بازی تاریخ Minecraft (2011)",
-      "titleEn": "Minecraft Official Launch",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
     },
     {
       "id": "gta6",
@@ -379,44 +475,12 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "zelda_oot_anniv",
-      "date": "11-21",
-      "title": "سالروز انتشار بالاترین امتیاز تاریخ متامنتقدین The Legend of Zelda: Ocarina of Time (1998)",
-      "titleEn": "Zelda: Ocarina of Time Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "wow_anniv",
-      "date": "11-23",
-      "title": "سالروز تولد دنیای اسطوره‌ای وارکرفت World of Warcraft (2004)",
-      "titleEn": "World of Warcraft Launch",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "ps1_japan_anniv",
-      "date": "12-03",
-      "title": "سالروز عرضه نخستین کنسول خاکستری رنگ PlayStation در ژاپن (1994)",
-      "titleEn": "PlayStation Japan Launch Anniversary",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
-    },
-    {
-      "id": "tga",
-      "date": "12-10",
-      "title": "مراسم باشکوه جوایز بازی سال (The Game Awards)",
-      "titleEn": "The Game Awards (TGA)",
-      "type": "event",
-      "category": "مراسم سالانه گیمینگ"
-    },
-    {
-      "id": "doom_1993_anniv",
-      "date": "12-10",
-      "title": "سالروز انتشار نسخه انقلابی نخستین بازی DOOM توسط جان کارمک (1993)",
-      "titleEn": "Original DOOM 1993 Launch",
-      "type": "milestone",
-      "category": "شاهکارهای تاریخ گیمینگ"
+      "id": "poe_2",
+      "date": "2026-12-11",
+      "title": "انتشار نسخه نهایی بازی نقش‌آفرینی اکشن Path of Exile 2 (Grinding Gear Games)",
+      "titleEn": "Path of Exile 2 Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
     },
     {
       "id": "armatus",
@@ -454,7 +518,7 @@
       "id": "tomb_raider_atlantis",
       "date": "2027-02-12",
       "title": "انتشار ماجراجویی جدید لارا کرافت Tomb Raider: Legacy of Atlantis (Crystal Dynamics)",
-      "titleEn": "Tomb Raider: Legacy of Atlantis",
+      "titleEn": "Tomb Raider: Legacy of Atlantis Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     },
@@ -467,14 +531,6 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
-      "id": "fable_reboot",
-      "date": "2027-02-23",
-      "title": "انتشار بازآفرینی حماسی Fable (Playground Games / Xbox)",
-      "titleEn": "Fable Release",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
       "id": "ff14_evercold",
       "date": "2027-02-23",
       "title": "انتشار بسته گسترش‌دهنده Final Fantasy XIV: Evercold (Square Enix)",
@@ -483,10 +539,18 @@
       "category": "عرضه بازی‌های بزرگ"
     },
     {
+      "id": "fable_reboot",
+      "date": "2027-02-23",
+      "title": "انتشار بازآفرینی حماسی Fable (Playground Games / Xbox)",
+      "titleEn": "Fable Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
       "id": "wo_long_2",
       "date": "2027-03-04",
       "title": "انتشار بازی اکشن سامورایی Wo Long 2: Wings of Ember (Team Ninja / Koei Tecmo)",
-      "titleEn": "Wo Long 2: Wings of Ember",
+      "titleEn": "Wo Long 2: Wings of Ember Release",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     },
@@ -541,32 +605,8 @@
     {
       "id": "marvel_1943",
       "date": "2027-10-06",
-      "title": "انتشار ماجراجویی سینمایی جنگ جهانی Marvel 1943: Rise of Hydra (Skydance)",
+      "title": "انتشار ماجراجویی سینمایی جنگ جهانی Marvel 1943: Rise of Hydra (Skydance / Paramount)",
       "titleEn": "Marvel 1943: Rise of Hydra Release",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "resident_evil_9",
-      "date": "2027-10-22",
-      "title": "انتشار نسخه جدید سری وحشت بقا Resident Evil 9 (Capcom)",
-      "titleEn": "Resident Evil 9 Release",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "control_2",
-      "date": "2027-11-05",
-      "title": "انتشار بازی رازآلود فراطبیعی Control 2 (Remedy Entertainment)",
-      "titleEn": "Control 2 Release",
-      "type": "release",
-      "category": "عرضه بازی‌های بزرگ"
-    },
-    {
-      "id": "elder_scrolls_6",
-      "date": "2027-11-11",
-      "title": "رویداد پیش‌بینی حماسه جهان‌باز The Elder Scrolls VI (Bethesda)",
-      "titleEn": "The Elder Scrolls VI Target Window",
       "type": "release",
       "category": "عرضه بازی‌های بزرگ"
     }
