@@ -357,6 +357,44 @@ function getMonthEvents(jYear, jMonth) {
   return list;
 }
 
+/**
+ * Gaming Events Registry & Matcher (Option A)
+ */
+let GAMING_EVENTS_REGISTRY = [];
+
+function setGamingEventsData(data) {
+  if (Array.isArray(data)) {
+    GAMING_EVENTS_REGISTRY = data;
+  } else if (data && Array.isArray(data.events)) {
+    GAMING_EVENTS_REGISTRY = data.events;
+  }
+}
+
+function getGamingEventsForDate(gDate) {
+  if (!gDate || !Array.isArray(GAMING_EVENTS_REGISTRY) || GAMING_EVENTS_REGISTRY.length === 0) {
+    return [];
+  }
+  const y = gDate.getFullYear();
+  const m = String(gDate.getMonth() + 1).padStart(2, "0");
+  const d = String(gDate.getDate()).padStart(2, "0");
+  const ymd = `${y}-${m}-${d}`;
+  const md = `${m}-${d}`;
+
+  const matches = [];
+  for (const item of GAMING_EVENTS_REGISTRY) {
+    if (item.date === ymd || item.date === md) {
+      matches.push({
+        title: item.title,
+        titleEn: item.titleEn,
+        type: item.type,
+        category: item.category,
+        isGaming: true
+      });
+    }
+  }
+  return matches;
+}
+
 // Export for ES modules and standard browser globals
 if (typeof module !== "undefined" && module.exports) {
   module.exports = {
@@ -369,6 +407,8 @@ if (typeof module !== "undefined" && module.exports) {
     getHijriParts,
     getEventsForDate,
     isOfficialHoliday,
-    getMonthEvents
+    getMonthEvents,
+    setGamingEventsData,
+    getGamingEventsForDate
   };
 }

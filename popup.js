@@ -116,7 +116,8 @@ const AppState = {
   themeMode: "auto", // "auto", "light", or "dark"
   theme: "dark",     // effective theme: "light" or "dark"
   notes: {}, // { "1405-8-16": "یادداشت من" }
-  isEditingNote: false
+  isEditingNote: false,
+  enableGamingEvents: false
 };
 
 function getDateKey(y, m, d) {
@@ -218,6 +219,9 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
   const events = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate) : [];
   const isFriday = weekdayIndex === 6;
   const officialHolidays = events.filter(e => e.isHoliday);
+  const gamingEvents = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function" && gDate)
+    ? getGamingEventsForDate(gDate)
+    : [];
 
   const container = document.getElementById("occasionContainer");
   const badge = document.getElementById("occasionBadge");
@@ -225,7 +229,7 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
 
   if (!container || !badge || !textEl) return;
 
-  if (events.length === 0 && !isFriday) {
+  if (events.length === 0 && !isFriday && gamingEvents.length === 0) {
     container.classList.add("hidden");
     return;
   }
@@ -243,9 +247,20 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
       textEl.textContent = "جمعه (تعطیل هفتگی)";
       badge.title = "تعطیل هفتگی";
     }
+    if (gamingEvents.length > 0) {
+      badge.title += ` • 🎮 ${gamingEvents[0].title}`;
+    }
   } else if (events.length > 0) {
     badge.classList.add("is-event");
     const title = events.map(e => e.title).join(" • ");
+    textEl.textContent = title;
+    badge.title = title;
+    if (gamingEvents.length > 0) {
+      badge.title += ` • 🎮 ${gamingEvents[0].title}`;
+    }
+  } else if (gamingEvents.length > 0) {
+    badge.classList.add("is-gaming");
+    const title = gamingEvents.map(e => `🎮 ${e.title}`).join(" • ");
     textEl.textContent = title;
     badge.title = title;
   }
@@ -279,6 +294,73 @@ async function persistNotes() {
     }
   } catch (err) {
     console.warn("Could not persist notes:", err);
+  }
+}
+
+/**
+ * Gaming Events Management (Option A)
+ */
+async function loadGamingEvents() {
+  try {
+    let enabled = false;
+    let cachedEvents = null;
+
+    if (browserAPI.storage && browserAPI.storage.local) {
+      const res = await browserAPI.storage.local.get(["enableGamingEvents", "cachedGamingEvents"]);
+      enabled = Boolean(res && res.enableGamingEvents);
+      if (res && res.cachedGamingEvents && Array.isArray(res.cachedGamingEvents)) {
+        cachedEvents = res.cachedGamingEvents;
+      }
+    } else if (typeof localStorage !== "undefined") {
+      enabled = localStorage.getItem("enableGamingEvents") === "true";
+      const raw = localStorage.getItem("cachedGamingEvents");
+      if (raw) cachedEvents = JSON.parse(raw);
+    }
+
+    AppState.enableGamingEvents = enabled;
+
+    // If cache not in storage, fetch bundled file
+    if (!cachedEvents) {
+      try {
+        const bundledUrl = (browserAPI.runtime && browserAPI.runtime.getURL)
+          ? browserAPI.runtime.getURL("gaming-events.json")
+          : "gaming-events.json";
+        const fetchRes = await fetch(bundledUrl);
+        if (fetchRes.ok) {
+          const json = await fetchRes.json();
+          if (json && Array.isArray(json.events)) {
+            cachedEvents = json.events;
+            if (browserAPI.storage && browserAPI.storage.local) {
+              await browserAPI.storage.local.set({ cachedGamingEvents: json.events });
+            }
+          }
+        }
+      } catch (e) {
+        console.warn("Could not load bundled gaming events:", e);
+      }
+    }
+
+    if (cachedEvents && typeof setGamingEventsData === "function") {
+      setGamingEventsData(cachedEvents);
+    }
+
+    updateGamingToggleUI();
+  } catch (err) {
+    console.warn("Failed to initialize gaming events in popup:", err);
+  }
+}
+
+function updateGamingToggleUI() {
+  const icon = document.getElementById("gamingIcon");
+  const btn = document.getElementById("gamingToggleBtn");
+  if (!icon || !btn) return;
+
+  if (AppState.enableGamingEvents) {
+    icon.className = "gaming-icon-active";
+    btn.title = "رویدادهای گیمینگ: فعال (کلیک برای غیرفعال‌سازی)";
+  } else {
+    icon.className = "gaming-icon-muted";
+    btn.title = "رویدادهای گیمینگ: غیرفعال (کلیک برای فعال‌سازی)";
   }
 }
 
@@ -458,6 +540,9 @@ function renderCalendar() {
     // Check if day has a personal local note
     const key = getDateKey(year, month, d);
     const hasNote = Boolean(AppState.notes[key]);
+    const gamingEvs = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function")
+      ? getGamingEventsForDate(cellGDate)
+      : [];
 
     // Indicators
     if (hasNote) {
@@ -469,6 +554,11 @@ function renderCalendar() {
       const dot = document.createElement("span");
       dot.className = `cell-dot ${isHoliday ? "holiday-dot" : ""}`;
       cell.appendChild(dot);
+    } else if (gamingEvs.length > 0) {
+      const gamingDot = document.createElement("span");
+      gamingDot.className = "cell-dot gaming-dot";
+      gamingDot.title = `🎮 ${gamingEvs[0].title}`;
+      cell.appendChild(gamingDot);
     }
 
     // Interactive Click: Updates hero card, occasion badge, and notes
@@ -687,15 +777,19 @@ function getMonthSummaryEvents(year, month) {
     const evs = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, dt) : [];
     const noteKey = getDateKey(year, month, d);
     const userNote = AppState.notes ? AppState.notes[noteKey] : null;
+    const gamingEvs = (AppState.enableGamingEvents && typeof getGamingEventsForDate === "function")
+      ? getGamingEventsForDate(dt)
+      : [];
 
-    // Only list days that have actual occasions/events or personal notes (Fridays without events are not listed)
-    if (evs.length > 0 || (userNote && userNote.trim())) {
+    // Only list days that have actual occasions/events, personal notes, or gaming events (when enabled)
+    if (evs.length > 0 || (userNote && userNote.trim()) || gamingEvs.length > 0) {
       list.push({
         day: d,
         weekday: PERSIAN_WEEKDAYS[weekdayIndex],
         weekdayIndex,
         isFriday,
         events: evs,
+        gamingEvents: gamingEvs,
         note: userNote && userNote.trim() ? userNote.trim() : null
       });
     }
@@ -733,9 +827,10 @@ function showMonthEventsOverlay() {
       row.title = "کلیک برای پرش به این روز";
 
       const hasOfficialHoliday = item.events.some(e => e.isHoliday) || item.isFriday;
+      const isOnlyGaming = !hasOfficialHoliday && item.events.length === 0 && !item.note && item.gamingEvents && item.gamingEvents.length > 0;
 
       const badge = document.createElement("div");
-      badge.className = `event-row-badge ${hasOfficialHoliday ? "is-holiday" : ""}`;
+      badge.className = `event-row-badge ${hasOfficialHoliday ? "is-holiday" : (isOnlyGaming ? "is-gaming" : "")}`;
 
       const badgeWd = document.createElement("span");
       badgeWd.className = "badge-weekday";
@@ -757,6 +852,15 @@ function showMonthEventsOverlay() {
           const t = document.createElement("div");
           t.className = `event-row-title ${ev.isHoliday ? "is-holiday" : ""}`;
           t.textContent = ev.isHoliday ? `${ev.title} (تعطیل)` : ev.title;
+          content.appendChild(t);
+        });
+      }
+
+      if (item.gamingEvents && item.gamingEvents.length > 0) {
+        item.gamingEvents.forEach(gev => {
+          const t = document.createElement("div");
+          t.className = "event-row-title is-gaming";
+          t.textContent = `🎮 ${gev.title}`;
           content.appendChild(t);
         });
       }
@@ -1123,6 +1227,36 @@ function setupEventHandlers() {
       }
     });
   }
+
+  // 10. Gaming Events Toggle Button (Option A)
+  const gamingToggleBtn = document.getElementById("gamingToggleBtn");
+  if (gamingToggleBtn) {
+    gamingToggleBtn.addEventListener("click", async (e) => {
+      e.stopPropagation();
+      AppState.enableGamingEvents = !AppState.enableGamingEvents;
+      try {
+        if (browserAPI.storage && browserAPI.storage.local) {
+          await browserAPI.storage.local.set({ enableGamingEvents: AppState.enableGamingEvents });
+        } else if (typeof localStorage !== "undefined") {
+          localStorage.setItem("enableGamingEvents", String(AppState.enableGamingEvents));
+        }
+      } catch (err) {
+        console.warn("Could not save gaming setting:", err);
+      }
+      updateGamingToggleUI();
+      showCopyToast(AppState.enableGamingEvents ? "رویدادهای گیمینگ فعال شد 🎮" : "رویدادهای گیمینگ غیرفعال شد");
+      renderCalendar();
+      const g = jalaliToGregorian(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+      const dt = new Date(g.gy, g.gm - 1, g.gd);
+      displayDateOnHero(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay, (dt.getDay() + 1) % 7, dt);
+
+      // If Month Events Overlay is visible, refresh it
+      const overlay = document.getElementById("monthEventsOverlay");
+      if (overlay && !overlay.classList.contains("hidden")) {
+        showMonthEventsOverlay();
+      }
+    });
+  }
 }
 
 // Bootstrap on DOM Ready
@@ -1134,6 +1268,7 @@ document.addEventListener("DOMContentLoaded", async () => {
   AppState.selectedDay = AppState.todayJalali.day;
 
   await loadNotes();
+  await loadGamingEvents();
   setupEventHandlers();
   setupKeyboardNavigation();
   renderCalendar();

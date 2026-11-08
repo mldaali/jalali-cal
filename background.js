@@ -204,22 +204,89 @@ async function updateDynamicIcon() {
   }
 }
 
+/**
+ * Automated Gaming Events Daily Background Sync (Option A)
+ */
+const GAMING_SYNC_URL = "https://raw.githubusercontent.com/mldaali/jalali-cal/main/gaming-events.json";
+
+async function syncGamingEventsOnline() {
+  try {
+    const res = await fetch(GAMING_SYNC_URL, { cache: "no-cache" });
+    if (!res.ok) {
+      console.warn(`[JalaliCal] Gaming events sync responded with status: ${res.status}`);
+      return;
+    }
+    const data = await res.json();
+    if (data && Array.isArray(data.events) && data.events.length > 0) {
+      await browserAPI.storage.local.set({
+        cachedGamingEvents: data.events,
+        lastGamingSync: Date.now()
+      });
+      console.log(`[JalaliCal] Successfully synced ${data.events.length} gaming events from GitHub.`);
+    }
+  } catch (err) {
+    console.warn("[JalaliCal] Failed to sync gaming events online, using local cache:", err);
+  }
+}
+
+async function initGamingEvents() {
+  try {
+    if (!browserAPI.storage || !browserAPI.storage.local) return;
+    const cache = await browserAPI.storage.local.get(["cachedGamingEvents", "lastGamingSync"]);
+    
+    // If no cache exists, load bundled dataset
+    if (!cache.cachedGamingEvents || !Array.isArray(cache.cachedGamingEvents) || cache.cachedGamingEvents.length === 0) {
+      try {
+        const bundledUrl = browserAPI.runtime.getURL("gaming-events.json");
+        const res = await fetch(bundledUrl);
+        if (res.ok) {
+          const data = await res.json();
+          if (data && Array.isArray(data.events)) {
+            await browserAPI.storage.local.set({
+              cachedGamingEvents: data.events,
+              lastGamingSync: Date.now()
+            });
+            console.log(`[JalaliCal] Loaded ${data.events.length} bundled gaming events.`);
+          }
+        }
+      } catch (e) {
+        console.warn("[JalaliCal] Could not load bundled gaming events:", e);
+      }
+    }
+
+    // Check if 24 hours have passed since last sync
+    const lastSync = cache.lastGamingSync || 0;
+    const ONE_DAY_MS = 24 * 60 * 60 * 1000;
+    if (Date.now() - lastSync > ONE_DAY_MS) {
+      syncGamingEventsOnline();
+    }
+  } catch (err) {
+    console.warn("[JalaliCal] Error initializing gaming events:", err);
+  }
+}
+
 // 1. Lifecycle: On Installed
 browserAPI.runtime.onInstalled.addListener(() => {
   updateDynamicIcon();
   browserAPI.alarms.create("hourlyIconAlarm", { periodInMinutes: 60 });
+  browserAPI.alarms.create("dailyGamingSyncAlarm", { periodInMinutes: 1440 });
+  initGamingEvents();
 });
 
 // 2. Lifecycle: On Startup
 browserAPI.runtime.onStartup.addListener(() => {
   updateDynamicIcon();
   browserAPI.alarms.create("hourlyIconAlarm", { periodInMinutes: 60 });
+  browserAPI.alarms.create("dailyGamingSyncAlarm", { periodInMinutes: 1440 });
+  initGamingEvents();
 });
 
-// 3. Hourly Alarm Trigger
+// 3. Hourly & Daily Alarm Triggers
 browserAPI.alarms.onAlarm.addListener(alarm => {
   if (alarm.name === "hourlyIconAlarm") {
     updateDynamicIcon();
+  } else if (alarm.name === "dailyGamingSyncAlarm") {
+    syncGamingEventsOnline();
   }
 });
 
@@ -228,5 +295,8 @@ browserAPI.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message && message.action === "updateIcon") {
     updateDynamicIcon();
     sendResponse({ success: true });
+  } else if (message && message.action === "syncGamingNow") {
+    syncGamingEventsOnline().then(() => sendResponse({ success: true }));
+    return true;
   }
 });

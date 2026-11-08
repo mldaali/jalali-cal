@@ -222,6 +222,41 @@ const dt22 = new Date(2026, 9, 23 + 22 - 1);
 const evs22 = getEventsForDate(1405, 8, 22, dt22);
 assert(evs22.length > 0, "1405/8/22 Friday has official event (Shahadat Hazrat Zahra) and will be included");
 
+console.log("\n\x1b[1m=== 10. Automated Gaming Events & Release Dates (Option A) ===\x1b[0m");
+assert(Array.isArray(manifest.host_permissions) && manifest.host_permissions.some(p => p.includes("raw.githubusercontent.com")), "Host permissions include raw.githubusercontent.com for background daily sync");
+assert(fs.existsSync(path.join(__dirname, "gaming-events.json")), "gaming-events.json exists in extension bundle");
+
+const gamingData = JSON.parse(fs.readFileSync(path.join(__dirname, "gaming-events.json"), "utf-8"));
+assert(Array.isArray(gamingData.events) && gamingData.events.length >= 20, `gaming-events.json contains curated dataset (${gamingData.events.length} events found)`);
+
+const { setGamingEventsData, getGamingEventsForDate } = require(path.join(__dirname, "events.js"));
+assert(typeof setGamingEventsData === "function", "setGamingEventsData is exported from events.js");
+assert(typeof getGamingEventsForDate === "function", "getGamingEventsForDate is exported from events.js");
+
+setGamingEventsData(gamingData.events);
+
+// Test GTA 6 release date match
+const gtaDate = new Date(2026, 10, 17); // Nov 17, 2026
+const gtaMatches = getGamingEventsForDate(gtaDate);
+assert(gtaMatches.some(e => e.title.includes("Grand Theft Auto VI")), "GTA 6 release date correctly matched on 2026-11-17");
+
+// Test The Game Awards annual event match
+const tgaDate = new Date(2026, 11, 10); // Dec 10
+const tgaMatches = getGamingEventsForDate(tgaDate);
+assert(tgaMatches.some(e => e.title.includes("The Game Awards")), "The Game Awards event matched on 12-10");
+
+assert(htmlContent.includes('id="gamingToggleBtn"'), "Gaming toggle button exists in popup.html");
+assert(htmlContent.includes('id="gamingIcon"'), "Gaming icon exists in popup.html");
+assert(popupJsContent.includes("enableGamingEvents: false"), "Gaming events are strictly opt-in (default disabled)");
+assert(popupJsContent.includes("loadGamingEvents"), "loadGamingEvents function exists in popup.js");
+
+const bgContent = fs.readFileSync(path.join(__dirname, "background.js"), "utf-8");
+assert(bgContent.includes("syncGamingEventsOnline"), "syncGamingEventsOnline background job exists in background.js");
+assert(bgContent.includes("dailyGamingSyncAlarm"), "dailyGamingSyncAlarm is registered in background.js");
+
+assert(fs.existsSync(path.join(__dirname, "scripts", "update-gaming-events.js")), "Autonomous GitHub action script exists");
+assert(fs.existsSync(path.join(__dirname, ".github", "workflows", "update-gaming-events.yml")), "Automated GitHub Actions workflow exists");
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");

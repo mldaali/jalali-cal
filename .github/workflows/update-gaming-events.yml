@@ -1,0 +1,40 @@
+name: Daily Gaming Events Sync
+
+on:
+  schedule:
+    # Run once daily at 03:00 AM UTC
+    - cron: '0 3 * * *'
+  workflow_dispatch: # Enable manual run from GitHub UI
+
+permissions:
+  contents: write
+
+jobs:
+  sync-gaming-events:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Run Gaming Events Synchronizer
+        run: node scripts/update-gaming-events.js
+        env:
+          RAWG_API_KEY: ${{ secrets.RAWG_API_KEY }}
+
+      - name: Commit and Push If Updated
+        run: |
+          if ! git diff --quiet gaming-events.json; then
+            git config user.name "github-actions[bot]"
+            git config user.email "github-actions[bot]@users.noreply.github.com"
+            git add gaming-events.json
+            git commit -m "chore(gaming): Automated daily update of gaming events [skip ci]"
+            git push
+            echo "✅ Successfully committed and pushed updated gaming events."
+          else
+            echo "ℹ️ No changes to gaming events detected."
+          fi

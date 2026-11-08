@@ -1,0 +1,207 @@
+{
+  "version": "1.0.0",
+  "lastUpdated": "2026-11-08",
+  "description": "Curated database of the greatest gaming events, annual conferences, legendary milestones, and blockbuster game releases",
+  "events": [
+    {
+      "id": "civ7",
+      "date": "2025-02-11",
+      "title": "انتشار بازی Sid Meier's Civilization VII",
+      "titleEn": "Civilization VII Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "mh_wilds",
+      "date": "2025-02-28",
+      "title": "انتشار بازی Monster Hunter Wilds (Capcom)",
+      "titleEn": "Monster Hunter Wilds Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "ac_shadows",
+      "date": "2025-03-20",
+      "title": "انتشار بازی Assassin's Creed Shadows",
+      "titleEn": "Assassin's Creed Shadows Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "doom_dark_ages",
+      "date": "2025-05-15",
+      "title": "انتشار بازی DOOM: The Dark Ages (id Software)",
+      "titleEn": "DOOM: The Dark Ages Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "death_stranding_2",
+      "date": "2025-09-26",
+      "title": "انتشار بازی Death Stranding 2: On The Beach",
+      "titleEn": "Death Stranding 2 Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "ghost_yotei",
+      "date": "2025-10-10",
+      "title": "انتشار بازی Ghost of Yōtei (Sucker Punch)",
+      "titleEn": "Ghost of Yōtei Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "metroid_prime_4",
+      "date": "2025-11-07",
+      "title": "انتشار بازی Metroid Prime 4: Beyond (Nintendo)",
+      "titleEn": "Metroid Prime 4: Beyond Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "elden_ring_anniv",
+      "date": "02-25",
+      "title": "سالروز انتشار بازی Elden Ring و جهان‌باز FromSoftware (2022)",
+      "titleEn": "Elden Ring Release Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "zelda_botw_anniv",
+      "date": "03-03",
+      "title": "سالروز عرضه Nintendo Switch و بازی The Legend of Zelda: BotW (2017)",
+      "titleEn": "Switch & Zelda: BotW Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "sgf",
+      "date": "06-08",
+      "title": "کنفرانس و رونمایی Summer Game Fest",
+      "titleEn": "Summer Game Fest",
+      "type": "event",
+      "category": "کنفرانس جهانی بازی‌ها"
+    },
+    {
+      "id": "pc_gaming_show",
+      "date": "06-09",
+      "title": "کنفرانس بازی‌های رایانه‌ای PC Gaming Show",
+      "titleEn": "PC Gaming Show",
+      "type": "event",
+      "category": "کنفرانس اختصاصی PC"
+    },
+    {
+      "id": "fable_reboot",
+      "date": "2026-06-12",
+      "title": "انتشار بازی Fable (Playground Games / Xbox)",
+      "titleEn": "Fable Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "gamescom",
+      "date": "08-20",
+      "title": "افتتاحیه و نمایشگاه گیمزکام (Gamescom ONL)",
+      "titleEn": "Gamescom Opening Night Live",
+      "type": "event",
+      "category": "بزرگترین رویداد عمومی گیمینگ"
+    },
+    {
+      "id": "ps1_western_anniv",
+      "date": "09-09",
+      "title": "سالروز عرضه نخستین کنسول PlayStation در آمریکا و اروپا (1995)",
+      "titleEn": "Original PlayStation Western Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "mario_anniv",
+      "date": "09-13",
+      "title": "سالروز انتشار Super Mario Bros و روز جهانی بازی ویدیویی (1985)",
+      "titleEn": "Super Mario Bros / National Video Game Day",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "tgs",
+      "date": "09-25",
+      "title": "نمایشگاه تخصصی بازی‌های توکیو (Tokyo Game Show)",
+      "titleEn": "Tokyo Game Show (TGS)",
+      "type": "event",
+      "category": "نمایشگاه بین‌المللی توکیو"
+    },
+    {
+      "id": "witcher_4",
+      "date": "2026-10-23",
+      "title": "پروژه بزرگ The Witcher 4: Polaris (CD Projekt Red)",
+      "titleEn": "The Witcher 4 Release Window",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "skyrim_anniv",
+      "date": "11-11",
+      "title": "سالروز انتشار جاودانه The Elder Scrolls V: Skyrim (2011)",
+      "titleEn": "Skyrim 11/11/11 Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "halo_xbox_anniv",
+      "date": "11-15",
+      "title": "سالروز معرفی کنسول نخست Xbox و بازی تاریخ‌ساز Halo: CE (2001)",
+      "titleEn": "Original Xbox & Halo Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "hl2_anniv",
+      "date": "11-16",
+      "title": "سالروز انتشار شاهکار انقلابی Half-Life 2 (2004)",
+      "titleEn": "Half-Life 2 Release Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "gta6",
+      "date": "2026-11-17",
+      "title": "انتشار بازی Grand Theft Auto VI (Rockstar Games)",
+      "titleEn": "Grand Theft Auto VI Release",
+      "type": "release",
+      "category": "عرضه بازی‌های بزرگ"
+    },
+    {
+      "id": "minecraft_anniv",
+      "date": "11-18",
+      "title": "سالروز انتشار نسخه نهایی Minecraft (2011)",
+      "titleEn": "Minecraft Official Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "ps1_japan_anniv",
+      "date": "12-03",
+      "title": "سالروز عرضه نخستین کنسول PlayStation در ژاپن (1994)",
+      "titleEn": "PlayStation Japan Launch Anniversary",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    },
+    {
+      "id": "tga",
+      "date": "12-10",
+      "title": "مراسم جوایز بازی سال (The Game Awards)",
+      "titleEn": "The Game Awards (TGA)",
+      "type": "event",
+      "category": "مراسم سالانه گیمینگ"
+    },
+    {
+      "id": "doom_1993_anniv",
+      "date": "12-10",
+      "title": "سالروز انتشار نخستین بازی DOOM توسط جان کارمک (1993)",
+      "titleEn": "Original DOOM 1993 Launch",
+      "type": "milestone",
+      "category": "شاهکارهای تاریخ گیمینگ"
+    }
+  ]
+}

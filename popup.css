@@ -757,6 +757,33 @@ html, body {
   background: var(--accent-red);
 }
 
+.cell-dot.gaming-dot {
+  background: var(--accent-mauve);
+}
+
+.gaming-icon-muted {
+  opacity: 0.38;
+  filter: grayscale(1);
+  transition: opacity 0.15s ease, filter 0.15s ease, transform 0.15s ease;
+}
+
+.gaming-icon-active {
+  opacity: 1;
+  filter: none;
+  transform: scale(1.08);
+}
+
+.occasion-badge.is-gaming {
+  background: rgba(203, 166, 247, 0.14);
+  color: var(--accent-mauve);
+  border: 1px solid rgba(203, 166, 247, 0.35);
+}
+
+.occasion-badge.is-gaming .badge-dot {
+  background: var(--accent-mauve);
+  box-shadow: 0 0 6px rgba(203, 166, 247, 0.7);
+}
+
 /* ==========================================================================
    Month Events HUD Peek Overlay (Hold 'E' to Peek)
    ========================================================================== */
@@ -926,6 +953,12 @@ html, body {
   border-color: rgba(243, 139, 168, 0.35);
 }
 
+.event-row-badge.is-gaming {
+  background: rgba(203, 166, 247, 0.14);
+  color: var(--accent-mauve);
+  border-color: rgba(203, 166, 247, 0.35);
+}
+
 .event-row-badge .badge-weekday {
   font-size: 7.5px;
   font-weight: 500;
@@ -955,6 +988,11 @@ html, body {
 
 .event-row-title.is-holiday {
   color: var(--accent-red);
+}
+
+.event-row-title.is-gaming {
+  color: var(--accent-mauve);
+  font-weight: 600;
 }
 
 .event-row-note {
