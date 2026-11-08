@@ -68,6 +68,7 @@ assert(htmlContent.includes('id="noteSection"'), "Notes container exists in popu
 assert(htmlContent.includes('id="quickNoteBtn"'), "Quick note trigger exists in corner actions");
 assert(htmlContent.includes('id="nextMonthBtn"'), "Next month button exists in popup.html");
 assert(htmlContent.includes('id="prevMonthBtn"'), "Prev month button exists in popup.html");
+assert(htmlContent.indexOf('id="prevMonthBtn"') < htmlContent.indexOf('id="nextMonthBtn"'), "Right indicator (prev month >) precedes left indicator (next month <) in RTL layout");
 assert(htmlContent.includes('class="nav-arrow-svg"'), "Month navigation uses modern vector SVG icons");
 assert(htmlContent.includes("E رویدادها • N یادداشت • T امروز • D پوسته • C کپی"), "Minimalist shortcuts footer strictly maintains E N T D C");
 
