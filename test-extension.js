@@ -66,6 +66,9 @@ assert(!/<script>\s*[\s\S]*?<\/script>/i.test(htmlContent), "No inline scripts i
 assert(!/\s+on[a-z]+\s*=/i.test(htmlContent), "No inline event attributes (e.g. onclick) in popup.html");
 assert(htmlContent.includes('id="noteSection"'), "Notes container exists in popup.html");
 assert(htmlContent.includes('id="quickNoteBtn"'), "Quick note trigger exists in corner actions");
+assert(htmlContent.includes('id="nextMonthBtn"'), "Next month button exists in popup.html");
+assert(htmlContent.includes('id="prevMonthBtn"'), "Prev month button exists in popup.html");
+assert(htmlContent.includes('class="nav-arrow-svg"'), "Month navigation uses modern vector SVG icons");
 
 console.log("\n\x1b[1m=== 4. Dynamic Native Intl API Calculations ===\x1b[0m");
 const now = new Date();
