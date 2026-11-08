@@ -85,7 +85,7 @@
     <div class="calendar-nav-bar">
       <button class="nav-arrow" id="prevMonthBtn" title="ماه قبل (P / PageUp)" aria-label="ماه قبل">›</button>
       <div class="month-title-wrapper">
-        <span class="month-title" id="monthTitle">...</span>
+        <span class="month-title" id="monthTitle" title="مشاهده رویدادهای ماه (یا کلید E را نگه دارید)">...</span>
         <button class="jump-today-btn" id="jumpTodayBtn" title="بازگشت به امروز (T)">امروز</button>
       </div>
       <button class="nav-arrow" id="nextMonthBtn" title="ماه بعد (M / PageDown)" aria-label="ماه بعد">‹</button>
@@ -107,7 +107,22 @@
 
     <!-- Minimalist Shortcut Footer Guide -->
     <div class="shortcuts-footer" title="کلیدهای میانبر فعال تقویم">
-      <span>⌨ میانبرها: ←/→ روزها • T امروز • N یادداشت • P/M ماه • C کپی • D پوسته</span>
+      <span>⌨ میانبرها: ←/→ روزها • T امروز • E رویدادها (نگه‌دارید) • N یادداشت • D پوسته • C کپی</span>
+    </div>
+
+    <!-- Month Events HUD Peek Overlay (Hold key 'E' to show) -->
+    <div class="month-events-overlay hidden" id="monthEventsOverlay" aria-hidden="true">
+      <div class="events-overlay-card">
+        <div class="events-overlay-header">
+          <div class="events-header-title-group">
+            <span class="events-header-icon">📅</span>
+            <span class="events-header-title" id="eventsOverlayTitle">رویدادهای ماه</span>
+          </div>
+          <span class="events-overlay-hint">رها کردن E: بستن</span>
+          <button class="events-overlay-close-btn" id="closeEventsOverlayBtn" title="بستن (Escape)" aria-label="بستن">✕</button>
+        </div>
+        <div class="events-overlay-list" id="eventsOverlayList"></div>
+      </div>
     </div>
   </div>
 

@@ -670,7 +670,146 @@ function applyTheme(themeMode) {
 }
 
 /**
- * Setup Global Keyboard Navigation (Feature 5)
+ * State and helpers for Month Events HUD Peek Overlay
+ */
+let isHoldingEventsKey = false;
+
+function getMonthSummaryEvents(year, month) {
+  const isLeap = typeof isLeapJalaliYear === "function" ? isLeapJalaliYear(year) : false;
+  const daysInMonth = month <= 6 ? 31 : (month <= 11 ? 30 : (isLeap ? 30 : 29));
+  const list = [];
+
+  for (let d = 1; d <= daysInMonth; d++) {
+    const g = jalaliToGregorian(year, month, d);
+    const dt = new Date(g.gy, g.gm - 1, g.gd);
+    const weekdayIndex = (dt.getDay() + 1) % 7;
+    const isFriday = weekdayIndex === 6;
+    const evs = typeof getEventsForDate === "function" ? getEventsForDate(year, month, d, dt) : [];
+    const noteKey = getDateKey(year, month, d);
+    const userNote = AppState.notes ? AppState.notes[noteKey] : null;
+
+    if (evs.length > 0 || isFriday || (userNote && userNote.trim())) {
+      list.push({
+        day: d,
+        weekday: PERSIAN_WEEKDAYS[weekdayIndex],
+        weekdayIndex,
+        isFriday,
+        events: evs,
+        note: userNote && userNote.trim() ? userNote.trim() : null
+      });
+    }
+  }
+
+  return list;
+}
+
+function showMonthEventsOverlay() {
+  const overlay = document.getElementById("monthEventsOverlay");
+  const listEl = document.getElementById("eventsOverlayList");
+  const titleEl = document.getElementById("eventsOverlayTitle");
+  if (!overlay || !listEl) return;
+
+  const year = AppState.currentViewYear;
+  const month = AppState.currentViewMonth;
+  const monthName = PERSIAN_MONTH_NAMES[month - 1];
+
+  if (titleEl) {
+    titleEl.textContent = `رویدادهای ${monthName} ${toPersianDigits(year)}`;
+  }
+
+  listEl.innerHTML = "";
+  const items = getMonthSummaryEvents(year, month);
+
+  if (items.length === 0) {
+    const empty = document.createElement("div");
+    empty.className = "events-empty-state";
+    empty.textContent = "هیچ رویدادی در این ماه ثبت نشده است.";
+    listEl.appendChild(empty);
+  } else {
+    items.forEach(item => {
+      const row = document.createElement("div");
+      row.className = "event-row-item";
+      row.title = "کلیک برای پرش به این روز";
+
+      const hasOfficialHoliday = item.events.some(e => e.isHoliday) || item.isFriday;
+
+      const badge = document.createElement("div");
+      badge.className = `event-row-badge ${hasOfficialHoliday ? "is-holiday" : ""}`;
+
+      const badgeWd = document.createElement("span");
+      badgeWd.className = "badge-weekday";
+      badgeWd.textContent = item.weekday;
+
+      const badgeNum = document.createElement("span");
+      badgeNum.className = "badge-daynum";
+      badgeNum.textContent = toPersianDigits(item.day);
+
+      badge.appendChild(badgeWd);
+      badge.appendChild(badgeNum);
+      row.appendChild(badge);
+
+      const content = document.createElement("div");
+      content.className = "event-row-content";
+
+      if (item.events.length > 0) {
+        item.events.forEach(ev => {
+          const t = document.createElement("div");
+          t.className = `event-row-title ${ev.isHoliday ? "is-holiday" : ""}`;
+          t.textContent = ev.isHoliday ? `${ev.title} (تعطیل)` : ev.title;
+          content.appendChild(t);
+        });
+      } else if (item.isFriday) {
+        const t = document.createElement("div");
+        t.className = "event-row-title is-holiday";
+        t.textContent = "جمعه (تعطیل هفتگی)";
+        content.appendChild(t);
+      }
+
+      if (item.note) {
+        const noteEl = document.createElement("div");
+        noteEl.className = "event-row-note";
+
+        const pin = document.createElement("span");
+        pin.textContent = "📌";
+
+        const txt = document.createElement("span");
+        txt.textContent = item.note;
+
+        noteEl.appendChild(pin);
+        noteEl.appendChild(txt);
+        content.appendChild(noteEl);
+      }
+
+      row.appendChild(content);
+
+      row.addEventListener("click", () => {
+        AppState.selectedDay = item.day;
+        const g = jalaliToGregorian(year, month, item.day);
+        const dt = new Date(g.gy, g.gm - 1, g.gd);
+        displayDateOnHero(year, month, item.day, item.weekdayIndex, dt);
+        renderCalendar();
+        hideMonthEventsOverlay();
+      });
+
+      listEl.appendChild(row);
+    });
+  }
+
+  overlay.classList.remove("hidden");
+  overlay.setAttribute("aria-hidden", "false");
+}
+
+function hideMonthEventsOverlay() {
+  const overlay = document.getElementById("monthEventsOverlay");
+  if (overlay) {
+    overlay.classList.add("hidden");
+    overlay.setAttribute("aria-hidden", "true");
+  }
+  isHoldingEventsKey = false;
+}
+
+/**
+ * Setup Global Keyboard Navigation (Feature 5 & Hold 'E' to Peek)
  */
 function setupKeyboardNavigation() {
   window.addEventListener("keydown", (e) => {
@@ -680,6 +819,28 @@ function setupKeyboardNavigation() {
       if (e.key === "Escape") {
         AppState.isEditingNote = false;
         updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+      }
+      return;
+    }
+
+    if (e.key === "Escape") {
+      hideMonthEventsOverlay();
+      AppState.isEditingNote = false;
+      updateNoteSection(AppState.currentViewYear, AppState.currentViewMonth, AppState.selectedDay);
+      return;
+    }
+
+    // Ignore single-key shortcuts if Ctrl / Meta / Alt modifiers are pressed
+    if (e.ctrlKey || e.metaKey || e.altKey) {
+      return;
+    }
+
+    // Hold 'E' / 'ث' to peek at month events overlay
+    if (e.key === "e" || e.key === "E" || e.key === "ث") {
+      e.preventDefault();
+      if (!isHoldingEventsKey) {
+        isHoldingEventsKey = true;
+        showMonthEventsOverlay();
       }
       return;
     }
@@ -732,6 +893,20 @@ function setupKeyboardNavigation() {
       const themeBtn = document.getElementById("themeToggleBtn");
       if (themeBtn) themeBtn.click();
     }
+  });
+
+  // Release 'E' / 'ث' key hides the peek overlay immediately
+  window.addEventListener("keyup", (e) => {
+    if (e.key === "e" || e.key === "E" || e.key === "ث") {
+      if (isHoldingEventsKey) {
+        hideMonthEventsOverlay();
+      }
+    }
+  });
+
+  // Safety net: ensure overlay disappears if window blurs while key is down
+  window.addEventListener("blur", () => {
+    hideMonthEventsOverlay();
   });
 }
 
@@ -920,6 +1095,37 @@ function setupEventHandlers() {
     });
   } else {
     applyTheme("auto");
+  }
+
+  // 9. Month Events Overlay (Click month title to toggle, close button or backdrop click to dismiss)
+  const monthTitle = document.getElementById("monthTitle");
+  if (monthTitle) {
+    monthTitle.addEventListener("click", () => {
+      const overlay = document.getElementById("monthEventsOverlay");
+      if (overlay && !overlay.classList.contains("hidden")) {
+        hideMonthEventsOverlay();
+      } else {
+        showMonthEventsOverlay();
+      }
+    });
+  }
+
+  const closeEventsOverlayBtn = document.getElementById("closeEventsOverlayBtn");
+  if (closeEventsOverlayBtn) {
+    closeEventsOverlayBtn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      hideMonthEventsOverlay();
+    });
+  }
+
+  const monthEventsOverlay = document.getElementById("monthEventsOverlay");
+  if (monthEventsOverlay) {
+    monthEventsOverlay.addEventListener("click", (e) => {
+      // If clicked on backdrop outside of the events card
+      if (e.target === monthEventsOverlay) {
+        hideMonthEventsOverlay();
+      }
+    });
   }
 }
 

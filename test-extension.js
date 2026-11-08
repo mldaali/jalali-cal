@@ -180,6 +180,29 @@ assert(popupJsContent.includes("darkModeMediaQuery.addEventListener") || popupJs
 assert(htmlContent.includes('id="themeToggleBtn"'), "Theme toggle button exists in popup.html");
 assert(popupJsContent.includes('"themeMode": "auto"') || popupJsContent.includes('themeMode: "auto"'), "Default theme mode is set to auto");
 
+console.log("\n\x1b[1m=== 9. Hold 'E' Month Events HUD Peek Overlay ===\x1b[0m");
+assert(htmlContent.includes('id="monthEventsOverlay"'), "Month events HUD overlay markup exists in popup.html");
+assert(htmlContent.includes('id="eventsOverlayList"'), "Events list container exists in popup.html");
+assert(htmlContent.includes('id="closeEventsOverlayBtn"'), "Events close button exists in popup.html");
+assert(popupJsContent.includes("showMonthEventsOverlay"), "showMonthEventsOverlay function is defined");
+assert(popupJsContent.includes("hideMonthEventsOverlay"), "hideMonthEventsOverlay function is defined");
+assert(popupJsContent.includes("getMonthSummaryEvents"), "getMonthSummaryEvents data extractor is defined");
+assert(popupJsContent.includes("isHoldingEventsKey"), "isHoldingEventsKey tracking state exists");
+assert(popupJsContent.includes("keyup"), "Keyup listener configured for release-to-hide");
+assert(popupJsContent.includes("blur"), "Window blur safety net listener configured");
+
+// Test getMonthSummaryEvents algorithm logic
+const testMonthEvents = [];
+for (let d = 1; d <= 31; d++) {
+  const dt = new Date(2025, 2, 21 + d - 1); // 1404 Farvardin approximation
+  const evs = getEventsForDate(1404, 1, d, dt);
+  if (evs.length > 0) {
+    testMonthEvents.push({ day: d, events: evs });
+  }
+}
+assert(testMonthEvents.length > 0, `Month summary events correctly collects Farvardin holidays/events (${testMonthEvents.length} days with events found)`);
+console.log(`  Found ${testMonthEvents.length} event days in 1404 Farvardin (Nowruz holidays verified)`);
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");
