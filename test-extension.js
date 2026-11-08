@@ -69,6 +69,7 @@ assert(htmlContent.includes('id="quickNoteBtn"'), "Quick note trigger exists in 
 assert(htmlContent.includes('id="nextMonthBtn"'), "Next month button exists in popup.html");
 assert(htmlContent.includes('id="prevMonthBtn"'), "Prev month button exists in popup.html");
 assert(htmlContent.includes('class="nav-arrow-svg"'), "Month navigation uses modern vector SVG icons");
+assert(htmlContent.includes("E رویدادها • N یادداشت • T امروز • D پوسته • C کپی"), "Minimalist shortcuts footer strictly maintains E N T D C");
 
 console.log("\n\x1b[1m=== 4. Dynamic Native Intl API Calculations ===\x1b[0m");
 const now = new Date();

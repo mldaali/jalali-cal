@@ -12,7 +12,7 @@
 [![GitHub Release](https://img.shields.io/github/v/release/mldaali/jalali-cal?style=for-the-badge&logo=github&color=blue)](https://github.com/mldaali/jalali-cal/releases)
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Built with AI](https://img.shields.io/badge/Built_with-AI-8A2BE2?style=for-the-badge&logo=openai&logoColor=white)](#-توسعه-با-هوش-مصنوعی-built-with-ai)
-[![Tests](https://img.shields.io/badge/Tests-95%2F95_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
+[![Tests](https://img.shields.io/badge/Tests-96%2F96_Passed-success.svg?style=for-the-badge)](#-تست‌های-خودکار-automated-tests)
 
 <br/>
 
@@ -77,7 +77,7 @@
 ├── background.js       # سرویس پس‌زمینه، موتور رندر Canvas و تولتیپ هوشمند
 ├── fonts/              # فونت‌های توکار وزیرمتن (WOFF2)
 ├── icons/              # آیکون‌های وکتور و شطرنجی (۱۶ تا ۵۱۲px)
-└── test-extension.js   # مجموعه تست‌های خودکار اعتبارسنجی (۹۵ تست کامل)
+└── test-extension.js   # مجموعه تست‌های خودکار اعتبارسنجی (۹۶ تست کامل)
 ```
 
 <div dir="rtl">
@@ -91,13 +91,13 @@
 ```bash
 node test-extension.js
 ```
-*(تمامی ۹۵ آزمون با موفقیت پاس می‌شوند).*
+*(تمامی ۹۶ آزمون با موفقیت پاس می‌شوند).*
 
 ---
 
 ## 🤖 توسعه با هوش مصنوعی (Built with AI)
 
-این افزونه و پروژه به صورت کامل و سرتاسری (End-to-End) — شامل معماری ساختار Manifest V3، پیاده‌سازی الگوریتم‌های دقیق Intl API، طراحی رابط کاربری بدون اسکرول با تم Catppuccin، موتور رندرینگ Canvas آیکون نوار ابزار، بانک رویدادها، سیستم یادداشت‌های محلی، ناوبری کیبورد، قابلیت پیش‌نمایش رویدادها با نگه‌داشتن کلید، نوشتن آزمون‌های اعتبارسنجی ۹۵ گانه و بسته‌بندی برای فروشگاه رسمی افزونه‌های موزیلا (Mozilla AMO) — با همراهی و کدنویسی **هوش مصنوعی** توسعه یافته است.
+این افزونه و پروژه به صورت کامل و سرتاسری (End-to-End) — شامل معماری ساختار Manifest V3، پیاده‌سازی الگوریتم‌های دقیق Intl API، طراحی رابط کاربری بدون اسکرول با تم Catppuccin، موتور رندرینگ Canvas آیکون نوار ابزار، بانک رویدادها، سیستم یادداشت‌های محلی، ناوبری کیبورد، قابلیت پیش‌نمایش رویدادها با نگه‌داشتن کلید، نوشتن آزمون‌های اعتبارسنجی ۹۶ گانه و بسته‌بندی برای فروشگاه رسمی افزونه‌های موزیلا (Mozilla AMO) — با همراهی و کدنویسی **هوش مصنوعی** توسعه یافته است.
 
 > 💡 **AI Transparency:** This entire codebase was architected, written, tested, and packaged with AI assistance.
 
