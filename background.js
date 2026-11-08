@@ -192,7 +192,7 @@ async function updateDynamicIcon() {
           if (data && data.persian_calendar_notes) {
             const key = `${today.year}-${today.month}-${today.day}`;
             if (data.persian_calendar_notes[key]) {
-              title += ` • 📝 ${data.persian_calendar_notes[key]}`;
+              title += ` • 📌 ${data.persian_calendar_notes[key]}`;
             }
           }
         }

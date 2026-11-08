@@ -230,9 +230,13 @@ html, body {
   transform: scale(1.1);
 }
 
+.note-svg,
 .refresh-svg {
   width: 13px;
   height: 13px;
+}
+
+.refresh-svg {
   transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
