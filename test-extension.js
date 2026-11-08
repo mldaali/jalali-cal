@@ -404,6 +404,40 @@ const { loadOfficialYearData } = require(path.join(__dirname, "events.js"));
 assert(typeof loadOfficialYearData === "function", "loadOfficialYearData is exported from events.js");
 assert(popupJsContent.includes("loadOfficialCalendarData"), "loadOfficialCalendarData dynamic year loader exists in popup.js");
 
+console.log("\n=== 14. Event Descriptions & Rich Metadata Synchronization ===");
+assert(cssContent.includes(".event-row-desc"), "popup.css defines styling for .event-row-desc");
+assert(popupJsContent.includes("event-row-desc"), "popup.js creates event-row-desc element in Month Events HUD");
+
+// Validate 100% event description coverage across multi-year official datasets
+[1404, 1405, 1406].forEach(yr => {
+  const yrData = JSON.parse(fs.readFileSync(path.join(__dirname, `official-events-${yr}.json`), "utf-8"));
+  let yrEventsCount = 0;
+  let yrWithDescCount = 0;
+  for (const day of Object.values(yrData.days)) {
+    for (const ev of day.events) {
+      yrEventsCount++;
+      if (ev.description && typeof ev.description === "string" && ev.description.trim().length > 0) {
+        yrWithDescCount++;
+      }
+    }
+  }
+  assert(yrEventsCount > 0, `Year ${yr} has official events (${yrEventsCount} total)`);
+  assert(yrWithDescCount === yrEventsCount, `Year ${yr} has 100% description coverage (${yrWithDescCount}/${yrEventsCount})`);
+});
+
+// Test that runtime getEventsForDate populates description with loaded official data
+const json1405 = JSON.parse(fs.readFileSync(path.join(__dirname, "official-events-1405.json"), "utf-8"));
+loadOfficialYearData(1405, json1405);
+
+const nowruzEvs = getEventsForDate(1405, 1, 1);
+assert(nowruzEvs.some(e => e.description && e.description.includes("آغاز سال نو")), "Nowruz 1405/1/1 returns rich description");
+
+const yaldaEvs = getEventsForDate(1405, 9, 30);
+assert(yaldaEvs.some(e => e.description && e.description.includes("یلدا")), "Yalda 1405/9/30 returns rich description");
+
+const rajabEvs = getEventsForDate(1405, 10, 2);
+assert(rajabEvs.some(e => e.description && e.description.includes("امیرالمؤمنین")), "13 Rajab 1405/10/2 returns rich description");
+
 console.log(`\n\x1b[1m=== SUMMARY: ${passedTests}/${totalTests} Tests Passed ===\x1b[0m\n`);
 if (passedTests === totalTests) {
   console.log("\x1b[32m✔ ALL EXTENSION TESTS PASSED SUCCESSFULLY!\x1b[0m\n");

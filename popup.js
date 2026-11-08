@@ -257,21 +257,23 @@ function updateOccasionBadge(year, month, day, weekdayIndex, gDate) {
     if (officialHolidays.length > 0) {
       const title = officialHolidays.map(h => h.title).join(" • ");
       textEl.textContent = `${title} (تعطیل)`;
-      badge.title = `${title} (تعطیل رسمی)`;
+      const descs = officialHolidays.map(h => h.description ? `${h.title}: ${h.description}` : `${h.title} (تعطیل رسمی)`).join("\n");
+      badge.title = descs;
     } else {
       textEl.textContent = "جمعه (تعطیل هفتگی)";
       badge.title = "تعطیل هفتگی";
     }
     if (gamingEvents.length > 0) {
-      badge.title += ` • 🎮 ${gamingEvents[0].title}`;
+      badge.title += `\n🎮 ${gamingEvents[0].title}`;
     }
   } else if (events.length > 0) {
     badge.classList.add("is-event");
     const title = events.map(e => e.title).join(" • ");
     textEl.textContent = title;
-    badge.title = title;
+    const descs = events.map(e => e.description ? `${e.title}: ${e.description}` : e.title).join("\n");
+    badge.title = descs;
     if (gamingEvents.length > 0) {
-      badge.title += ` • 🎮 ${gamingEvents[0].title}`;
+      badge.title += `\n🎮 ${gamingEvents[0].title}`;
     }
   } else if (gamingEvents.length > 0) {
     badge.classList.add("is-gaming");
@@ -729,6 +731,20 @@ function renderCalendar() {
       : [];
 
     // Indicators
+    const tooltipParts = [];
+    if (events.length > 0) {
+      tooltipParts.push(events.map(e => e.description ? `${e.title}: ${e.description}` : e.title).join("\n"));
+    }
+    if (gamingEvs.length > 0) {
+      tooltipParts.push(`🎮 ${gamingEvs[0].title}`);
+    }
+    if (hasNote) {
+      tooltipParts.push(`📝 یادداشت: ${AppState.notes[key]}`);
+    }
+    if (tooltipParts.length > 0) {
+      cell.title = tooltipParts.join("\n---\n");
+    }
+
     if (hasNote) {
       const noteDot = document.createElement("span");
       noteDot.className = "cell-dot note-dot";
@@ -1066,6 +1082,14 @@ function showMonthEventsOverlay() {
           t.appendChild(titleSpan);
 
           content.appendChild(t);
+
+          if (ev.description) {
+            const descEl = document.createElement("div");
+            descEl.className = "event-row-desc";
+            descEl.textContent = ev.description;
+            descEl.title = ev.description;
+            content.appendChild(descEl);
+          }
         });
       }
 
@@ -1088,6 +1112,14 @@ function showMonthEventsOverlay() {
           t.appendChild(titleSpan);
 
           content.appendChild(t);
+
+          if (gev.description) {
+            const descEl = document.createElement("div");
+            descEl.className = "event-row-desc";
+            descEl.textContent = gev.description;
+            descEl.title = gev.description;
+            content.appendChild(descEl);
+          }
         });
       }
 
