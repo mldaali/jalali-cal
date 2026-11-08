@@ -199,12 +199,14 @@ function displayDateOnHero(year, month, day, weekdayIndex = null, gDate = null) 
   heroGregorianEl.textContent = gregorianStr;
   heroGregorianEl.dataset.copyText = `${gDate.getFullYear()}-${String(gDate.getMonth() + 1).padStart(2, "0")}-${String(gDate.getDate()).padStart(2, "0")}`;
 
-  // 3. Hijri Subtitle
+  // 3. Hijri Subtitle (Calendar by Moon)
   try {
     const dayEvents = typeof getEventsForDate === "function" ? getEventsForDate(year, month, day, gDate) : [];
     const relEv = dayEvents.find(e => e.category === "religious" && e.hijriDateStr);
     if (relEv && relEv.hijriDateStr) {
       document.getElementById("heroIslamic").textContent = relEv.hijriDateStr;
+    } else if (typeof formatIranianIslamicDate === "function") {
+      document.getElementById("heroIslamic").textContent = formatIranianIslamicDate(gDate);
     } else {
       const intlIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
         day: "numeric",

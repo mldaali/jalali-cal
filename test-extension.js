@@ -89,7 +89,7 @@ assert(parseInt(pMap.month, 10) >= 1 && parseInt(pMap.month, 10) <= 12, `Intl co
 assert(parseInt(pMap.day, 10) >= 1 && parseInt(pMap.day, 10) <= 31, `Intl correctly resolved Jalali day: ${pMap.day}`);
 
 console.log("\n\x1b[1m=== 5. Robust Multi-Year Holiday & Event Engine ===\x1b[0m");
-const { getEventsForDate, isOfficialHoliday } = require(path.join(__dirname, "events.js"));
+const { getEventsForDate, isOfficialHoliday, formatIranianIslamicDate } = require(path.join(__dirname, "events.js"));
 
 // 1405 Holidays
 assert(isOfficialHoliday(1405, 1, 1), "1405/1/1: Nowruz is official holiday");
@@ -188,6 +188,17 @@ for (const td of testDates) {
   const jRes = gregorianToJalali(td.gy, td.gm, td.gd);
   assert(jRes.jy === td.jy && jRes.jm === td.jm && jRes.jd === td.jd, `G->J: ${td.gy}/${td.gm}/${td.gd} => ${td.jy}/${td.jm}/${td.jd}`);
 }
+
+// Iranian Lunar Calendar (Moon Calendar) Alignment & Discrepancy Prevention
+const gDey1 = jalaliToGregorian(1405, 10, 1);
+const gDateDey1 = new Date(gDey1.gy, gDey1.gm - 1, gDey1.gd);
+const gDey2 = jalaliToGregorian(1405, 10, 2);
+const gDateDey2 = new Date(gDey2.gy, gDey2.gm - 1, gDey2.gd);
+const dey1Moon = formatIranianIslamicDate(gDateDey1);
+const dey2Moon = formatIranianIslamicDate(gDateDey2);
+assert(dey1Moon.includes("۱۲") && dey1Moon.includes("رجب"), `1405/10/1 moon calendar is 12 Rajab (got: ${dey1Moon})`);
+assert(dey2Moon.includes("۱۳") && dey2Moon.includes("رجب"), `1405/10/2 moon calendar is 13 Rajab (got: ${dey2Moon})`);
+assert(dey1Moon !== dey2Moon, "No duplicate 13 Rajab on 1 Dey and 2 Dey");
 
 console.log("\n\x1b[1m=== 7. Keyboard Navigation & Notes Functionality ===\x1b[0m");
 const popupJsContent = fs.readFileSync(path.join(__dirname, "popup.js"), "utf-8");

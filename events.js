@@ -267,6 +267,43 @@ function jalaliToGregorianInternal(jy, jm, jd) {
   return new Date(gy, gm - 1, days + 1);
 }
 
+const LUNAR_MONTH_OFFSETS = {
+  // Iranian crescent sighting offsets relative to Saudi Umm al-Qura
+  "1446-9": 0, "1446-10": -1, "1446-11": -1, "1446-12": 0,
+  "1447-1": -1, "1447-2": -1, "1447-3": -1, "1447-4": -1, "1447-5": 0, "1447-6": 0,
+  "1447-7": -1, "1447-8": -1, "1447-9": -1, "1447-10": -1, "1447-11": -1, "1447-12": 0,
+  "1448-1": 0, "1448-2": -1, "1448-3": 0, "1448-4": 0, "1448-5": 0, "1448-6": 0,
+  "1448-7": -1, "1448-8": -1, "1448-9": 0, "1448-10": -1, "1448-11": -1, "1448-12": -1,
+  "1449-1": 0, "1449-2": -1, "1449-3": -1, "1449-4": -1, "1449-5": -1, "1449-6": -1,
+  "1449-7": -1, "1449-8": -1, "1449-9": 0, "1449-10": -1, "1449-11": -1, "1449-12": -1
+};
+
+function formatIranianIslamicDate(gDate) {
+  try {
+    const formatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
+      day: "numeric",
+      month: "numeric",
+      year: "numeric"
+    });
+    const parts = formatter.formatToParts(gDate);
+    let hMonth = 1, hYear = 1445;
+    for (const part of parts) {
+      if (part.type === "month") hMonth = parseInt(part.value, 10);
+      if (part.type === "year") hYear = parseInt(part.value, 10);
+    }
+    const key = `${hYear}-${hMonth}`;
+    const offset = LUNAR_MONTH_OFFSETS[key] !== undefined ? LUNAR_MONTH_OFFSETS[key] : 0;
+    const adjustedDate = offset === 0 ? gDate : new Date(gDate.getTime() + offset * 86400000);
+    const intlPersianIslamic = new Intl.DateTimeFormat("fa-IR-u-ca-islamic-umalqura", {
+      day: "numeric",
+      month: "long"
+    });
+    return intlPersianIslamic.format(adjustedDate);
+  } catch (e) {
+    return "";
+  }
+}
+
 function getHijriParts(gDate) {
   try {
     const formatter = new Intl.DateTimeFormat("en-US-u-ca-islamic-umalqura", {
@@ -280,6 +317,17 @@ function getHijriParts(gDate) {
       if (part.type === "day") hDay = parseInt(part.value, 10);
       if (part.type === "month") hMonth = parseInt(part.value, 10);
       if (part.type === "year") hYear = parseInt(part.value, 10);
+    }
+    const key = `${hYear}-${hMonth}`;
+    const offset = LUNAR_MONTH_OFFSETS[key] !== undefined ? LUNAR_MONTH_OFFSETS[key] : 0;
+    if (offset !== 0) {
+      const adjustedDate = new Date(gDate.getTime() + offset * 86400000);
+      const adjParts = formatter.formatToParts(adjustedDate);
+      for (const part of adjParts) {
+        if (part.type === "day") hDay = parseInt(part.value, 10);
+        if (part.type === "month") hMonth = parseInt(part.value, 10);
+        if (part.type === "year") hYear = parseInt(part.value, 10);
+      }
     }
     return { hDay, hMonth, hYear };
   } catch (e) {
@@ -427,6 +475,8 @@ if (typeof module !== "undefined" && module.exports) {
     isOfficialHoliday,
     getMonthEvents,
     setGamingEventsData,
-    getGamingEventsForDate
+    getGamingEventsForDate,
+    formatIranianIslamicDate,
+    LUNAR_MONTH_OFFSETS
   };
 }
